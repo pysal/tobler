@@ -3,7 +3,7 @@ Tobler
 
 A library for spatial interpolation
 
-* TODO r-tree or binning for indexing and table generational
+* TODO r-tree or binning for indexing and table generation
 * TODO allow for weights parameter
 * TODO hybrid harmonization
 * TODO union harmonization
@@ -46,6 +46,7 @@ def area_extensive(source_df, target_df, att_name, table=None):
     if table is None:
         table = area_table(source_df, target_df)
     row_sum = table.sum(axis=1)
+    row_sum = row_sum + (row_sum == 0)
     weights = np.dot(np.diag(1/row_sum), table)
     estimates = np.dot(np.diag(att), weights)
     return estimates.sum(axis=0)
