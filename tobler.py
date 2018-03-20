@@ -48,6 +48,7 @@ def area_extensive(source_df, target_df, att_name, table=None):
     row_sum = table.sum(axis=1)
     row_sum = row_sum + (row_sum == 0)
     weights = np.dot(np.diag(1/row_sum), table)
+    print(table.shape, att.shape, weights.shape)
     estimates = np.dot(np.diag(att), weights)
     return estimates.sum(axis=0)
 
@@ -65,3 +66,4 @@ def area_intensive(source_df, target_df, att_name, table=None):
     vals = att.values
     vals.shape = (len(vals), 1)
     return  (vals * weights).sum(axis=0)
+
