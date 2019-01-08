@@ -1,0 +1,68 @@
+# Local Variables:
+# org-ref-default-bibliography: references.bib
+# End:
+
+#+LATEX_CLASS_OPTIONS: [a4paper, 11pt, colorlinks=true, citecolor=., linkcolor=black, urlcolor=black]
+#+LATEX_HEADER: \usepackage{natbib}
+
+
+
+
+
+* Areal Interpolation: Surveys 
+
+cite:Kennedy_2010
+
+* Areal Interpolation: Area Weighting
+
+cite:Goodchild_1993
+cite:murakami11_new_areal_inter_method_based_spatial_statis
+cite:cromley12_evaluat_repres_scale_error_maxim
+
+* Areal Interpolation: Dasymetric 
+
+cite:zhang11_point_based_intel_approac_to_areal_inter
+cite:sridharan13_spatial_disag_areal_inter_model
+cite:schroeder17_hybrid_areal_inter_census_count
+cite:reibel07_geogr_infor_system_spatial_data_proces_demog
+cite:reibel07_areal_inter_popul_count_using
+cite:reibel05_street_weigh_inter_techn_demog
+cite:qiu12_devel_areal_inter_arcgis_exten_compar_study
+cite:noble11_harmon_dispar_data_acros_time_place
+cite:murakami11_new_areal_inter_method_based_spatial_statis
+cite:logan16_valid_popul_estim_harmon_census
+cite:lin15_local_polyc_approac_to_areal_inter
+cite:lin15_evaluat_geo_locat_twitt_data
+cite:lin11_using_geogr_weigh_regres_to
+cite:langford07_rapid_facil_dasym_based_popul
+cite:jia16_dasym_model
+cite:hanaoka14_networ_based_spatial_inter_commut_trajec
+cite:gregory06_error_histor_gis
+cite:cromley12_evaluat_repres_scale_error_maxim
+
+* Areal Interpolation: Regression Based
+cite:lin11_using_geogr_weigh_regres_to
+cite:noble11_harmon_dispar_data_acros_time_place
+cite:reibel07_areal_inter_popul_count_using
+cite:gregory06_error_histor_gis
+cite:schroeder17_hybrid_areal_inter_census_count
+cite:reibel05_street_weigh_inter_techn_demog
+cite:cromley12_evaluat_repres_scale_error_maxim
+cite:hanaoka14_networ_based_spatial_inter_commut_trajec
+
+
+* Areal Interpolation: Pycnophylactic
+
+cite:Tobler_1979a
+cite:Tobler_1979b
+
+* Areal Interpolation: Other
+
+cite:Tobler_2010
+cite:Tobler_1979
+
+
+
+
+bibliographystyle:abbrvnat
+bibliography:references.bib
