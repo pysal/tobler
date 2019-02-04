@@ -10,12 +10,17 @@ def area_table(source_df, target_df):
     """
     Calculate area of each source feature (row) intersecting with each target feature (column)
 
-    Arguments
-    ---------
+    Parameters
+    ----------
 
     source_df: geopandas GeoDataFrame with geometry column of polygon type
 
     source_df: geopandas GeoDataFrame with geometry column of polygon type
+
+    Returns
+    -------
+    table: array
+           area mapping reporting intersection of target polygon i with source polygon j for all polygons i in source_df and j in target_df
 
 
     Notes
@@ -55,8 +60,8 @@ def area_extensive(source_df, target_df, att_name, table=None):
     """
     Interpolate extensive attribute values from source features to target features
 
-    Arguments
-    ---------
+    Parameters
+    ----------
 
     source_df: geopandas GeoDataFrame with geometry column of polygon type
 
@@ -72,6 +77,13 @@ def area_extensive(source_df, target_df, att_name, table=None):
     Notes
     -----
     The assumption is both dataframes have the same coordinate reference system.
+
+
+    Estimate at target polygon j:
+
+    v_j = \sum_i v_i w_{i,j}
+
+    w_{i,j} = a_{i,j} / \sum_k a_{i,k}
 
 
 
@@ -92,6 +104,34 @@ def area_extensive(source_df, target_df, att_name, table=None):
 def area_intensive(source_df, target_df, att_name, table=None):
     """
     Interpolate intensive attribute values from source features to target features
+
+    Parameters
+    ----------
+
+    source_df: geopandas GeoDataFrame with geometry column of polygon type
+
+    source_df: geopandas GeoDataFrame with geometry column of polygon type
+
+    att_name: string
+              column name in source_df to interpolate over target_df 
+
+
+    table: array (optional)
+           area mapping reporting intersection of target polygon i with source polygon j for all polygons i in source_df and j in target_df
+
+    Notes
+    -----
+    The assumption is both dataframes have the same coordinate reference system.
+
+    Estimate at target polygon j:
+
+    v_j = \sum_i v_i w_{i,j}
+
+    w_{i,j} = a_{i,j} / \sum_k a_{k,j}
+
+
+
+
     """
     att = source_df[att_name]
     if table is None:
