@@ -308,7 +308,7 @@ def calculate_interpolated_polygon_population_from_correspondence_NLCD_table(pol
     -----
     When you clip a specific polygon, there are pixels that lie beyond the polygon extent, because the clipping is rectangular. 
     Therefore, the population could be wrongly summed from another spatial unit.
-    The solution is to build a pandas and filter the pixels different than 255. This is done during the construction of the resulting population of this function.
+    The solution is to build a pandas and filter the pixels different than 255. This is done during the construction of the polygon summary for the resulting population of this function.
     
     """
 
@@ -321,11 +321,14 @@ def calculate_interpolated_polygon_population_from_correspondence_NLCD_table(pol
     data = {'lons': np.ndarray.flatten(lons).round().astype(int).tolist(), 
             'lats': np.ndarray.flatten(lats).round().astype(int).tolist(),
             'pixel_value': np.ndarray.flatten(out_img)}
-    polygon_summary = pd.DataFrame.from_dict(data)
+    polygon_summary_full = pd.DataFrame.from_dict(data)
+    
+    # Remove pixels of the polygon that do not belong to the spatil unit, but might be from another one
+    polygon_summary = polygon_summary_full[polygon_summary_full.pixel_value != 255]
     
     merged_polygon = corresp_table.merge(polygon_summary, on = ['lons', 'lats'])
     
-    pop = merged_polygon[merged_polygon.pixel_value != 255]['pop_value'].sum()
+    pop = merged_polygon['pop_value'].sum()
     
     return pop
 
