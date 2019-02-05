@@ -323,7 +323,7 @@ def calculate_interpolated_polygon_population_from_correspondence_NLCD_table(pol
             'pixel_value': np.ndarray.flatten(out_img)}
     polygon_summary_full = pd.DataFrame.from_dict(data)
     
-    # Remove pixels of the polygon that do not belong to the spatil unit, but might be from another one
+    # Remove pixels of the polygon that do not belong to the spatial unit, but might be from another one
     polygon_summary = polygon_summary_full[polygon_summary_full.pixel_value != 255]
     
     merged_polygon = corresp_table.merge(polygon_summary, on = ['lons', 'lats'])
