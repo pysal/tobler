@@ -6,10 +6,9 @@ Area Weighted Interpolation
 import numpy as np
 import geopandas as gpd
 
-def area_table(source_df, target_df):
+def area_tables(source_df, target_df):
     """
-    Calculate area of each source feature (row) intersecting with each target feature (column)
-
+    Construct area allocation and source-target correspondence tables
     Parameters
     ----------
 
@@ -19,19 +18,19 @@ def area_table(source_df, target_df):
 
     Returns
     -------
-    table: array
-           area mapping reporting intersection of target polygon i with source polygon j for all polygons i in source_df and j in target_df
+    tables: tuple (optional)
+            two 2-D numpy arrays
+            SU: area of intersection of source geometry i with union geometry j
+            UT: binary mapping of union geometry i to target geometry j
+
 
 
     Notes
     -----
     The assumption is both dataframes have the same coordinate reference system.
 
+    SU Maps source geometry to union geometry, UT maps union geometry to target geometry
 
-    Todo
-    ----
-
-    - add warnings for non-exhaustion across rows/columns
 
 
     """
@@ -39,24 +38,24 @@ def area_table(source_df, target_df):
     n_t = target_df.shape[0]
     _left = np.arange(n_s)
     _right = np.arange(n_t)
-    table = np.zeros((n_s, n_t))
-    # assume each layer is planar enforced
     source_df['_left'] = _left  # create temporary index for union
     target_df['_right'] = _right # create temporary index for union
     res_union = gpd.overlay(source_df, target_df, how='union')
-    for idx, row in res_union.iterrows():
-        i = row['_left']
-        j = row['_right']
-        #print(idx, i, j)
-        if not np.isnan([i, j]).any():
-            #print('ok',i,j)
-            table[int(i-1), int(j-1)] = row['geometry'].area
-    del source_df['_left']  # remove temporary index
-    del target_df['_right'] # remove temporary index
-    return table
+    n_u, _ = res_union.shape
+    SU = np.zeros((n_s, n_u)) # holds area of intersection of source geom with union geom
+    UT = np.zeros((n_u, n_t)) # binary table mapping union geom to target geom
+    for index, row in res_union.iterrows():
+        # only union polygons that intersect both a source and a target geometry matter 
+        if not np.isnan(row['_left']) and not np.isnan(row['_right']):
+            s_id = int(row['_left'])
+            t_id = int(row['_right'])
+            SU[s_id, index] = row['geometry'].area
+            UT[index, t_id] = 1
+
+    return SU, UT
 
 
-def area_extensive(source_df, target_df, att_name, table=None):
+def area_extensive(source_df, target_df, att_name, tables=None):
     """
     Interpolate extensive attribute values from source features to target features
 
@@ -71,8 +70,16 @@ def area_extensive(source_df, target_df, att_name, table=None):
               column name in source_df to interpolate over target_df 
 
 
-    table: array (optional)
-           area mapping reporting intersection of target polygon i with source polygon j for all polygons i in source_df and j in target_df
+    tables: tuple (optional)
+            two 2-D numpy arrays
+            SU: area of intersection of source geometry i with union geometry j
+            UT: binary mapping of union geometry i to target geometry j
+
+
+    Returns
+    -------
+    estimates: array
+              values of attribute in target polygons
 
     Notes
     -----
@@ -91,17 +98,19 @@ def area_extensive(source_df, target_df, att_name, table=None):
 
     """
     att = source_df[att_name]
-    if table is None:
-        table = area_table(source_df, target_df)
-    row_sum = table.sum(axis=1)
-    row_sum = row_sum + (row_sum == 0)
-    weights = np.dot(np.diag(1/row_sum), table)
-    print(table.shape, att.shape, weights.shape)
+    if tables is None:
+        SU, UT  = area_tables(source_df, target_df)
+    else:
+        SU, UT = tables
+    den = source_df['geometry'].area.values
+    den = den + (den==0)
+    weights = np.dot(np.diag(1/den), SU)
     estimates = np.dot(np.diag(att), weights)
+    estimates = np.dot(estimates, UT)
     return estimates.sum(axis=0)
 
 
-def area_intensive(source_df, target_df, att_name, table=None):
+def area_intensive(source_df, target_df, att_name, tables=None):
     """
     Interpolate intensive attribute values from source features to target features
 
@@ -119,6 +128,12 @@ def area_intensive(source_df, target_df, att_name, table=None):
     table: array (optional)
            area mapping reporting intersection of target polygon i with source polygon j for all polygons i in source_df and j in target_df
 
+    Returns
+    -------
+    estimates: array
+              values of attribute in target polygons
+
+
     Notes
     -----
     The assumption is both dataframes have the same coordinate reference system.
@@ -134,11 +149,15 @@ def area_intensive(source_df, target_df, att_name, table=None):
 
     """
     att = source_df[att_name]
-    if table is None:
-        table = area_table(source_df, target_df)
-    area = table.sum(axis=0)
+    if tables is None:
+        SU, UT = area_tables(source_df, target_df)
+    else:
+        SU, UT = tables
+    area = source_df['geometry'].area.values
+    ST = np.dot(SU, UT)
+    area = ST.sum(axis=0)
     den = np.diag(1./ (area + (area == 0)))
-    weights = np.dot(table, den)
+    weights = np.dot(ST, den)
     vals = att.values
     vals.shape = (len(vals), 1)
     return  (vals * weights).sum(axis=0)
