@@ -27,7 +27,6 @@ __all__ = ['getFeatures',
            'calculate_interpolated_population_from_correspondence_NLCD_table']
 
 
-
 def getFeatures(gdf):
     
     """Function to parse features from GeoDataFrame in such a manner that rasterio wants them
@@ -144,7 +143,7 @@ def return_weights_from_regression(geodataframe, raster, pop_string, codes = [21
     profiled_df = append_profile_in_gdf(geodataframe[['geometry', pop_string]], raster) # Use only two columns to build the weights (this avoids error, if the original dataset has already types appended on it).
     
     # Formula WITHOUT intercept
-    str_codes = [str(i) for i in codes]
+    str_codes = [str(i) for i in codes.sort()] # If the list is unsorted, the codes will be sorted to guarantee that the position of the weights will match
     formula_string = pop_string + ' ~ -1 + ' + " + ".join(['Type_' + s for s in str_codes])
     
     if (likelihood == 'Poisson'):
