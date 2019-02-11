@@ -99,7 +99,7 @@ def append_profile_in_gdf(geodataframe, raster):
     for i in range(len(geodataframe)):
         
         aux = return_area_profile(geodataframe.iloc[[i]], raster = raster)
-        final_geodata = pd.concat([final_geodata.reset_index(drop = True), aux], axis = 0)
+        final_geodata = pd.concat([final_geodata.reset_index(drop = True), aux], axis = 0, sort = False) # sort = False means that the profile will be appended in the end of the result
     
     return final_geodata
 
