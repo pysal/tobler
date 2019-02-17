@@ -143,10 +143,10 @@ def return_weights_from_regression(geodataframe, raster, pop_string, codes = [21
     profiled_df = append_profile_in_gdf(geodataframe[['geometry', pop_string]], raster) # Use only two columns to build the weights (this avoids error, if the original dataset has already types appended on it).
     
     # If the list is unsorted, the codes will be sorted to guarantee that the position of the weights will match
-    codes_sorted = codes.sort()
+    codes.sort()
     
     # Formula WITHOUT intercept
-    str_codes = [str(i) for i in codes_sorted] 
+    str_codes = [str(i) for i in codes] 
     formula_string = pop_string + ' ~ -1 + ' + " + ".join(['Type_' + s for s in str_codes])
     
     if (likelihood == 'Poisson'):
@@ -156,7 +156,7 @@ def return_weights_from_regression(geodataframe, raster, pop_string, codes = [21
         results = smf.ols(formula_string, data = profiled_df).fit()
     
     weights = np.zeros(n_pixels_option_values)
-    weights[codes_sorted] = results.params
+    weights[codes] = results.params
     
     return weights
 
