@@ -137,6 +137,9 @@ def return_weights_from_regression(geodataframe, raster, pop_string, codes = [21
     
     """
     
+    if (255 in codes):
+        raise ValueError('codes should not assume the value 255.')
+    
     if not likelihood in ['Poisson', 'Gaussian']:
         raise ValueError('likelihood must one of \'Poisson\', \'Gaussian\'')
     
