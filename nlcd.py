@@ -208,7 +208,7 @@ def return_weights_from_xgboost(geodataframe,
     n_pixels_option_values : number of options of the pixel values of rasterior. Default is 256.
     
     tuned_xgb              : bool. Default is False.
-                             If True the XGBoost model will be tuned making a grid search using gbm_hyperparam_grid dictionary a picking the best model in terms of mean squared error.
+                             If True the XGBoost model will be tuned making a grid search using gbm_hyperparam_grid dictionary a picking the best model in terms of mean squared error with some pre-defined number of cross-validation.
                              Otherwise, the XGBoost model is fitted with default values of xgboost.train function from xgboost Python library.
                              
     gbm_hyperparam_grid    : a dictionary that represent the grid for the grid search of XGBoost
