@@ -18,6 +18,7 @@ from statsmodels.genmod.families import Poisson
 
 
 
+
 __all__ = ['getFeatures', 
            'return_area_profile', 
            'append_profile_in_gdf', 
@@ -145,7 +146,9 @@ def return_weights_from_regression(geodataframe, raster, pop_string, codes = [21
     if not likelihood in ['Poisson', 'Gaussian']:
         raise ValueError('likelihood must one of \'Poisson\', \'Gaussian\'')
     
+    print('Appending profile...')
     profiled_df = append_profile_in_gdf(geodataframe[['geometry', pop_string]], raster) # Use only two columns to build the weights (this avoids error, if the original dataset has already types appended on it).
+    print('Append profile: Done.')
     
     # If the list is unsorted, the codes will be sorted to guarantee that the position of the weights will match
     codes.sort()
@@ -154,6 +157,7 @@ def return_weights_from_regression(geodataframe, raster, pop_string, codes = [21
     str_codes = [str(i) for i in codes] 
     formula_string = pop_string + ' ~ -1 + ' + " + ".join(['Type_' + s for s in str_codes])
     
+    print('Starting to fit regression...')
     if (likelihood == 'Poisson'):
         results = smf.glm(formula_string, data = profiled_df, family = Poisson()).fit()
         
