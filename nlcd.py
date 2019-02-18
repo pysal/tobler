@@ -261,11 +261,14 @@ def return_weights_from_xgboost(geodataframe,
         # Fit the grid to the data
         grid_mse.fit(X, y)
         
+        best_params = grid_mse.best_params_
+        best_params["objective"] = "reg:linear"
+        
         # Create the DMatrix
         xgb_dmatrix = xgb.DMatrix(X, y)
         
         # Train the model from the best parameters of the grid search
-        xg_reg = xgb.train(params = grid_mse.best_params_, dtrain = xgb_dmatrix)
+        xg_reg = xgb.train(params = best_params, dtrain = xgb_dmatrix)
     
     weights_from_xgb_object = xg_reg.get_score(importance_type = 'weight')
     weights_from_xgb = dict(sorted(weights_from_xgb_object.items())).values() # This orders according to type order string!
