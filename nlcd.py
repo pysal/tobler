@@ -16,13 +16,15 @@ from rasterio.mask import mask
 import statsmodels.formula.api as smf
 from statsmodels.genmod.families import Poisson
 
-
+import xgboost as xgb
+from sklearn.model_selection import GridSearchCV
 
 
 __all__ = ['getFeatures', 
            'return_area_profile', 
            'append_profile_in_gdf', 
-           'return_weights_from_regression', 
+           'return_weights_from_regression',
+           'return_weights_from_xgboost',
            'create_lon_lat',
            'create_non_zero_population_by_pixels_locations',
            'calculate_interpolated_polygon_population_from_correspondence_NLCD_table',
@@ -168,6 +170,112 @@ def return_weights_from_regression(geodataframe, raster, pop_string, codes = [21
     weights[codes] = results.params
     
     return weights
+
+
+
+
+
+
+
+
+def return_weights_from_xgboost(geodataframe, 
+                                raster, 
+                                pop_string, 
+                                codes = [21, 22, 23, 24], 
+                                n_pixels_option_values = 256, 
+                                tuned_xgb = False, 
+                                gbm_hyperparam_grid = {'learning_rate': [0.001,0.01, 0.9],
+                                                       'n_estimators': [200],
+                                                       'subsample': [0.3, 0.5],
+                                                       'max_depth': [4, 5, 6],
+                                                       'num_boosting_rounds': [10, 20]}):
+    
+    """Function that returns the weights of each land type according to NLCD types/codes given by Extreme Gradient Boost model (XGBoost)
+    
+    Parameters
+    ----------
+    
+    geodataframe           : a geopandas geoDataFrame used to build regression
+    
+    raster                 : a raster (from rasterio.open) that has the types of each pixel in the geodataframe
+    
+    pop_string             : the name of the variable on geodataframe that the regression shall be conducted
+    
+    codes                  : an integer list of codes values that should be considered as 'populated' from the National Land Cover Database (NLCD).
+                             The description of each code can be found here: https://www.mrlc.gov/sites/default/files/metadata/landcover.html
+                             The default is 21 (Developed, Open Space), 22 (Developed, Low Intensity), 23 (Developed, Medium Intensity) and 24 (Developed, High Intensity).
+                             
+    n_pixels_option_values : number of options of the pixel values of rasterior. Default is 256.
+    
+    tuned_xgb              : bool. Default is False.
+                             If True the XGBoost model will be tuned making a grid search using gbm_hyperparam_grid dictionary a picking the best model in terms of mean squared error.
+                             Otherwise, the XGBoost model is fitted with default values of xgboost.train function from xgboost Python library.
+                             
+    gbm_hyperparam_grid    : a dictionary that represent the grid for the grid search of XGBoost
+    
+    Notes
+    -----
+    1) The formula uses a substring called 'Type_' before the code number due to the 'append_profile_in_gdf' function.
+    2) The pixel value, usually, ranges from 0 to 255. That is why the default of 'n_pixels_option_values' is 256.
+    3) The returning weights represent the feature importance as the number of times a feature is used to split the data across all trees. That is, using the method .get_score(importance_type = 'weight')
+    
+    """
+    
+    if (255 in codes):
+        raise ValueError('codes should not assume the value 255.')
+    
+    print('Appending profile...')
+    profiled_df = append_profile_in_gdf(geodataframe[['geometry', pop_string]], raster) # Use only two columns to build the weights (this avoids error, if the original dataset has already types appended on it).
+    print('Append profile: Done.')
+    
+    # If the list is unsorted, the codes will be sorted to guarantee that the position of the weights will match
+    codes.sort()
+
+    str_codes = [str(i) for i in codes] 
+    feature_names = ['Type_' + s for s in str_codes]
+    
+    y = profiled_df[pop_string]
+    X = profiled_df[feature_names]
+    
+    print('Starting to fit XGBoost...')
+    if (tuned_xgb == False):
+        
+        # Create the DMatrix
+        xgb_dmatrix = xgb.DMatrix(X, y)
+
+        # Create the parameter dictionary
+        params = {"objective":"reg:linear"}
+
+        # Train the model
+        xg_reg = xgb.train(params = params, dtrain = xgb_dmatrix)
+        
+    if (tuned_xgb == True):
+        
+        gbm = xgb.XGBRegressor()
+        grid_mse = GridSearchCV(estimator = gbm,
+                                param_grid = gbm_hyperparam_grid, 
+                                scoring = 'neg_mean_squared_error', 
+                                cv = 4,      # 4-fold crossvalidation
+                                verbose = 3) # Prints the grid search profile
+
+        # Fit the grid to the data
+        grid_mse.fit(X, y)
+        
+        # Create the DMatrix
+        xgb_dmatrix = xgb.DMatrix(X, y)
+        
+        # Train the model from the best parameters of the grid search
+        xg_reg = xgb.train(params = grid_mse.best_params_, dtrain = xgb_dmatrix)
+    
+    weights_from_xgb_object = xg_reg.get_score(importance_type = 'weight')
+    weights_from_xgb = dict(sorted(weights_from_xgb_object.items())).values() # This orders according to type order string!
+    
+    weights = np.zeros(n_pixels_option_values)
+    weights[codes] = list(weights_from_xgb) # Convert to list a dict_values
+    
+    return weights
+
+
 
 
 
