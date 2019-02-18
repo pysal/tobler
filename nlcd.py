@@ -12,6 +12,7 @@ import pandas as pd
 import geopandas as gpd
 import numpy as np
 from rasterio.mask import mask
+
 import statsmodels.formula.api as smf
 from statsmodels.genmod.families import Poisson
 
@@ -100,6 +101,7 @@ def append_profile_in_gdf(geodataframe, raster):
         
         aux = return_area_profile(geodataframe.iloc[[i]], raster = raster)
         final_geodata = pd.concat([final_geodata.reset_index(drop = True), aux], axis = 0, sort = False) # sort = False means that the profile will be appended in the end of the result
+        print('Polygon profile {} appended out of {}'.format(i + 1, len(geodataframe)), end = "\r")
     
     return final_geodata
 
