@@ -51,7 +51,7 @@ def getFeatures(gdf):
 
 
 
-def return_area_profile(polygon, raster, polygon_crs = {'init': 'epsg:4326'}):
+def return_area_profile(polygon, raster, polygon_crs = {'init': 'epsg:3857'}):
     
     """Function that counts the amount of pixel types it is inside a polygon within a given raster
     
@@ -324,7 +324,7 @@ def create_lon_lat(out_img, out_transform):
 
 
 
-def create_non_zero_population_by_pixels_locations(geodataframe, raster, pop_string, weights = None, geodataframe_crs = {'init': 'epsg:4326'}, save_polygon_index = False):
+def create_non_zero_population_by_pixels_locations(geodataframe, raster, pop_string, weights = None, geodataframe_crs = {'init': 'epsg:3857'}, save_polygon_index = False):
     
     '''Function that returns the actual population of each pixel from a given geodataframe and variable.
     
@@ -434,7 +434,7 @@ def calculate_interpolated_polygon_population_from_correspondence_NLCD_table(pol
     
     """
 
-    polygon.crs = {'init': 'epsg:4326'}
+    polygon.crs = {'init': 'epsg:3857'}
     polygon_projected = polygon.to_crs(crs = raster.crs.data)
 
     coords = getFeatures(polygon_projected)
