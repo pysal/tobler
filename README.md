@@ -13,8 +13,8 @@ A library for spatial interpolation
 
 ## Installation
 
-```
+```bash
 $ conda env create -f environment.yml
 $ source activate tobler 
-$ python setup.py develop``
+$ python setup.py develop
 ```
