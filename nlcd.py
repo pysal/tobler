@@ -3,6 +3,8 @@ Functions to perform Population Interpolation using the National Land Cover Data
 This is a generic framework that can be used to distribute population more accurately in harmonized spatial structures. 
 
 Inspired by Reibel, Michael, and Aditya Agrawal. "Areal interpolation of population counts using pre-classified land cover data." Population Research and Policy Review 26.5-6 (2007): 619-633.
+
+Note: This study was financed in part by the Coordenação de Aperfeiçoamento de Pessoal de Nível Superior - Brasil (CAPES) - Process number 88881.170553/2018-01
 """
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
