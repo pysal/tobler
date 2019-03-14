@@ -40,8 +40,8 @@ def area_tables(source_df, target_df):
     n_t = target_df.shape[0]
     _left = np.arange(n_s)
     _right = np.arange(n_t)
-    source_df['_left'] = _left  # create temporary index for union
-    target_df['_right'] = _right # create temporary index for union
+    source_df.loc[:, '_left'] = _left  # create temporary index for union
+    target_df.loc[:, '_right'] = _right # create temporary index for union
     res_union = gpd.overlay(source_df, target_df, how='union')
     n_u, _ = res_union.shape
     SU = np.zeros((n_s, n_u)) # holds area of intersection of source geom with union geom
