@@ -15,6 +15,6 @@ A library for spatial interpolation
 
 ```bash
 $ conda env create -f environment.yml
-$ source activate tobler 
+$ conda activate tobler 
 $ python setup.py develop
 ```
