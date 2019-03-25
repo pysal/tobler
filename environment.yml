@@ -1,0 +1,8 @@
+name: tobler
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - jupyterlab
+  - geopandas
+  - rasterio

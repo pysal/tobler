@@ -1,0 +1,2 @@
+geopandas
+rasterio
