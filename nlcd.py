@@ -53,7 +53,7 @@ def getFeatures(gdf):
 
 
 
-def return_area_profile(polygon, raster, polygon_crs = {'init': 'epsg:3395'}):
+def return_area_profile(polygon, raster, polygon_crs = {'init': 'epsg:4326'}):
     
     """Function that counts the amount of pixel types it is inside a polygon within a given raster
     
@@ -64,8 +64,7 @@ def return_area_profile(polygon, raster, polygon_crs = {'init': 'epsg:3395'}):
     
     raster      : the associated raster (from rasterio.open)
     
-    polygon_crs : the original crs code given by a dict of the polygon (this is gonna be projected later, as this must be the same as the raster). 
-                  This argument is only to avoid passing a polygon without crs and, therefore, raising an error.
+    polygon_crs : the original crs code given by a dict of the polygon (this is gonna be projected later, as this must be the same as the raster).
 
     """
     
