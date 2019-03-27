@@ -14,7 +14,7 @@ def area_tables(source_df, target_df):
 
     source_df: geopandas GeoDataFrame with geometry column of polygon type
 
-    source_df: geopandas GeoDataFrame with geometry column of polygon type
+    target_df: geopandas GeoDataFrame with geometry column of polygon type
 
     Returns
     -------
