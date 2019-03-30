@@ -214,7 +214,10 @@ def area_tables_nlcd(source_df, target_df, raster, codes = [21, 22, 23, 24], crs
     str_codes     = [str(i) for i in codes]
     str_list      = ['Type_' + i for i in str_codes]
     
-    res_union['Populated_Pixels'] = res_union[str_list].sum(axis = 1)
+    # Extract list of code names that actually appear in the appended dataset
+    str_list_ok = [col for col in res_union.columns if col in str_list]
+    
+    res_union['Populated_Pixels'] = res_union[str_list_ok].sum(axis = 1)
     
     n_u, _ = res_union.shape
     SU = np.zeros((n_s, n_u)) # holds area of intersection of source geom with union geom
