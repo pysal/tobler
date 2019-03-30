@@ -89,13 +89,15 @@ def return_area_profile(polygon, raster, polygon_crs = {'init': 'epsg:4326'}):
 
 
 
-def append_profile_in_gdf(geodataframe, raster):
+def append_profile_in_gdf(geodataframe, raster, polygon_crs = {'init': 'epsg:4326'}):
     
     """Function that appends the columns of the profile in a geopandas according to a given raster
     
     geodataframe : a GeoDataFrame from geopandas. The variables of the profile will be appended in this data.
     
-    raster       : the associated raster (from rasterio.open)
+    raster       : the associated NLCD raster (from rasterio.open).
+    
+    polygon_crs : the original crs code given by a dict of the polygon (this is gonna be projected later, as this must be the same as the raster).
     
     """
     
@@ -103,7 +105,7 @@ def append_profile_in_gdf(geodataframe, raster):
     
     for i in range(len(geodataframe)):
         
-        aux = return_area_profile(geodataframe.iloc[[i]], raster = raster)
+        aux = return_area_profile(geodataframe.iloc[[i]], raster = raster, polygon_crs = polygon_crs)
         final_geodata = pd.concat([final_geodata.reset_index(drop = True), aux], axis = 0, sort = False) # sort = False means that the profile will be appended in the end of the result
         print('Polygon profile {} appended out of {}'.format(i + 1, len(geodataframe)), end = "\r")
     
