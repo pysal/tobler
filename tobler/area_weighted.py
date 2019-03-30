@@ -199,6 +199,10 @@ def area_tables_nlcd(source_df, target_df, raster, codes = [21, 22, 23, 24], crs
 
 
     """
+    
+    source_df.crs = crs
+    target_df.crs = crs
+    
     n_s = source_df.shape[0]
     n_t = target_df.shape[0]
     _left = np.arange(n_s)
