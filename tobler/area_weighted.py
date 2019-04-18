@@ -14,7 +14,7 @@ def area_tables(source_df, target_df):
 
     source_df: geopandas GeoDataFrame with geometry column of polygon type
 
-    source_df: geopandas GeoDataFrame with geometry column of polygon type
+    target_df: geopandas GeoDataFrame with geometry column of polygon type
 
     Returns
     -------
@@ -36,6 +36,12 @@ def area_tables(source_df, target_df):
 
 
     """
+
+    if _check_crs(source_df, target_df):
+        pass
+    else:
+        return None
+
     n_s = source_df.shape[0]
     n_t = target_df.shape[0]
     _left = np.arange(n_s)
@@ -136,7 +142,7 @@ def area_interpolate(source_df, target_df, extensive_variables=[], intensive_var
 
     extensive = [] 
     for variable in extensive_variables:
-        att = source_df[variable]
+        vals = _nan_check(source_df, variable)
         estimates = np.dot(np.diag(att), weights)
         estimates = np.dot(estimates, UT)
         estimates = estimates.sum(axis=0)
@@ -149,8 +155,7 @@ def area_interpolate(source_df, target_df, extensive_variables=[], intensive_var
     weights = np.dot(ST, den)
     intensive = []
     for variable in intensive_variables:
-        att = source_df[variable]
-        vals = att.values
+        vals = _nan_check(source_df, variable)
         vals.shape = (len(vals), 1)
         est = (vals * weights).sum(axis=0)
         intensive.append(est)
@@ -158,4 +163,22 @@ def area_interpolate(source_df, target_df, extensive_variables=[], intensive_var
 
     return (extensive, intensive)
 
+def _check_crs(source_df, target_df):
+    """check if crs is identical"""
+    if not (source_df.crs == target_df.crs):
+        print("Source and target dataframes have different crs. Please correct.")
+        return False
+    return True
+
+def _nan_check(df, column):
+    """Check if variable has nan values.
+
+    Warn and replace nan with 0.0.
+    """
+    values = df[column].values
+    if np.any(np.isnan(values)):
+        wherenan = np.isnan(values)
+        values[wherenan] = 0.0
+        print('nan values in variable: {var}, replacing with 0.0'.format(var=column))
+    return values
 
