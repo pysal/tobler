@@ -3,6 +3,8 @@ Functions to perform Population Interpolation using the National Land Cover Data
 This is a generic framework that can be used to distribute population more accurately in harmonized spatial structures. 
 
 Inspired by Reibel, Michael, and Aditya Agrawal. "Areal interpolation of population counts using pre-classified land cover data." Population Research and Policy Review 26.5-6 (2007): 619-633.
+
+Note: This study was financed in part by the Coordenação de Aperfeiçoamento de Pessoal de Nível Superior - Brasil (CAPES) - Process number 88881.170553/2018-01
 """
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
@@ -51,7 +53,7 @@ def getFeatures(gdf):
 
 
 
-def return_area_profile(polygon, raster, polygon_crs = {'init': 'epsg:3395'}):
+def return_area_profile(polygon, raster, polygon_crs = {'init': 'epsg:4326'}):
     
     """Function that counts the amount of pixel types it is inside a polygon within a given raster
     
@@ -62,8 +64,7 @@ def return_area_profile(polygon, raster, polygon_crs = {'init': 'epsg:3395'}):
     
     raster      : the associated raster (from rasterio.open)
     
-    polygon_crs : the original crs code given by a dict of the polygon (this is gonna be projected later, as this must be the same as the raster). 
-                  This argument is only to avoid passing a polygon without crs and, therefore, raising an error.
+    polygon_crs : the original crs code given by a dict of the polygon (this is gonna be projected later, as this must be the same as the raster).
 
     """
     
@@ -88,13 +89,15 @@ def return_area_profile(polygon, raster, polygon_crs = {'init': 'epsg:3395'}):
 
 
 
-def append_profile_in_gdf(geodataframe, raster):
+def append_profile_in_gdf(geodataframe, raster, polygon_crs = {'init': 'epsg:4326'}):
     
     """Function that appends the columns of the profile in a geopandas according to a given raster
     
     geodataframe : a GeoDataFrame from geopandas. The variables of the profile will be appended in this data.
     
-    raster       : the associated raster (from rasterio.open)
+    raster       : the associated NLCD raster (from rasterio.open).
+    
+    polygon_crs : the original crs code given by a dict of the polygon (this is gonna be projected later, as this must be the same as the raster).
     
     """
     
@@ -102,7 +105,7 @@ def append_profile_in_gdf(geodataframe, raster):
     
     for i in range(len(geodataframe)):
         
-        aux = return_area_profile(geodataframe.iloc[[i]], raster = raster)
+        aux = return_area_profile(geodataframe.iloc[[i]], raster = raster, polygon_crs = polygon_crs)
         final_geodata = pd.concat([final_geodata.reset_index(drop = True), aux], axis = 0, sort = False) # sort = False means that the profile will be appended in the end of the result
         print('Polygon profile {} appended out of {}'.format(i + 1, len(geodataframe)), end = "\r")
     
@@ -184,7 +187,7 @@ def return_weights_from_xgboost(geodataframe,
                                 codes = [21, 22, 23, 24], 
                                 n_pixels_option_values = 256, 
                                 tuned_xgb = False, 
-                                gbm_hyperparam_grid = {'learning_rate': [0.001,0.01, 0.9],
+                                gbm_hyperparam_grid = {'learning_rate': [0.001,0.01, 0.1],
                                                        'n_estimators': [200],
                                                        'subsample': [0.3, 0.5],
                                                        'max_depth': [4, 5, 6],
