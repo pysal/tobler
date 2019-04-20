@@ -6,3 +6,10 @@ dependencies:
   - jupyterlab
   - geopandas
   - rasterio
+  - statsmodels
+  - scikit-learn
+  - pip
+  - pip:
+    - xgboost
+
+
