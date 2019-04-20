@@ -5,7 +5,7 @@ Area Weighted Interpolation
 
 import numpy as np
 import geopandas as gpd
-from nlcd import *
+from . nlcd import *
 
 def area_tables(source_df, target_df):
     """
