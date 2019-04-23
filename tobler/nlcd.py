@@ -327,7 +327,12 @@ def create_lon_lat(out_img, out_transform):
 
 
 
-def create_non_zero_population_by_pixels_locations(geodataframe, raster, pop_string, weights = None, geodataframe_crs = {'init': 'epsg:3395'}, save_polygon_index = False):
+def create_non_zero_population_by_pixels_locations(geodataframe, 
+                                                   raster, 
+                                                   pop_string, 
+                                                   weights = None, 
+                                                   geodataframe_crs = {'init': 'epsg:4326'}, 
+                                                   save_polygon_index = False):
     
     '''Function that returns the actual population of each pixel from a given geodataframe and variable.
     
