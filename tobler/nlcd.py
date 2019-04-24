@@ -113,6 +113,10 @@ def append_profile_in_gdf(geodataframe, raster, force_crs_match = True):
     force_crs_match : bool. Default is True.
                       Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file. 
                       It is recommended to let this argument as True.
+                      
+    Notes
+    -----
+    The generated geodataframe will input the value 0 for each Type that is not present in the raster for each polygon. 
     
     """
     
@@ -125,6 +129,10 @@ def append_profile_in_gdf(geodataframe, raster, force_crs_match = True):
         aux = return_area_profile(geodataframe.iloc[[i]], raster = raster, force_crs_match = force_crs_match)
         final_geodata = pd.concat([final_geodata.reset_index(drop = True), aux], axis = 0, sort = False) # sort = False means that the profile will be appended in the end of the result
         print('Polygon profile {} appended out of {}'.format(i + 1, len(geodataframe)), end = "\r")
+    
+    # Input 0 in Types which are not present in the raster for the polygons
+    filter_col = [col for col in final_geodata if col.startswith('Type_')]
+    final_geodata[filter_col] = final_geodata[filter_col].fillna(value = 0)
     
     return final_geodata
 
