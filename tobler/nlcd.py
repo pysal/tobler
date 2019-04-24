@@ -14,6 +14,7 @@ import pandas as pd
 import geopandas as gpd
 import numpy as np
 from rasterio.mask import mask
+import warnings
 
 import statsmodels.formula.api as smf
 from statsmodels.genmod.families import Poisson
@@ -53,23 +54,34 @@ def getFeatures(gdf):
 
 
 
-def return_area_profile(polygon, raster, polygon_crs = {'init': 'epsg:4326'}):
+def return_area_profile(polygon, raster, force_crs_match = True):
     
     """Function that counts the amount of pixel types it is inside a polygon within a given raster
     
     Parameters
     ----------
     
-    polygon     : polygon for the profile (it can be a row of a geopandas)
+    polygon         : polygon for the profile (it can be a row of a geopandas)
     
-    raster      : the associated raster (from rasterio.open)
+    raster          : the associated raster (from rasterio.open)
     
-    polygon_crs : the original crs code given by a dict of the polygon (this is gonna be projected later, as this must be the same as the raster).
+    force_crs_match : bool. Default is True.
+                      Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file. 
+                      It is recommended to let this argument as True.
 
     """
     
-    polygon.crs = polygon_crs
-    polygon_projected = polygon.to_crs(crs = raster.crs.data)
+    if (polygon.crs is None):
+        raise KeyError('The polygon does not have a Coordinate Reference System (CRS). This must be set before using this function.')
+    
+    # Since the CRS can be an empty dictionary:
+    if (len(polygon.crs) == 0):
+        raise KeyError('The polygon does not have a Coordinate Reference System (CRS). This must be set before using this function.')
+    
+    if force_crs_match:
+        polygon_projected = polygon.to_crs(crs = raster.crs.data)
+    else:
+        warnings.warn('The polygon is not being reprojected. The clipping might be being performing on unmatching polygon to the raster.')
     
     coords = getFeatures(polygon_projected)
     out_img = mask(dataset = raster, shapes = coords, crop = True)[0]
@@ -89,23 +101,32 @@ def return_area_profile(polygon, raster, polygon_crs = {'init': 'epsg:4326'}):
 
 
 
-def append_profile_in_gdf(geodataframe, raster, polygon_crs = {'init': 'epsg:4326'}):
+def append_profile_in_gdf(geodataframe, raster, force_crs_match = True):
     
     """Function that appends the columns of the profile in a geopandas according to a given raster
     
-    geodataframe : a GeoDataFrame from geopandas. The variables of the profile will be appended in this data.
+    geodataframe    : a GeoDataFrame from geopandas. The variables of the profile will be appended in this data.
     
-    raster       : the associated NLCD raster (from rasterio.open).
+    raster          : the associated NLCD raster (from rasterio.open).
     
-    polygon_crs : the original crs code given by a dict of the polygon (this is gonna be projected later, as this must be the same as the raster).
+    force_crs_match : bool. Default is True.
+                      Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file. 
+                      It is recommended to let this argument as True.
     
     """
+    
+    if (geodataframe.crs is None):
+        raise KeyError('The geodataframe does not have a Coordinate Reference System (CRS). This must be set before using this function.')
+    
+    # Since the CRS can be an empty dictionary:
+    if (len(geodataframe.crs) == 0):
+        raise KeyError('The geodataframe does not have a Coordinate Reference System (CRS). This must be set before using this function.')
     
     final_geodata = gpd.GeoDataFrame()
     
     for i in range(len(geodataframe)):
         
-        aux = return_area_profile(geodataframe.iloc[[i]], raster = raster, polygon_crs = polygon_crs)
+        aux = return_area_profile(geodataframe.iloc[[i]], raster = raster, force_crs_match = force_crs_match)
         final_geodata = pd.concat([final_geodata.reset_index(drop = True), aux], axis = 0, sort = False) # sort = False means that the profile will be appended in the end of the result
         print('Polygon profile {} appended out of {}'.format(i + 1, len(geodataframe)), end = "\r")
     
@@ -115,7 +136,13 @@ def append_profile_in_gdf(geodataframe, raster, polygon_crs = {'init': 'epsg:432
 
 
 
-def return_weights_from_regression(geodataframe, raster, pop_string, codes = [21, 22, 23, 24], likelihood = 'Poisson', n_pixels_option_values = 256):
+def return_weights_from_regression(geodataframe, 
+                                   raster, 
+                                   pop_string, 
+                                   codes = [21, 22, 23, 24], 
+                                   likelihood = 'Poisson', 
+                                   n_pixels_option_values = 256,
+                                   force_crs_match = True):
     
     """Function that returns the weights of each land type according to NLCD types/codes
     
@@ -138,12 +165,23 @@ def return_weights_from_regression(geodataframe, raster, pop_string, codes = [21
                              
     n_pixels_option_values : number of options of the pixel values of rasterior. Default is 256.
     
+    force_crs_match        : bool. Default is True.
+                             Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file. 
+                             It is recommended to let this argument as True.
+    
     Notes
     -----
     1) The formula uses a substring called 'Type_' before the code number due to the 'append_profile_in_gdf' function.
     2) The pixel value, usually, ranges from 0 to 255. That is why the default of 'n_pixels_option_values' is 256.
     
     """
+    
+    if (geodataframe.crs is None):
+        raise KeyError('The geodataframe does not have a Coordinate Reference System (CRS). This must be set before using this function.')
+    
+    # Since the CRS can be an empty dictionary:
+    if (len(geodataframe.crs) == 0):
+        raise KeyError('The geodataframe does not have a Coordinate Reference System (CRS). This must be set before using this function.')
     
     if (255 in codes):
         raise ValueError('codes should not assume the value 255.')
@@ -152,7 +190,7 @@ def return_weights_from_regression(geodataframe, raster, pop_string, codes = [21
         raise ValueError('likelihood must one of \'Poisson\', \'Gaussian\'')
     
     print('Appending profile...')
-    profiled_df = append_profile_in_gdf(geodataframe[['geometry', pop_string]], raster) # Use only two columns to build the weights (this avoids error, if the original dataset has already types appended on it).
+    profiled_df = append_profile_in_gdf(geodataframe[['geometry', pop_string]], raster, force_crs_match) # Use only two columns to build the weights (this avoids error, if the original dataset has already types appended on it).
     print('Append profile: Done.')
     
     # If the list is unsorted, the codes will be sorted to guarantee that the position of the weights will match
@@ -185,13 +223,14 @@ def return_weights_from_xgboost(geodataframe,
                                 raster, 
                                 pop_string, 
                                 codes = [21, 22, 23, 24], 
-                                n_pixels_option_values = 256, 
+                                n_pixels_option_values = 256,
                                 tuned_xgb = False, 
                                 gbm_hyperparam_grid = {'learning_rate': [0.001,0.01, 0.1],
                                                        'n_estimators': [200],
                                                        'subsample': [0.3, 0.5],
                                                        'max_depth': [4, 5, 6],
-                                                       'num_boosting_rounds': [10, 20]}):
+                                                       'num_boosting_rounds': [10, 20]},
+                                force_crs_match = True):
     
     """Function that returns the weights of each land type according to NLCD types/codes given by Extreme Gradient Boost model (XGBoost)
     
@@ -214,7 +253,11 @@ def return_weights_from_xgboost(geodataframe,
                              If True the XGBoost model will be tuned making a grid search using gbm_hyperparam_grid dictionary a picking the best model in terms of mean squared error with some pre-defined number of cross-validation.
                              Otherwise, the XGBoost model is fitted with default values of xgboost.train function from xgboost Python library.
                              
-    gbm_hyperparam_grid    : a dictionary that represent the grid for the grid search of XGBoost
+    gbm_hyperparam_grid    : a dictionary that represent the grid for the grid search of XGBoost.
+    
+    force_crs_match        : bool. Default is True.
+                             Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file. 
+                             It is recommended to let this argument as True.
     
     Notes
     -----
@@ -224,11 +267,18 @@ def return_weights_from_xgboost(geodataframe,
     
     """
     
+    if (geodataframe.crs is None):
+        raise KeyError('The geodataframe does not have a Coordinate Reference System (CRS). This must be set before using this function.')
+    
+    # Since the CRS can be an empty dictionary:
+    if (len(geodataframe.crs) == 0):
+        raise KeyError('The geodataframe does not have a Coordinate Reference System (CRS). This must be set before using this function.')
+    
     if (255 in codes):
         raise ValueError('codes should not assume the value 255.')
     
     print('Appending profile...')
-    profiled_df = append_profile_in_gdf(geodataframe[['geometry', pop_string]], raster) # Use only two columns to build the weights (this avoids error, if the original dataset has already types appended on it).
+    profiled_df = append_profile_in_gdf(geodataframe[['geometry', pop_string]], raster, force_crs_match) # Use only two columns to build the weights (this avoids error, if the original dataset has already types appended on it).
     print('Append profile: Done.')
     
     # If the list is unsorted, the codes will be sorted to guarantee that the position of the weights will match
@@ -331,8 +381,8 @@ def create_non_zero_population_by_pixels_locations(geodataframe,
                                                    raster, 
                                                    pop_string, 
                                                    weights = None, 
-                                                   geodataframe_crs = {'init': 'epsg:4326'}, 
-                                                   save_polygon_index = False):
+                                                   save_polygon_index = False,
+                                                   force_crs_match = True):
     
     '''Function that returns the actual population of each pixel from a given geodataframe and variable.
     
@@ -343,15 +393,27 @@ def create_non_zero_population_by_pixels_locations(geodataframe,
     pop_string         : a string of the column name of the geodataframe that the estimation will be made
     
     weights            : vector of weights in each position of the pixel values according 'return_weights_from_regression' function. This must be provided by the user.
-    
-    geodataframe_crs   : projection of the dataframe (this is gonna be reprojeced inside the loop, as this must be the same as the raster).
-                         This argument is only to avoid passing a polygon without crs and, therefore, raising an error.
                          
     save_polygon_index : bool. If True, it saves the polygon row index of each pixel. 
     
+    force_crs_match    : bool. Default is True.
+                         Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file. 
+                         It is recommended to let this argument as True.
+    
     '''
     
-    geodataframe.crs = geodataframe_crs # This is gonna be reprojected inside the loop
+    if (geodataframe.crs is None):
+        raise KeyError('The geodataframe does not have a Coordinate Reference System (CRS). This must be set before using this function.')
+    
+    # Since the CRS can be an empty dictionary:
+    if (len(geodataframe.crs) == 0):
+        raise KeyError('The geodataframe does not have a Coordinate Reference System (CRS). This must be set before using this function.')
+
+    if force_crs_match:
+        geodataframe_projected = geodataframe.to_crs(crs = raster.crs.data)
+    else:
+        warnings.warn('The polygon is not being reprojected. The clipping might be being performing on unmatching polygon to the raster.')
+
 
     result_pops_array = np.array([])
     result_lons_array = np.array([])
@@ -360,17 +422,16 @@ def create_non_zero_population_by_pixels_locations(geodataframe,
     if (save_polygon_index == True):
         result_poly_index = np.array([])
 
-    for line_index in range(len(geodataframe)):
-        polygon = geodataframe.iloc[[line_index]]
-        polygon_projected = polygon.to_crs(crs = raster.crs.data)
+    for line_index in range(len(geodataframe_projected)):
+        polygon_projected = geodataframe_projected.iloc[[line_index]]
         
         coords = getFeatures(polygon_projected)
         
         out_img, out_transform = mask(dataset = raster, shapes = coords, crop = True)
         
         '''Calculating the population for each pixel'''
-        trans_numpy = weights[out_img] # Pixel population from regression
-        orig_estimate = polygon[pop_string]         # Original Population Value of The polygon
+        trans_numpy = weights[out_img]                # Pixel population from regression
+        orig_estimate = polygon_projected[pop_string] # Original Population Value of The polygon
         correction_term = orig_estimate / trans_numpy.sum()
         final_pop_numpy_pre = trans_numpy * np.array(correction_term)
         
@@ -421,18 +482,25 @@ def create_non_zero_population_by_pixels_locations(geodataframe,
 
 
 
-def calculate_interpolated_polygon_population_from_correspondence_NLCD_table(polygon, raster, corresp_table):
+def calculate_interpolated_polygon_population_from_correspondence_NLCD_table(polygon, 
+                                                                             raster, 
+                                                                             corresp_table,
+                                                                             force_crs_match = True):
     
     """Function that returns the interpolated population of a given polygon according to a correspondence table previous built
     
     Parameters
     ----------
     
-    polygon       : polygon for the profile (it can be a row of a geopandas)
+    polygon         : polygon for the profile (it can be a row of a geopandas)
     
-    raster        : the associated raster (from rasterio.open)
+    raster          : the associated raster (from rasterio.open)
     
-    corresp_table : correspondence table that has the interpolated population for each pixel. This object is created with the function 'create_non_zero_population_by_pixels_locations'.
+    corresp_table   : correspondence table that has the interpolated population for each pixel. This object is created with the function 'create_non_zero_population_by_pixels_locations'.
+    
+    force_crs_match : bool. Default is True.
+                      Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file. 
+                      It is recommended to let this argument as True.
     
     Notes
     -----
@@ -441,9 +509,18 @@ def calculate_interpolated_polygon_population_from_correspondence_NLCD_table(pol
     The solution is to build a pandas and filter the pixels different than 255. This is done during the construction of the polygon summary for the resulting population of this function.
     
     """
-
-    polygon.crs = {'init': 'epsg:3395'}
-    polygon_projected = polygon.to_crs(crs = raster.crs.data)
+    
+    if (polygon.crs is None):
+        raise KeyError('The polygon does not have a Coordinate Reference System (CRS). This must be set before using this function.')
+    
+    # Since the CRS can be an empty dictionary:
+    if (len(polygon.crs) == 0):
+        raise KeyError('The polygon does not have a Coordinate Reference System (CRS). This must be set before using this function.')
+    
+    if force_crs_match:
+        polygon_projected = polygon.to_crs(crs = raster.crs.data)
+    else:
+        warnings.warn('The polygon is not being reprojected. The clipping might be being performing on unmatching polygon to the raster.')
 
     coords = getFeatures(polygon_projected)
     out_img, out_transform = mask(dataset = raster, shapes = coords, crop = True)
@@ -469,18 +546,25 @@ def calculate_interpolated_polygon_population_from_correspondence_NLCD_table(pol
 
 
 
-def calculate_interpolated_population_from_correspondence_NLCD_table(geodataframe, raster, corresp_table):
+def calculate_interpolated_population_from_correspondence_NLCD_table(geodataframe, 
+                                                                     raster, 
+                                                                     corresp_table,
+                                                                     force_crs_match = True):
     
     """Function that returns the interpolated population of an entire geopandas according to a correspondence table previous built
     
     Parameters
     ----------
     
-    geodataframe  : a GeoDataFrame from geopandas
+    geodataframe    : a GeoDataFrame from geopandas
     
-    raster        : the associated raster (from rasterio.open)
+    raster          : the associated raster (from rasterio.open)
     
-    corresp_table : correspondence table that has the interpolated population for each pixel. This object is created with the function 'create_non_zero_population_by_pixels_locations'.
+    corresp_table   : correspondence table that has the interpolated population for each pixel. This object is created with the function 'create_non_zero_population_by_pixels_locations'.
+    
+    force_crs_match : bool. Default is True.
+                      Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file. 
+                      It is recommended to let this argument as True.
     
     Notes
     -----
@@ -488,12 +572,19 @@ def calculate_interpolated_population_from_correspondence_NLCD_table(geodatafram
     
     """
     
+    if (geodataframe.crs is None):
+        raise KeyError('The geodataframe does not have a Coordinate Reference System (CRS). This must be set before using this function.')
+    
+    # Since the CRS can be an empty dictionary:
+    if (len(geodataframe.crs) == 0):
+        raise KeyError('The geodataframe does not have a Coordinate Reference System (CRS). This must be set before using this function.')
+    
     final_geodataframe = geodataframe.copy()
     pop_final = np.empty(len(geodataframe))
     
     for line_index in range(len(geodataframe)):
         polygon = geodataframe.iloc[[line_index]]
-        pop_aux = calculate_interpolated_polygon_population_from_correspondence_NLCD_table(polygon, raster, corresp_table)
+        pop_aux = calculate_interpolated_polygon_population_from_correspondence_NLCD_table(polygon, raster, corresp_table, force_crs_match)
         pop_final[line_index] = pop_aux
         
         print('Polygon {} processed out of {}'.format(line_index + 1, len(geodataframe)), end = "\r")
