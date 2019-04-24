@@ -49,8 +49,14 @@ def getFeatures(gdf):
 
 
 
-
-
+def _check_presence_of_crs(geoinput):
+    """check if there is crs in the polygon/geodataframe"""
+    if (geoinput.crs is None):
+        raise KeyError('The polygon/geodataframe does not have a Coordinate Reference System (CRS). This must be set before using this function.')
+    
+    # Since the CRS can be an empty dictionary:
+    if (len(geoinput.crs) == 0):
+        raise KeyError('The polygon/geodataframe does not have a Coordinate Reference System (CRS). This must be set before using this function.')
 
 
 
@@ -71,12 +77,7 @@ def return_area_profile(polygon, raster, force_crs_match = True):
 
     """
     
-    if (polygon.crs is None):
-        raise KeyError('The polygon does not have a Coordinate Reference System (CRS). This must be set before using this function.')
-    
-    # Since the CRS can be an empty dictionary:
-    if (len(polygon.crs) == 0):
-        raise KeyError('The polygon does not have a Coordinate Reference System (CRS). This must be set before using this function.')
+    _check_presence_of_crs(polygon)
     
     if force_crs_match:
         polygon_projected = polygon.to_crs(crs = raster.crs.data)
@@ -115,12 +116,7 @@ def append_profile_in_gdf(geodataframe, raster, force_crs_match = True):
     
     """
     
-    if (geodataframe.crs is None):
-        raise KeyError('The geodataframe does not have a Coordinate Reference System (CRS). This must be set before using this function.')
-    
-    # Since the CRS can be an empty dictionary:
-    if (len(geodataframe.crs) == 0):
-        raise KeyError('The geodataframe does not have a Coordinate Reference System (CRS). This must be set before using this function.')
+    _check_presence_of_crs(geodataframe)
     
     final_geodata = gpd.GeoDataFrame()
     
@@ -176,12 +172,7 @@ def return_weights_from_regression(geodataframe,
     
     """
     
-    if (geodataframe.crs is None):
-        raise KeyError('The geodataframe does not have a Coordinate Reference System (CRS). This must be set before using this function.')
-    
-    # Since the CRS can be an empty dictionary:
-    if (len(geodataframe.crs) == 0):
-        raise KeyError('The geodataframe does not have a Coordinate Reference System (CRS). This must be set before using this function.')
+    _check_presence_of_crs(geodataframe)
     
     if (255 in codes):
         raise ValueError('codes should not assume the value 255.')
@@ -267,12 +258,7 @@ def return_weights_from_xgboost(geodataframe,
     
     """
     
-    if (geodataframe.crs is None):
-        raise KeyError('The geodataframe does not have a Coordinate Reference System (CRS). This must be set before using this function.')
-    
-    # Since the CRS can be an empty dictionary:
-    if (len(geodataframe.crs) == 0):
-        raise KeyError('The geodataframe does not have a Coordinate Reference System (CRS). This must be set before using this function.')
+    _check_presence_of_crs(geodataframe)
     
     if (255 in codes):
         raise ValueError('codes should not assume the value 255.')
@@ -402,12 +388,7 @@ def create_non_zero_population_by_pixels_locations(geodataframe,
     
     '''
     
-    if (geodataframe.crs is None):
-        raise KeyError('The geodataframe does not have a Coordinate Reference System (CRS). This must be set before using this function.')
-    
-    # Since the CRS can be an empty dictionary:
-    if (len(geodataframe.crs) == 0):
-        raise KeyError('The geodataframe does not have a Coordinate Reference System (CRS). This must be set before using this function.')
+    _check_presence_of_crs(geodataframe)
 
     if force_crs_match:
         geodataframe_projected = geodataframe.to_crs(crs = raster.crs.data)
@@ -510,12 +491,7 @@ def calculate_interpolated_polygon_population_from_correspondence_NLCD_table(pol
     
     """
     
-    if (polygon.crs is None):
-        raise KeyError('The polygon does not have a Coordinate Reference System (CRS). This must be set before using this function.')
-    
-    # Since the CRS can be an empty dictionary:
-    if (len(polygon.crs) == 0):
-        raise KeyError('The polygon does not have a Coordinate Reference System (CRS). This must be set before using this function.')
+    _check_presence_of_crs(polygon)
     
     if force_crs_match:
         polygon_projected = polygon.to_crs(crs = raster.crs.data)
@@ -572,12 +548,7 @@ def calculate_interpolated_population_from_correspondence_NLCD_table(geodatafram
     
     """
     
-    if (geodataframe.crs is None):
-        raise KeyError('The geodataframe does not have a Coordinate Reference System (CRS). This must be set before using this function.')
-    
-    # Since the CRS can be an empty dictionary:
-    if (len(geodataframe.crs) == 0):
-        raise KeyError('The geodataframe does not have a Coordinate Reference System (CRS). This must be set before using this function.')
+    _check_presence_of_crs(geodataframe)
     
     final_geodataframe = geodataframe.copy()
     pop_final = np.empty(len(geodataframe))
