@@ -6,6 +6,7 @@ Area Weighted Interpolation
 import numpy as np
 import geopandas as gpd
 from . nlcd import *
+import warnings
 
 def area_tables(source_df, target_df):
     """
@@ -236,6 +237,7 @@ def area_tables_nlcd(source_df, target_df, raster, codes = [21, 22, 23, 24]):
     res_union_pre = gpd.overlay(source_df, target_df, how='union')
     
     # Establishing a CRS for the generated union
+    warnings.warn('The CRS for the generated union will be set to be the same as source_df.')
     res_union_pre.crs = source_df.crs
     
     # The 'append_profile_in_gdf' function is present in nlcd.py script
