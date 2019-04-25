@@ -183,7 +183,7 @@ def _nan_check(df, column):
         print('nan values in variable: {var}, replacing with 0.0'.format(var=column))
     return values
 
-def area_tables_nlcd(source_df, target_df, raster, codes = [21, 22, 23, 24], crs = {'init': 'epsg:4326'}):
+def area_tables_nlcd(source_df, target_df, raster, codes = [21, 22, 23, 24]):
     """
     Construct area allocation and source-target correspondence tables according to National Land Cover Data (NLCD) 'populated' areas
     Parameters
@@ -198,8 +198,6 @@ def area_tables_nlcd(source_df, target_df, raster, codes = [21, 22, 23, 24], crs
     codes     : an integer list of codes values that should be considered as 'populated' from the National Land Cover Database (NLCD).
                 The description of each code can be found here: https://www.mrlc.gov/sites/default/files/metadata/landcover.html
                 The default is 21 (Developed, Open Space), 22 (Developed, Low Intensity), 23 (Developed, Medium Intensity) and 24 (Developed, High Intensity).
-    
-    crs       : the original crs of both GeoDataFrames given by a dict (this is gonna be projected later, as this must be the same as the raster).
 
 
     Returns
@@ -213,7 +211,7 @@ def area_tables_nlcd(source_df, target_df, raster, codes = [21, 22, 23, 24], crs
 
     Notes
     -----
-    The assumption is both dataframes have the same coordinate reference system given by crs parameter.
+    The assumption is both dataframes have the same coordinate reference system.
 
     Union geometry is a geometry formed by the intersection of a source geometry and a target geometry
 
@@ -223,8 +221,10 @@ def area_tables_nlcd(source_df, target_df, raster, codes = [21, 22, 23, 24], crs
 
     """
     
-    source_df.crs = crs
-    target_df.crs = crs
+    if _check_crs(source_df, target_df):
+        pass
+    else:
+        return None
     
     n_s = source_df.shape[0]
     n_t = target_df.shape[0]
@@ -235,8 +235,11 @@ def area_tables_nlcd(source_df, target_df, raster, codes = [21, 22, 23, 24], crs
     
     res_union_pre = gpd.overlay(source_df, target_df, how='union')
     
+    # Establishing a CRS for the generated union
+    res_union_pre.crs = source_df.crs
+    
     # The 'append_profile_in_gdf' function is present in nlcd.py script
-    res_union = append_profile_in_gdf(res_union_pre, raster = raster, polygon_crs = crs)
+    res_union = append_profile_in_gdf(res_union_pre, raster = raster)
     
     str_codes     = [str(i) for i in codes]
     str_list      = ['Type_' + i for i in str_codes]
