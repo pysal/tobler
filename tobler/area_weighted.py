@@ -145,7 +145,7 @@ def area_interpolate(source_df, target_df, extensive_variables=[], intensive_var
     extensive = [] 
     for variable in extensive_variables:
         vals = _nan_check(source_df, variable)
-        estimates = np.dot(np.diag(att), weights)
+        estimates = np.dot(np.diag(vals), weights)
         estimates = np.dot(estimates, UT)
         estimates = estimates.sum(axis=0)
         extensive.append(estimates)
