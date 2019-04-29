@@ -303,7 +303,8 @@ def return_weights_from_xgboost(geodataframe,
                                 param_grid = gbm_hyperparam_grid, 
                                 scoring = 'neg_mean_squared_error', 
                                 cv = 4,      # 4-fold crossvalidation
-                                verbose = 3) # Prints the grid search profile
+                                verbose = 3, # Prints the grid search profile
+                                n_jobs = -1) # Process the GridSearch in parallel all cores availables
 
         # Fit the grid to the data
         grid_mse.fit(X, y)
