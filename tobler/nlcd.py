@@ -128,7 +128,7 @@ def append_profile_in_gdf(geodataframe, raster, force_crs_match = True):
         
         aux = return_area_profile(geodataframe.iloc[[i]], raster = raster, force_crs_match = force_crs_match)
         final_geodata = pd.concat([final_geodata.reset_index(drop = True), aux], axis = 0, sort = False) # sort = False means that the profile will be appended in the end of the result
-		final_geodata.reset_index(drop = True)
+        final_geodata.reset_index(drop = True)
         print('Polygon profile {} appended out of {}'.format(i + 1, len(geodataframe)), end = "\r")
     
     # Input 0 in Types which are not present in the raster for the polygons
