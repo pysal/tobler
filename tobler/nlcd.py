@@ -22,6 +22,12 @@ from statsmodels.genmod.families import Poisson
 import xgboost as xgb
 from sklearn.model_selection import GridSearchCV
 
+# An option worth to consider to install `shap` (that could avoid dependency conflict) is direct from github:
+# pip install git+https://github.com/slundberg/shap.git
+import shap
+
+
+
 
 __all__ = ['getFeatures', 
            'return_area_profile', 
@@ -263,7 +269,7 @@ def return_weights_from_xgboost(geodataframe,
     -----
     1) The formula uses a substring called 'Type_' before the code number due to the 'append_profile_in_gdf' function.
     2) The pixel value, usually, ranges from 0 to 255. That is why the default of 'n_pixels_option_values' is 256.
-    3) The returning weights represent the feature importance as the number of times a feature is used to split the data across all trees. That is, using the method .get_score(importance_type = 'weight')
+    3) The returning weights represent the average of the Shapley's values from each feature.
     
     """
     
@@ -319,8 +325,10 @@ def return_weights_from_xgboost(geodataframe,
         # Train the model from the best parameters of the grid search
         xg_reg = xgb.train(params = best_params, dtrain = xgb_dmatrix)
     
-    weights_from_xgb_object = xg_reg.get_score(importance_type = 'weight')
-    weights_from_xgb = dict(sorted(weights_from_xgb_object.items())).values() # This orders according to type order string!
+    # Build explainer and fit Shapley's values (https://github.com/slundberg/shap)
+    explainer = shap.TreeExplainer(xg_reg)
+    shap_values = explainer.shap_values(X)
+    weights_from_xgb = shap_values.mean(axis = 0) # This is already sorted by pixel Type
     
     weights = np.zeros(n_pixels_option_values)
     weights[codes] = list(weights_from_xgb) # Convert to list a dict_values
