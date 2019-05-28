@@ -323,7 +323,7 @@ def scanline_harmonization(source_gdf,
     long_weights = np.zeros(n_pixels_option_values)
     long_weights[codes] = weights
     
-    print('INITIALIZING SECOND SCANLINES')
+    print('\nINITIALIZING SECOND SCANLINES')
     interpolate = scanlines_interpolate(target_gdf = target_gdf, 
                                         source_CTs = scan_line_input_CT, 
                                         weights_long = long_weights, 
