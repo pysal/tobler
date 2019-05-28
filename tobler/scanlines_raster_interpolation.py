@@ -131,7 +131,7 @@ def scanlines_interpolate(target_gdf, source_CTs, weights_long, raster_path):
     
     source_CTs      : geopandas GeoDataFrame with the Correction Terms for source polygons.
     
-    weights_long    : a numpy array with the weights for all land types in the rasters.
+    weights_long    : a numpy array with the weights for all land types in the raster.
     
     raster_path     : the path to the associated raster image.
 
