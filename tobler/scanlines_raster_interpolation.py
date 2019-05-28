@@ -4,7 +4,7 @@ Functions to perform fast Population Interpolation using the National Land Cover
 This is a generic framework that can be used to distribute population more accurately in harmonized spatial structures. 
 
 Inspired by Reibel, Michael, and Aditya Agrawal. "Areal interpolation of population counts using pre-classified land cover data." Population Research and Policy Review 26.5-6 (2007): 619-633.
-The advantage of this approach is the use of the Scanlines proposed by "Eldawy, Ahmed, et al. "Large Scale Analytics of Vector+ Raster Big Spatial Data." Proceedings of the 25th ACM SIGSPATIAL International Conference on Advances in Geographic Information Systems. ACM, 2017."
+The advantage of this approach is the use of the Scanlines proposed by "Eldawy, Ahmed, et al. "Large Scale Analytics of Vector + Raster Big Spatial Data." Proceedings of the 25th ACM SIGSPATIAL International Conference on Advances in Geographic Information Systems. ACM, 2017."
 
 Note: This study was financed by the National Science Foundation (NSF) (Award #1831615). Renan X. Cortes is also grateful for the support of the Coordenação de Aperfeiçoamento de Pessoal de Nível Superior - Brasil (CAPES) - Process number 88881.170553/2018-01
 """
@@ -28,7 +28,7 @@ from sklearn.model_selection import GridSearchCV
 import shap
 
 from tobler.area_weighted import _check_crs
-from tobler.vectorized_nlcd import _check_presence_of_crs
+from tobler.vectorized_raster_interpolation import _check_presence_of_crs
 
 import os
 import tempfile
@@ -39,6 +39,17 @@ import time
 
 # Function that will return all count of all pixel types
 def scanlines_count_pixels(source_gdf, raster_path):
+    
+    """Function that generates the count of all pixel types in a raster of a given set of polygons using scanlines
+    
+    Parameters
+    ----------
+    
+    source_gdf      : geopandas GeoDataFrame with geometry column of polygon type for the source set of polygons desired.
+    
+    raster_path     : the path to the associated raster image.
+
+    """
     
     t0_aux = time.time()
     
@@ -111,6 +122,21 @@ def scanlines_count_pixels(source_gdf, raster_path):
 # Function that will interpolate the population for given set of weights and correction terms
 def scanlines_interpolate(target_gdf, source_CTs, weights_long, raster_path):
     
+    """Function that generates the interpolated values using scanlines with a given set of weights and Correction Terms using scanlines
+    
+    Parameters
+    ----------
+    
+    target_gdf      : geopandas GeoDataFrame with geometry column of polygon type for the target set of polygons desired.
+    
+    source_CTs      : geopandas GeoDataFrame with the Correction Terms for source polygons.
+    
+    weights_long    : a numpy array with the weights for all land types in the rasters.
+    
+    raster_path     : the path to the associated raster image.
+
+    """
+    
     t0_aux = time.time()
     
     _check_presence_of_crs(target_gdf)
@@ -149,7 +175,7 @@ def scanlines_interpolate(target_gdf, source_CTs, weights_long, raster_path):
         source_CTs = source_CTs.set_geometry('geometry')
     
     
-    # Create a temporary directory for ALL files of input
+    # Create a temporary directory for ALL input files
     temp_dir = tempfile.mkdtemp()
     
     # parquet like internal file
@@ -223,6 +249,47 @@ def scanline_harmonization(source_gdf,
                            n_pixels_option_values = 256,
                            ReLU = True,
                            **kwargs):
+    
+    """Function that generates an interpolated population using scanlines with the entire pipeline.
+    
+    Parameters
+    ----------
+    
+    source_gdf             : geopandas GeoDataFrame with geometry column of polygon type for the source set of polygons desired.
+    
+    target_gdf             : geopandas GeoDataFrame with geometry column of polygon type for the target set of polygons desired.
+    
+    pop_string             : the name of the variable on geodataframe that the interpolation shall be conducted.
+    
+    raster_path            : the path to the associated raster image.
+    
+    auxiliary_type         : string. The type of the auxiliary variable for the desired method of interpolation. Default is 'nlcd' for the National Land Cover Dataset. 
+    
+    regression_method      : the method used to estimate the weights of each land type and population. Default is "Poisson".
+                        
+        "Poisson"  : performs Generalized Linear Model with a Poisson likelihood with log-link function.
+        "Gaussian" : ordinary least squares will be fitted.
+        "XGBoost"  : an Extreme Gradient Boosting regression will be fitted and the weights will be extracted from the Shapelys value from each land type.
+
+    codes                  : an integer list of codes values that should be considered as 'populated' for the raster file. See (1) in notes.
+    
+    n_pixels_option_values : number of options of the pixel values of rasterior. Default is 256.
+    
+    ReLU                   : bool. Default is True.
+                             Wheter the Rectified Linear Units (ReLU) transformation will be used to avoid negative weights for the land types.
+                             
+    **kwargs               : additional arguments that can be passed to internal functions.
+                             Currently `tuned_xgb` or `gbm_hyperparam_grid` can be passed to internal XGBoost approach.
+
+    Notes
+    -----
+
+    1) Since this was inspired using the National Land Cover Database (NLCD), it is established some default values for this argument.
+       The default is 21 (Developed, Open Space), 22 (Developed, Low Intensity), 23 (Developed, Medium Intensity) and 24 (Developed, High Intensity).
+       The description of each code for NLCD can be found here: https://www.mrlc.gov/sites/default/files/metadata/landcover.html    
+    
+    """
+    
     
     print('INITIALIZING FIRST SCANLINES')
     profiled_df_pre = scanlines_count_pixels(source_gdf, raster_path)
