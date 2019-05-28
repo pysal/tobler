@@ -5,7 +5,7 @@ Area Weighted Interpolation
 
 import numpy as np
 import geopandas as gpd
-from . nlcd import *
+from . vectorized_raster_interpolation import *
 import warnings
 
 def area_tables(source_df, target_df):
