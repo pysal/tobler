@@ -65,12 +65,7 @@ def scanlines_count_pixels(source_gdf, raster_path, verbose = True):
     source_gdf = source_gdf.to_crs(crs = raster.crs.data)
     
     # Check if Operational System is Windows
-    if os.name == 'nt':
-        sep_cmd = ';'
-        sep_dir = '\\'
-    else:
-        sep_cmd = ':'
-        sep_dir = '/'
+    sep_cmd = ";" if os.name == 'nt' else ":"
 
     if ('geometry' not in source_gdf.columns):
         source_gdf['geometry'] = source_gdf[source_gdf._geometry_column_name]
@@ -84,7 +79,7 @@ def scanlines_count_pixels(source_gdf, raster_path, verbose = True):
         if verbose: print('Starting to create well-known text (wkt) of geometries...')
         source_gdf['geometry_wkt'] = source_gdf['geometry'].apply(lambda x: x.wkt) # Create well-know text (raw text) for the geometry column
         source_gdf = source_gdf.drop(['geometry'], axis = 1)
-        source_gdf_temp_file_name = source_gdf_temp_dir + '{}source_gdf_temp.parquet'.format(sep_dir)
+        source_gdf_temp_file_name = os.path.join(source_gdf_temp_dir, 'source_gdf_temp.parquet')
         
         # Just extract the useful column for optimization
         source_gdf = source_gdf[['geometry_wkt']]
@@ -92,10 +87,11 @@ def scanlines_count_pixels(source_gdf, raster_path, verbose = True):
         if verbose: print('Starting to convert the GeoDataFrame to a temporary file...')
         source_gdf.to_parquet(source_gdf_temp_file_name)
         
-        cmd = "java -client -cp dependency{}*{}ucrspatial-6.0-SNAPSHOT.jar histogram {} {}".format(sep_dir,
-                                                                                                   sep_cmd, 
-                                                                                                   raster_path, 
-                                                                                                   source_gdf_temp_file_name)
+        cmd_pre = os.path.join('java -client -cp dependency', '*')
+        
+        cmd = cmd_pre + "{}ucrspatial-6.0-SNAPSHOT.jar histogram {} {}".format(sep_cmd, 
+                                                                               raster_path, 
+                                                                               source_gdf_temp_file_name)
         
         t1_aux = time.time()
         
@@ -160,12 +156,7 @@ def scanlines_interpolate(target_gdf, source_CTs, weights_long, raster_path, ver
     
     
     # Check if Operational System is Windows
-    if os.name == 'nt':
-        sep_cmd = ';'
-        sep_dir = '\\'
-    else:
-        sep_cmd = ':'
-        sep_dir = '/'
+    sep_cmd = ";" if os.name == 'nt' else ":"
     
     if ('geometry' not in target_gdf.columns):
         target_gdf['geometry'] = target_gdf[target_gdf._geometry_column_name]
@@ -184,8 +175,8 @@ def scanlines_interpolate(target_gdf, source_CTs, weights_long, raster_path, ver
         # parquet like internal file
         if verbose: print('Starting to create well-known text (wkt) of geometries...')
         target_gdf['geometry_wkt'] = target_gdf['geometry'].apply(lambda x: x.wkt) # Create well-know text (raw text) for the geometry column
-        target_gdf = target_gdf.drop(['geometry'], axis = 1)
-        target_gdf_temp_file_name = temp_dir + '{}target_gdf_temp.parquet'.format(sep_dir)
+        target_gdf = target_gdf.drop(['geometry'], axis = 1)      
+        target_gdf_temp_file_name = os.path.join(temp_dir, 'target_gdf_temp.parquet')
         
         # Just extract the useful column for optimization
         target_gdf = target_gdf[['geometry_wkt']]
@@ -197,7 +188,7 @@ def scanlines_interpolate(target_gdf, source_CTs, weights_long, raster_path, ver
         if verbose: print('Source CT: Starting to create well-known text (wkt) of geometries...')
         source_CTs['geometry_wkt'] = source_CTs['geometry'].apply(lambda x: x.wkt) # Create well-know text (raw text) for the geometry column
         source_CTs = source_CTs.drop(['geometry'], axis = 1)
-        source_CTs_temp_file_name = temp_dir + '{}source_CTs_temp.parquet'.format(sep_dir)
+        source_CTs_temp_file_name = os.path.join(temp_dir, 'source_CTs_temp.parquet')
         
         # Just extract the useful column for optimization
         # For source we need also the Correction Terms!
@@ -205,16 +196,18 @@ def scanlines_interpolate(target_gdf, source_CTs, weights_long, raster_path, ver
         
         if verbose: print('Starting to convert the GeoDataFrame to a temporary file...')
         source_CTs.to_parquet(source_CTs_temp_file_name)
-    
-        weights_temp_file_name = temp_dir + '{}input_weights.csv'.format(sep_dir)
+        
+        weights_temp_file_name = os.path.join(temp_dir, 'input_weights.csv')
+        
         np.savetxt(weights_temp_file_name, weights_long, delimiter=",", header = 'weights', comments='')
+        
+        cmd_pre = os.path.join('java -client -cp dependency', '*')
     
-        cmd = "java -cp dependency{}*{}ucrspatial-6.0-SNAPSHOT.jar interpolate {} {} {} {}".format(sep_dir,
-                                                                                                   sep_cmd, 
-                                                                                                   raster_path,
-                                                                                                   source_CTs_temp_file_name,
-                                                                                                   target_gdf_temp_file_name,
-                                                                                                   weights_temp_file_name)
+        cmd = cmd_pre + "{}ucrspatial-6.0-SNAPSHOT.jar interpolate {} {} {} {}".format(sep_cmd, 
+                                                                                       raster_path,
+                                                                                       source_CTs_temp_file_name,
+                                                                                       target_gdf_temp_file_name,
+                                                                                       weights_temp_file_name)
     
         t1_aux = time.time()
         
