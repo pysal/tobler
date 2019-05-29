@@ -38,7 +38,7 @@ import rasterio
 import time
 
 # Function that will return all count of all pixel types
-def scanlines_count_pixels(source_gdf, raster_path):
+def scanlines_count_pixels(source_gdf, raster_path, verbose = True):
     
     """Function that generates the count of all pixel types in a raster of a given set of polygons using scanlines
     
@@ -48,6 +48,9 @@ def scanlines_count_pixels(source_gdf, raster_path):
     source_gdf      : geopandas GeoDataFrame with geometry column of polygon type for the source set of polygons desired.
     
     raster_path     : the path to the associated raster image.
+    
+    verbose         : bool. Default is False.
+                      Wheter the function will print progress steps.
 
     """
     
@@ -55,10 +58,10 @@ def scanlines_count_pixels(source_gdf, raster_path):
     
     _check_presence_of_crs(source_gdf)
     
-    print('Opening raster metadata...')
+    if verbose: print('Opening raster metadata...')
     raster = rasterio.open(raster_path)
     
-    print('Matching both crs\'s (reprojecting source_gdf to raster)...')
+    if verbose: print('Matching both crs\'s (reprojecting source_gdf to raster)...')
     source_gdf = source_gdf.to_crs(crs = raster.crs.data)
     
     # Check if Operational System is Windows
@@ -74,41 +77,38 @@ def scanlines_count_pixels(source_gdf, raster_path):
         source_gdf = source_gdf.drop([source_gdf._geometry_column_name], axis = 1)
         source_gdf = source_gdf.set_geometry('geometry')
     
-    # Create Temporary Directory
-    source_gdf_temp_dir = tempfile.mkdtemp()
+    # Create Temporary Directory    
+    with tempfile.TemporaryDirectory() as source_gdf_temp_dir:
     
-    # parquet like internal file
-    print('Starting to create well-known text (wkt) of geometries...')
-    source_gdf['geometry_wkt'] = source_gdf['geometry'].apply(lambda x: x.wkt) # Create well-know text (raw text) for the geometry column
-    source_gdf = source_gdf.drop(['geometry'], axis = 1)
-    source_gdf_temp_file_name = source_gdf_temp_dir + '{}source_gdf_temp.parquet'.format(sep_dir)
+        # parquet like internal file
+        if verbose: print('Starting to create well-known text (wkt) of geometries...')
+        source_gdf['geometry_wkt'] = source_gdf['geometry'].apply(lambda x: x.wkt) # Create well-know text (raw text) for the geometry column
+        source_gdf = source_gdf.drop(['geometry'], axis = 1)
+        source_gdf_temp_file_name = source_gdf_temp_dir + '{}source_gdf_temp.parquet'.format(sep_dir)
+        
+        # Just extract the useful column for optimization
+        source_gdf = source_gdf[['geometry_wkt']]
+        
+        if verbose: print('Starting to convert the GeoDataFrame to a temporary file...')
+        source_gdf.to_parquet(source_gdf_temp_file_name)
+        
+        cmd = "java -client -cp dependency{}*{}ucrspatial-6.0-SNAPSHOT.jar histogram {} {}".format(sep_dir,
+                                                                                                   sep_cmd, 
+                                                                                                   raster_path, 
+                                                                                                   source_gdf_temp_file_name)
+        
+        t1_aux = time.time()
+        
+        if verbose: print('Time of preparation before scanline (in seconds): {}'.format(t1_aux - t0_aux))
+        
     
-    # Just extract the useful column for optimization
-    source_gdf = source_gdf[['geometry_wkt']]
-    
-    print('Starting to convert the GeoDataFrame to a temporary file...')
-    source_gdf.to_parquet(source_gdf_temp_file_name)
-    
-    cmd = "java -client -cp dependency{}*{}ucrspatial-6.0-SNAPSHOT.jar histogram {} {}".format(sep_dir,
-                                                                                               sep_cmd, 
-                                                                                               raster_path, 
-                                                                                               source_gdf_temp_file_name)
-    
-    t1_aux = time.time()
-    
-    print('Time of preparation before scanline (in seconds): {}'.format(t1_aux - t0_aux))
-    
-
-    
-    print('Starting to perform the scanline...')
-    t0_aux = time.time()
-    run(cmd, shell = True, check = True) # Will generate an parquet for output: histogram.parquet
-    t1_aux = time.time()
-    print('Scanline: Done.')
-    print('Time of scanline itself (in seconds): {}'.format(t1_aux - t0_aux))
-    
-    os.remove(source_gdf_temp_file_name)
-    os.rmdir(source_gdf_temp_dir)
+        
+        if verbose: print('Starting to perform the scanline...')
+        t0_aux = time.time()
+        run(cmd, shell = True, check = True) # Will generate an parquet for output: histogram.parquet
+        t1_aux = time.time()
+        if verbose: print('Scanline: Done.')
+        if verbose: print('Time of scanline itself (in seconds): {}'.format(t1_aux - t0_aux))
     
     profile_df = pd.read_parquet("histogram.parquet")
     
@@ -120,7 +120,7 @@ def scanlines_count_pixels(source_gdf, raster_path):
 
 
 # Function that will interpolate the population for given set of weights and correction terms
-def scanlines_interpolate(target_gdf, source_CTs, weights_long, raster_path):
+def scanlines_interpolate(target_gdf, source_CTs, weights_long, raster_path, verbose = True):
     
     """Function that generates the interpolated values using scanlines with a given set of weights and Correction Terms using scanlines
     
@@ -134,6 +134,9 @@ def scanlines_interpolate(target_gdf, source_CTs, weights_long, raster_path):
     weights_long    : a numpy array with the weights for all land types in the raster.
     
     raster_path     : the path to the associated raster image.
+    
+    verbose         : bool. Default is False.
+                      Wheter the function will print progress steps.
 
     """
     
@@ -147,12 +150,12 @@ def scanlines_interpolate(target_gdf, source_CTs, weights_long, raster_path):
     else:
         return None
 
-    print('Opening raster metadata...')
+    if verbose: print('Opening raster metadata...')
     raster = rasterio.open(raster_path)
     
-    print('Matching both crs\'s (reprojecting source_CTs to raster)...')
+    if verbose: print('Matching both crs\'s (reprojecting source_CTs to raster)...')
     source_CTs = source_CTs.to_crs(crs = raster.crs.data)
-    print('...reprojecting target_gdf to raster)...')
+    if verbose: print('...reprojecting target_gdf to raster)...')
     target_gdf = target_gdf.to_crs(crs = raster.crs.data)
     
     
@@ -176,60 +179,54 @@ def scanlines_interpolate(target_gdf, source_CTs, weights_long, raster_path):
     
     
     # Create a temporary directory for ALL input files
-    temp_dir = tempfile.mkdtemp()
+    with tempfile.TemporaryDirectory() as temp_dir:
     
-    # parquet like internal file
-    print('Starting to create well-known text (wkt) of geometries...')
-    target_gdf['geometry_wkt'] = target_gdf['geometry'].apply(lambda x: x.wkt) # Create well-know text (raw text) for the geometry column
-    target_gdf = target_gdf.drop(['geometry'], axis = 1)
-    target_gdf_temp_file_name = temp_dir + '{}target_gdf_temp.parquet'.format(sep_dir)
+        # parquet like internal file
+        if verbose: print('Starting to create well-known text (wkt) of geometries...')
+        target_gdf['geometry_wkt'] = target_gdf['geometry'].apply(lambda x: x.wkt) # Create well-know text (raw text) for the geometry column
+        target_gdf = target_gdf.drop(['geometry'], axis = 1)
+        target_gdf_temp_file_name = temp_dir + '{}target_gdf_temp.parquet'.format(sep_dir)
+        
+        # Just extract the useful column for optimization
+        target_gdf = target_gdf[['geometry_wkt']]
+        
+        if verbose: print('Starting to convert the GeoDataFrame to a temporary file...')
+        target_gdf.to_parquet(target_gdf_temp_file_name)
+        
+        # parquet like internal file
+        if verbose: print('Source CT: Starting to create well-known text (wkt) of geometries...')
+        source_CTs['geometry_wkt'] = source_CTs['geometry'].apply(lambda x: x.wkt) # Create well-know text (raw text) for the geometry column
+        source_CTs = source_CTs.drop(['geometry'], axis = 1)
+        source_CTs_temp_file_name = temp_dir + '{}source_CTs_temp.parquet'.format(sep_dir)
+        
+        # Just extract the useful column for optimization
+        # For source we need also the Correction Terms!
+        source_CTs = source_CTs[['geometry_wkt', 'CT']]
+        
+        if verbose: print('Starting to convert the GeoDataFrame to a temporary file...')
+        source_CTs.to_parquet(source_CTs_temp_file_name)
     
-    # Just extract the useful column for optimization
-    target_gdf = target_gdf[['geometry_wkt']]
+        weights_temp_file_name = temp_dir + '{}input_weights.csv'.format(sep_dir)
+        np.savetxt(weights_temp_file_name, weights_long, delimiter=",", header = 'weights', comments='')
     
-    print('Starting to convert the GeoDataFrame to a temporary file...')
-    target_gdf.to_parquet(target_gdf_temp_file_name)
+        cmd = "java -cp dependency{}*{}ucrspatial-6.0-SNAPSHOT.jar interpolate {} {} {} {}".format(sep_dir,
+                                                                                                   sep_cmd, 
+                                                                                                   raster_path,
+                                                                                                   source_CTs_temp_file_name,
+                                                                                                   target_gdf_temp_file_name,
+                                                                                                   weights_temp_file_name)
     
-    # parquet like internal file
-    print('Source CT: Starting to create well-known text (wkt) of geometries...')
-    source_CTs['geometry_wkt'] = source_CTs['geometry'].apply(lambda x: x.wkt) # Create well-know text (raw text) for the geometry column
-    source_CTs = source_CTs.drop(['geometry'], axis = 1)
-    source_CTs_temp_file_name = temp_dir + '{}source_CTs_temp.parquet'.format(sep_dir)
-    
-    # Just extract the useful column for optimization
-    # For source we need also the Correction Terms!
-    source_CTs = source_CTs[['geometry_wkt', 'CT']]
-    
-    print('Starting to convert the GeoDataFrame to a temporary file...')
-    source_CTs.to_parquet(source_CTs_temp_file_name)
-    
-    
-    weights_temp_file_name = temp_dir + '{}input_weights.csv'.format(sep_dir)
-    np.savetxt(weights_temp_file_name, weights_long, delimiter=",", header = 'weights', comments='')
-    
-    cmd = "java -cp dependency/*{}ucrspatial-6.0-SNAPSHOT.jar interpolate {} {} {} {}".format(sep_cmd, 
-                                                                                              raster_path,
-                                                                                              source_CTs_temp_file_name,
-                                                                                              target_gdf_temp_file_name,
-                                                                                              weights_temp_file_name)
-    
-    t1_aux = time.time()
-    
-    print('Time of preparation before scanline (in seconds): {}'.format(t1_aux - t0_aux))
-    
-    print('Starting to perform the scanline...')
-    t0_aux = time.time()
-    run(cmd, shell=True, check=True) # Will generate an parquet for output: interpolate.parquet
-    t1_aux = time.time()
-    print('Scanline: Done.')
-    print('Time of scanline itself (in seconds): {}'.format(t1_aux - t0_aux))
-    
-    os.remove(target_gdf_temp_file_name)
-    os.remove(source_CTs_temp_file_name)
-    os.remove(weights_temp_file_name)
-    
-    os.rmdir(temp_dir)
-    
+        t1_aux = time.time()
+        
+        if verbose: print('Time of preparation before scanline (in seconds): {}'.format(t1_aux - t0_aux))
+        
+        if verbose: print('Starting to perform the scanline...')
+        t0_aux = time.time()
+        run(cmd, shell=True, check=True) # Will generate an parquet for output: interpolate.parquet
+        t1_aux = time.time()
+        if verbose: print('Scanline: Done.')
+        if verbose: print('Time of scanline itself (in seconds): {}'.format(t1_aux - t0_aux))
+        
     interpolated_df = pd.read_parquet("interpolate.parquet")
     
     os.remove("interpolate.parquet")
@@ -243,6 +240,7 @@ def scanline_harmonization(source_gdf,
                            target_gdf, 
                            pop_string, 
                            raster_path, 
+                           verbose = True,
                            auxiliary_type = 'nlcd',
                            regression_method = 'Poisson',
                            codes = [21, 22, 23, 24],
@@ -262,6 +260,9 @@ def scanline_harmonization(source_gdf,
     pop_string             : the name of the variable on geodataframe that the interpolation shall be conducted.
     
     raster_path            : the path to the associated raster image.
+    
+    verbose                : bool. Default is False.
+                             Wheter the function will print progress steps.
     
     auxiliary_type         : string. The type of the auxiliary variable for the desired method of interpolation. Default is 'nlcd' for the National Land Cover Dataset. 
     
@@ -291,8 +292,8 @@ def scanline_harmonization(source_gdf,
     """
     
     
-    print('INITIALIZING FIRST SCANLINES')
-    profiled_df_pre = scanlines_count_pixels(source_gdf, raster_path)
+    if verbose: print('INITIALIZING FIRST SCANLINES')
+    profiled_df_pre = scanlines_count_pixels(source_gdf, raster_path, verbose = verbose)
     
     profiled_df = pd.concat([source_gdf.reset_index(), profiled_df_pre], axis = 1)
     
@@ -323,11 +324,12 @@ def scanline_harmonization(source_gdf,
     long_weights = np.zeros(n_pixels_option_values)
     long_weights[codes] = weights
     
-    print('\nINITIALIZING SECOND SCANLINES')
+    if verbose: print('\nINITIALIZING SECOND SCANLINES')
     interpolate = scanlines_interpolate(target_gdf = target_gdf, 
                                         source_CTs = scan_line_input_CT, 
                                         weights_long = long_weights, 
-                                        raster_path = raster_path)
+                                        raster_path = raster_path,
+                                        verbose = verbose)
     
     interpolate_df = pd.concat([target_gdf.reset_index(), interpolate], axis = 1)
     
@@ -355,7 +357,6 @@ def _return_xgboost_weights(profiled_df,
     y = profiled_df[pop_string]
     X = profiled_df[feature_names]
 
-    print('Starting to fit XGBoost...')
     if (tuned_xgb == False):
         
         # Create the DMatrix
