@@ -17,7 +17,7 @@ from rasterio.mask import mask
 import warnings
 
 import statsmodels.formula.api as smf
-from statsmodels.genmod.families import Poisson
+from statsmodels.genmod.families import Poisson, Gaussian
 
 import xgboost as xgb
 from sklearn.model_selection import GridSearchCV
