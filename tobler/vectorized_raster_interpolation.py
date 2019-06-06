@@ -620,18 +620,18 @@ def subset_gdf_polygons_from_raster(geodataframe, raster, force_crs_match = True
     else:
         warnings.warn('The geodataframe is not being reprojected. The clipping might be being performing on unmatching polygon to the raster.')
     
-    # within is a boolean vector: True if the polygon is within the raster, False otherwise
-    within = []
+    # has_intersection is a boolean vector: True if the polygon has some overlay with raster, False otherwise
+    has_intersection = []
     for i in list(range(len(reprojected_gdf))):
         print('Polygon {} checked out of {}'.format(i, len(reprojected_gdf)), end = "\r")
         coords = getFeatures(reprojected_gdf.iloc[[i]])
         try:
             out_img = mask(dataset = raster, shapes = coords, crop = True)[0]
-            within.append(True)
+            has_intersection.append(True)
         except:
-            within.append(False)
+            has_intersection.append(False)
     
-    within_gdf = reprojected_gdf.iloc[within]
-    within_gdf = within_gdf.set_geometry('geometry')
+    overlayed_subset_gdf = reprojected_gdf.iloc[has_intersection]
+    overlayed_subset_gdf = overlayed_subset_gdf.set_geometry('geometry')
     
-    return within_gdf
+    return overlayed_subset_gdf
