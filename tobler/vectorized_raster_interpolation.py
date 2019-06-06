@@ -153,7 +153,8 @@ def return_weights_from_regression(geodataframe,
                                    codes = [21, 22, 23, 24], 
                                    likelihood = 'Poisson', 
                                    n_pixels_option_values = 256,
-                                   force_crs_match = True):
+                                   force_crs_match = True,
+                                   na_value = 255):
     
     """Function that returns the weights of each land type according to NLCD types/codes
     
@@ -180,6 +181,9 @@ def return_weights_from_regression(geodataframe,
                              Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file. 
                              It is recommended to let this argument as True.
     
+    na_value               : int. Default is 255.
+                             The number which is considered to be 'Not a Number' (NaN) in the raster pixel values.
+    
     Notes
     -----
     1) The formula uses a substring called 'Type_' before the code number due to the 'append_profile_in_gdf' function.
@@ -189,8 +193,8 @@ def return_weights_from_regression(geodataframe,
     
     _check_presence_of_crs(geodataframe)
     
-    if (255 in codes):
-        raise ValueError('codes should not assume the value 255.')
+    if (na_value in codes):
+        raise ValueError('codes should not assume the na_value value.')
     
     if not likelihood in ['Poisson', 'Gaussian']:
         raise ValueError('likelihood must one of \'Poisson\', \'Gaussian\'')
@@ -236,7 +240,8 @@ def return_weights_from_xgboost(geodataframe,
                                                        'subsample': [0.3, 0.5],
                                                        'max_depth': [4, 5, 6],
                                                        'num_boosting_rounds': [10, 20]},
-                                force_crs_match = True):
+                                force_crs_match = True,
+                                na_value = 255):
     
     """Function that returns the weights of each land type according to NLCD types/codes given by Extreme Gradient Boost model (XGBoost)
     
@@ -265,6 +270,9 @@ def return_weights_from_xgboost(geodataframe,
                              Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file. 
                              It is recommended to let this argument as True.
     
+    na_value               : int. Default is 255.
+                             The number which is considered to be 'Not a Number' (NaN) in the raster pixel values.
+    
     Notes
     -----
     1) The formula uses a substring called 'Type_' before the code number due to the 'append_profile_in_gdf' function.
@@ -275,8 +283,8 @@ def return_weights_from_xgboost(geodataframe,
     
     _check_presence_of_crs(geodataframe)
     
-    if (255 in codes):
-        raise ValueError('codes should not assume the value 255.')
+    if (na_value in codes):
+        raise ValueError('codes should not assume the na_value value.')
     
     print('Appending profile...')
     profiled_df = append_profile_in_gdf(geodataframe[['geometry', pop_string]], raster, force_crs_match) # Use only two columns to build the weights (this avoids error, if the original dataset has already types appended on it).
@@ -484,7 +492,8 @@ def create_non_zero_population_by_pixels_locations(geodataframe,
 def calculate_interpolated_polygon_population_from_correspondence_NLCD_table(polygon, 
                                                                              raster, 
                                                                              corresp_table,
-                                                                             force_crs_match = True):
+                                                                             force_crs_match = True,
+                                                                             na_value = 255):
     
     """Function that returns the interpolated population of a given polygon according to a correspondence table previous built
     
@@ -500,6 +509,9 @@ def calculate_interpolated_polygon_population_from_correspondence_NLCD_table(pol
     force_crs_match : bool. Default is True.
                       Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file. 
                       It is recommended to let this argument as True.
+    
+    na_value        : int. Default is 255.
+                      The number which is considered to be 'Not a Number' (NaN) in the raster pixel values.
     
     Notes
     -----
@@ -525,7 +537,7 @@ def calculate_interpolated_polygon_population_from_correspondence_NLCD_table(pol
     polygon_summary_full = pd.DataFrame.from_dict(data)
     
     # Remove pixels of the polygon that do not belong to the spatial unit, but might be from another one
-    polygon_summary = polygon_summary_full[polygon_summary_full.pixel_value != 255]
+    polygon_summary = polygon_summary_full[polygon_summary_full.pixel_value != na_value]
     
     merged_polygon = corresp_table.merge(polygon_summary, on = ['lons', 'lats'])
     
