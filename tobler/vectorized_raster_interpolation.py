@@ -112,7 +112,8 @@ def append_profile_in_gdf(geodataframe, raster, force_crs_match = True):
     
     """Function that appends the columns of the profile in a geopandas according to a given raster
     
-    geodataframe    : a GeoDataFrame from geopandas. The variables of the profile will be appended in this data.
+    geodataframe    : a GeoDataFrame from geopandas that has overlay with the raster. The variables of the profile will be appended in this data.
+                      If some polygon do not overlay the raster, consider a preprocessing step using the function subset_gdf_polygons_from_raster.
     
     raster          : the associated NLCD raster (from rasterio.open).
     
@@ -153,7 +154,8 @@ def return_weights_from_regression(geodataframe,
                                    codes = [21, 22, 23, 24], 
                                    likelihood = 'Poisson', 
                                    n_pixels_option_values = 256,
-                                   force_crs_match = True):
+                                   force_crs_match = True,
+                                   na_value = 255):
     
     """Function that returns the weights of each land type according to NLCD types/codes
     
@@ -180,6 +182,9 @@ def return_weights_from_regression(geodataframe,
                              Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file. 
                              It is recommended to let this argument as True.
     
+    na_value               : int. Default is 255.
+                             The number which is considered to be 'Not a Number' (NaN) in the raster pixel values.
+    
     Notes
     -----
     1) The formula uses a substring called 'Type_' before the code number due to the 'append_profile_in_gdf' function.
@@ -189,8 +194,8 @@ def return_weights_from_regression(geodataframe,
     
     _check_presence_of_crs(geodataframe)
     
-    if (255 in codes):
-        raise ValueError('codes should not assume the value 255.')
+    if (na_value in codes):
+        raise ValueError('codes should not assume the na_value value.')
     
     if not likelihood in ['Poisson', 'Gaussian']:
         raise ValueError('likelihood must one of \'Poisson\', \'Gaussian\'')
@@ -236,7 +241,8 @@ def return_weights_from_xgboost(geodataframe,
                                                        'subsample': [0.3, 0.5],
                                                        'max_depth': [4, 5, 6],
                                                        'num_boosting_rounds': [10, 20]},
-                                force_crs_match = True):
+                                force_crs_match = True,
+                                na_value = 255):
     
     """Function that returns the weights of each land type according to NLCD types/codes given by Extreme Gradient Boost model (XGBoost)
     
@@ -265,6 +271,9 @@ def return_weights_from_xgboost(geodataframe,
                              Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file. 
                              It is recommended to let this argument as True.
     
+    na_value               : int. Default is 255.
+                             The number which is considered to be 'Not a Number' (NaN) in the raster pixel values.
+    
     Notes
     -----
     1) The formula uses a substring called 'Type_' before the code number due to the 'append_profile_in_gdf' function.
@@ -275,8 +284,8 @@ def return_weights_from_xgboost(geodataframe,
     
     _check_presence_of_crs(geodataframe)
     
-    if (255 in codes):
-        raise ValueError('codes should not assume the value 255.')
+    if (na_value in codes):
+        raise ValueError('codes should not assume the na_value value.')
     
     print('Appending profile...')
     profiled_df = append_profile_in_gdf(geodataframe[['geometry', pop_string]], raster, force_crs_match) # Use only two columns to build the weights (this avoids error, if the original dataset has already types appended on it).
@@ -484,7 +493,8 @@ def create_non_zero_population_by_pixels_locations(geodataframe,
 def calculate_interpolated_polygon_population_from_correspondence_NLCD_table(polygon, 
                                                                              raster, 
                                                                              corresp_table,
-                                                                             force_crs_match = True):
+                                                                             force_crs_match = True,
+                                                                             na_value = 255):
     
     """Function that returns the interpolated population of a given polygon according to a correspondence table previous built
     
@@ -500,6 +510,9 @@ def calculate_interpolated_polygon_population_from_correspondence_NLCD_table(pol
     force_crs_match : bool. Default is True.
                       Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file. 
                       It is recommended to let this argument as True.
+    
+    na_value        : int. Default is 255.
+                      The number which is considered to be 'Not a Number' (NaN) in the raster pixel values.
     
     Notes
     -----
@@ -525,7 +538,7 @@ def calculate_interpolated_polygon_population_from_correspondence_NLCD_table(pol
     polygon_summary_full = pd.DataFrame.from_dict(data)
     
     # Remove pixels of the polygon that do not belong to the spatial unit, but might be from another one
-    polygon_summary = polygon_summary_full[polygon_summary_full.pixel_value != 255]
+    polygon_summary = polygon_summary_full[polygon_summary_full.pixel_value != na_value]
     
     merged_polygon = corresp_table.merge(polygon_summary, on = ['lons', 'lats'])
     
@@ -581,3 +594,44 @@ def calculate_interpolated_population_from_correspondence_NLCD_table(geodatafram
     final_geodataframe['interpolated_population'] = pop_final
         
     return final_geodataframe
+
+
+
+def subset_gdf_polygons_from_raster(geodataframe, raster, force_crs_match = True):
+    """Function that returns only the polygons that actually have some intersection with a given raster
+    
+    Parameters
+    ----------
+    
+    geodataframe    : a GeoDataFrame from geopandas
+    
+    raster          : the associated raster (from rasterio.open)
+    
+    force_crs_match : bool. Default is True.
+                      Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file. 
+                      It is recommended to let this argument as True.
+
+    """
+    
+    _check_presence_of_crs(geodataframe)
+    
+    if force_crs_match:
+        reprojected_gdf = geodataframe.to_crs(crs = raster.crs.data)
+    else:
+        warnings.warn('The geodataframe is not being reprojected. The clipping might be being performing on unmatching polygon to the raster.')
+    
+    # has_intersection is a boolean vector: True if the polygon has some overlay with raster, False otherwise
+    has_intersection = []
+    for i in list(range(len(reprojected_gdf))):
+        print('Polygon {} checked out of {}'.format(i, len(reprojected_gdf)), end = "\r")
+        coords = getFeatures(reprojected_gdf.iloc[[i]])
+        try:
+            out_img = mask(dataset = raster, shapes = coords, crop = True)[0]
+            has_intersection.append(True)
+        except:
+            has_intersection.append(False)
+    
+    overlayed_subset_gdf = reprojected_gdf.iloc[has_intersection]
+    overlayed_subset_gdf = overlayed_subset_gdf.set_geometry('geometry')
+    
+    return overlayed_subset_gdf
