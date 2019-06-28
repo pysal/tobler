@@ -236,7 +236,7 @@ def area_interpolate_binning(
         den = np.asarray(table.sum(axis=1))
     den = den + (den == 0)
     den = 1.0 / den
-    n, k = den.shape
+    n = den.shape[0]
     den = den.reshape((n,))
     den = diags([den], [0])
     weights = den.dot(table)  # row standardize table
