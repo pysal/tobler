@@ -7,6 +7,7 @@ import numpy as np
 import geopandas as gpd
 from .vectorized_raster_interpolation import *
 import warnings
+from scipy.sparse import dok_matrix, diags
 
 
 def area_tables_binning(source_df, target_df):
@@ -78,7 +79,7 @@ def area_tables_binning(source_df, target_df):
             rows2[j].add(i)
             poly2Row2[i].add(j)
 
-    table = np.zeros((n1, n2))
+    table = dok_matrix((n1, n2), dtype=np.float32)
     for polyId in range(n1):
         idRows = poly2Row1[polyId]
         idCols = poly2Column1[polyId]
@@ -179,8 +180,7 @@ def area_interpolate_binning(
     intensive_variables: list of columns in dataframes for intensive variables
 
 
-    table: numpy array
-           area_table_binning
+    table: scipy.sparse dok_matrix
 
 
     allocate_total: boolean
@@ -232,27 +232,36 @@ def area_interpolate_binning(
 
     den = source_df["geometry"].area.values
     if allocate_total:
-        den = table.sum(axis=1)
+        den = np.asarray(table.sum(axis=1))
     den = den + (den == 0)
-    weights = np.dot(np.diag(1 / den), table)
+    den = 1.0 / den
+    n, k = den.shape
+    den = den.reshape((n,))
+    den = diags([den], [0])
+    weights = den.dot(table)  # row standardize table
 
     extensive = []
     for variable in extensive_variables:
         vals = _nan_check(source_df, variable)
-        estimates = np.dot(np.diag(vals), weights)
+        estimates = diags([vals], [0]).dot(weights)
         estimates = estimates.sum(axis=0)
-        extensive.append(estimates)
+        extensive.append(np.asarray(estimates))
     extensive = np.array(extensive)
 
-    area = table.sum(axis=0)
-    den = np.diag(1.0 / (area + (area == 0)))
-    weights = np.dot(table, den)
+    area = np.asarray(table.sum(axis=0))
+    den = 1.0 / (area + (area == 0))
+    n, k = den.shape
+    den = den.reshape((k,))
+    den = diags([den], [0])
+    weights = table.dot(den)
     intensive = []
     for variable in intensive_variables:
         vals = _nan_check(source_df, variable)
-        vals.shape = (len(vals), 1)
-        est = (vals * weights).sum(axis=0)
-        intensive.append(est)
+        n, k = vals.shape
+        vals = vals.reshape((n,))
+        estimates = diags([vals], [0])
+        estimates = estimates.dot(weights).sum(axis=0)
+        intensive.append(np.asarray(estimates))
     intensive = np.array(intensive)
 
     return (extensive, intensive)
