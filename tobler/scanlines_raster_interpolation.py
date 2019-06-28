@@ -27,8 +27,7 @@ from sklearn.model_selection import GridSearchCV
 # pip install git+https://github.com/slundberg/shap.git
 import shap
 
-from tobler.area_weighted import _check_crs
-from tobler.vectorized_raster_interpolation import _check_presence_of_crs
+from tobler.util.util import _check_crs, _check_presence_of_crs
 
 import os
 import tempfile

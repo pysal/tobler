@@ -55,17 +55,6 @@ def getFeatures(gdf):
 
 
 
-def _check_presence_of_crs(geoinput):
-    """check if there is crs in the polygon/geodataframe"""
-    if (geoinput.crs is None):
-        raise KeyError('The polygon/geodataframe does not have a Coordinate Reference System (CRS). This must be set before using this function.')
-    
-    # Since the CRS can be an empty dictionary:
-    if (len(geoinput.crs) == 0):
-        raise KeyError('The polygon/geodataframe does not have a Coordinate Reference System (CRS). This must be set before using this function.')
-
-
-
 def return_area_profile(polygon, raster, force_crs_match = True):
     
     """Function that counts the amount of pixel types it is inside a polygon within a given raster

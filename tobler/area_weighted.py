@@ -5,9 +5,11 @@ Area Weighted Interpolation
 
 import numpy as np
 import geopandas as gpd
-from .vectorized_raster_interpolation import *
+from tobler.vectorized_raster_interpolation import append_profile_in_gdf
 import warnings
 from scipy.sparse import dok_matrix, diags
+
+from tobler.util.util import _check_crs, _nan_check
 
 
 def area_tables_binning(source_df, target_df):
@@ -94,6 +96,7 @@ def area_tables_binning(source_df, target_df):
             if df1.geometry[polyId].intersects(df2.geometry[neighbor]):
                 intersection = df1.geometry[polyId].intersection(df2.geometry[neighbor])
                 table[polyId, neighbor] = intersection.area
+                
     return table
 
 
@@ -167,65 +170,39 @@ def area_interpolate_binning(
 ):
     """
     Area interpolation for extensive and intensive variables.
-
     Parameters
     ----------
-
     source_df: geopandas GeoDataFrame with geometry column of polygon type
-
     target_df: geopandas GeoDataFrame with geometry column of polygon type
-
     extensive_variables: list of columns in dataframes for extensive variables
-
     intensive_variables: list of columns in dataframes for intensive variables
-
-
     table: scipy.sparse dok_matrix
-
-
     allocate_total: boolean
                     True if total value of source area should be allocated.
                     False if denominator is area of i. Note that the two cases
                     would be identical when the area of the source polygon is
                     exhausted by intersections. See Notes for more details.
-
     Returns
     -------
     estimates: tuple (2)
               (extensive variable array, intensive variables array)
-
+              Each is of shape n,v where n is number of target units and v is the number of variables for each variable type.
     Notes
     -----
     The assumption is both dataframes have the same coordinate reference system.
-
-
     For an extensive variable, the estimate at target polygon j (default case) is:
-
     v_j = \sum_i v_i w_{i,j}
-
     w_{i,j} = a_{i,j} / \sum_k a_{i,k}
-
-
     If the area of the source polygon is not exhausted by intersections with
     target polygons and there is reason to not allocate the complete value of
     an extensive attribute, then setting allocate_total=False will use the
     following weights:
-
-
     v_j = \sum_i v_i w_{i,j}
-
     w_{i,j} = a_{i,j} / a_i
-
     where a_i is the total area of source polygon i.
-
-
     For an intensive variable, the estimate at target polygon j is:
-
     v_j = \sum_i v_i w_{i,j}
-
     w_{i,j} = a_{i,j} / \sum_k a_{k,j}
-
-
     """
     if table is None:
         table = area_tables_binning(source_df, target_df)
@@ -245,8 +222,9 @@ def area_interpolate_binning(
         vals = _nan_check(source_df, variable)
         estimates = diags([vals], [0]).dot(weights)
         estimates = estimates.sum(axis=0)
-        extensive.append(np.asarray(estimates))
-    extensive = np.array(extensive)
+        extensive.append(estimates.tolist()[0])
+
+    extensive = np.asarray(extensive)
 
     area = np.asarray(table.sum(axis=0))
     den = 1.0 / (area + (area == 0))
@@ -257,14 +235,15 @@ def area_interpolate_binning(
     intensive = []
     for variable in intensive_variables:
         vals = _nan_check(source_df, variable)
-        n, k = vals.shape
+        n = vals.shape[0]
         vals = vals.reshape((n,))
         estimates = diags([vals], [0])
         estimates = estimates.dot(weights).sum(axis=0)
-        intensive.append(np.asarray(estimates))
-    intensive = np.array(intensive)
+        intensive.append(estimates.tolist()[0])
 
-    return (extensive, intensive)
+    intensive = np.asarray(intensive)
+    
+    return (extensive.T, intensive.T)
 
 
 def area_interpolate(
@@ -374,25 +353,6 @@ def area_interpolate(
     return (extensive, intensive)
 
 
-def _check_crs(source_df, target_df):
-    """check if crs is identical"""
-    if not (source_df.crs == target_df.crs):
-        print("Source and target dataframes have different crs. Please correct.")
-        return False
-    return True
-
-
-def _nan_check(df, column):
-    """Check if variable has nan values.
-
-    Warn and replace nan with 0.0.
-    """
-    values = df[column].values
-    if np.any(np.isnan(values)):
-        wherenan = np.isnan(values)
-        values[wherenan] = 0.0
-        print("nan values in variable: {var}, replacing with 0.0".format(var=column))
-    return values
 
 
 def area_tables_nlcd(
