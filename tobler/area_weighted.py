@@ -259,7 +259,6 @@ def area_interpolate_binning(
     intensive = []
     for variable in intensive_variables:
         vals = _nan_check(source_df, variable)
-        print(vals.shape)
         n, k = vals.shape
         vals = vals.reshape((n,))
         estimates = diags([vals], [0])
