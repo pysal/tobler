@@ -187,6 +187,7 @@ def area_interpolate_binning(
     estimates: tuple (2)
               (extensive variable array, intensive variables array)
               Each is of shape n,v where n is number of target units and v is the number of variables for each variable type.
+
     Notes
     -----
     The assumption is both dataframes have the same coordinate reference system.
@@ -212,7 +213,7 @@ def area_interpolate_binning(
         den = np.asarray(table.sum(axis=1))
     den = den + (den == 0)
     den = 1.0 / den
-    n, k = den.shape
+    n = den.shape[0]
     den = den.reshape((n,))
     den = diags([den], [0])
     weights = den.dot(table)  # row standardize table
@@ -242,7 +243,6 @@ def area_interpolate_binning(
         intensive.append(estimates.tolist()[0])
 
     intensive = np.asarray(intensive)
-    
     return (extensive.T, intensive.T)
 
 
