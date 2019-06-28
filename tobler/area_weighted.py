@@ -193,6 +193,7 @@ def area_interpolate_binning(
     -------
     estimates: tuple (2)
               (extensive variable array, intensive variables array)
+              Each is of shape n,v where n is number of target units and v is the number of variables for each variable type.
 
     Notes
     -----
@@ -245,8 +246,9 @@ def area_interpolate_binning(
         vals = _nan_check(source_df, variable)
         estimates = diags([vals], [0]).dot(weights)
         estimates = estimates.sum(axis=0)
-        extensive.append(np.asarray(estimates))
-    extensive = np.array(extensive)
+        extensive.append(estimates.tolist()[0])
+
+    extensive = np.asarray(extensive)
 
     area = np.asarray(table.sum(axis=0))
     den = 1.0 / (area + (area == 0))
@@ -257,14 +259,15 @@ def area_interpolate_binning(
     intensive = []
     for variable in intensive_variables:
         vals = _nan_check(source_df, variable)
+        print(vals.shape)
         n, k = vals.shape
         vals = vals.reshape((n,))
         estimates = diags([vals], [0])
         estimates = estimates.dot(weights).sum(axis=0)
-        intensive.append(np.asarray(estimates))
-    intensive = np.array(intensive)
+        intensive.append(estimates.tolist()[0])
 
-    return (extensive, intensive)
+    intensive = np.asarray(intensive)
+    return (extensive.T, intensive.T)
 
 
 def area_interpolate(
