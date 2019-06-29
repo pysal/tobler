@@ -9,7 +9,7 @@ from tobler.vectorized_raster_interpolation import append_profile_in_gdf
 import warnings
 from scipy.sparse import dok_matrix, diags
 
-from tobler.util.util import _check_crs, _nan_check
+from tobler.util.util import _check_crs, _nan_check, _check_presence_of_crs
 
 
 def area_tables_binning(source_df, target_df):

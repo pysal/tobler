@@ -116,10 +116,10 @@ def harmonize(raw_community,
             
             # In area_interpolate, the resulting variable has same lenght as target_df
             interpolation = area_interpolate_binning(source_df, 
-                                                         reference_df,
-                                                         extensive_variables = extensive_variables,
-                                                         intensive_variables = intensive_variables,
-                                                         allocate_total = allocate_total)
+                                                     reference_df,
+                                                     extensive_variables = extensive_variables,
+                                                     intensive_variables = intensive_variables,
+                                                     allocate_total = allocate_total)
             
             #if (len(interpolation_pre) == 3):
             #    interpolation = (interpolation_pre[0][0], interpolation_pre[1][0])

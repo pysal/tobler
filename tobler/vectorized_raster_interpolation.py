@@ -15,6 +15,7 @@ import geopandas as gpd
 import numpy as np
 from rasterio.mask import mask
 import warnings
+from tobler.util.util import _check_presence_of_crs
 
 import statsmodels.formula.api as smf
 from statsmodels.genmod.families import Poisson, Gaussian
