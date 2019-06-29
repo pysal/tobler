@@ -132,12 +132,12 @@ def harmonize(raw_community,
             area_tables_nlcd_fitted = area_tables_nlcd(source_df, reference_df, raster, codes = codes, force_crs_match = force_crs_match)
             
             # In area_interpolate, the resulting variable has same lenght as target_df
-            interpolation = area_interpolate_binning(source_df, 
-                                                     reference_df,
-                                                     extensive_variables = extensive_variables,
-                                                     intensive_variables = intensive_variables,
-                                                     allocate_total = allocate_total,
-                                                     tables = area_tables_nlcd_fitted)
+            interpolation = area_interpolate(source_df, 
+                                             reference_df,
+                                             extensive_variables = extensive_variables,
+                                             intensive_variables = intensive_variables,
+                                             allocate_total = allocate_total,
+                                             tables = area_tables_nlcd_fitted)
 
             
         for j in list(range(interpolation[0].shape[1])):
