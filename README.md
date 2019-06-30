@@ -1,4 +1,4 @@
-# tobler: a library fo spatial interpolation in Python
+# tobler: a library for spatial interpolation in Python
 
 A library for spatial interpolation
 
