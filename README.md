@@ -2,11 +2,11 @@
 
 **Easily perform area interpolation for different set of set of polygons:**
 
-<img src="figs/toy_census_tracts_example.png" width="500" height="250">
+![](figs/toy_census_tracts_example.png)
 
 **Perform enhanced interpolation using raster image files from satellites:**
 
-<img src="figs/raster_lattice_example.png" width="500" height="250">
+![](figs/raster_lattice_example.png)
 
 ## Roadmap
 
