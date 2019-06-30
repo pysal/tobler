@@ -1,5 +1,5 @@
 """
-Functions to perform Population Interpolation using the National Land Cover Data (NLCD).
+Functions to perform Population Interpolation using a vectorized version of a raster file.
 This is a generic framework that can be used to distribute population more accurately in harmonized spatial structures. 
 
 Inspired by Reibel, Michael, and Aditya Agrawal. "Areal interpolation of population counts using pre-classified land cover data." Population Research and Policy Review 26.5-6 (2007): 619-633.
@@ -37,8 +37,8 @@ __all__ = ['getFeatures',
            'return_weights_from_xgboost',
            'create_lon_lat',
            'create_non_zero_population_by_pixels_locations',
-           'calculate_interpolated_polygon_population_from_correspondence_NLCD_table',
-           'calculate_interpolated_population_from_correspondence_NLCD_table']
+           'calculate_interpolated_polygon_population_from_correspondence_table',
+           'calculate_interpolated_population_from_correspondence_table']
 
 
 def getFeatures(gdf):
@@ -145,7 +145,8 @@ def return_weights_from_regression(geodataframe,
                                    likelihood = 'Poisson', 
                                    n_pixels_option_values = 256,
                                    force_crs_match = True,
-                                   na_value = 255):
+                                   na_value = 255,
+                                   ReLU = True):
     
     """Function that returns the weights of each land type according to NLCD types/codes
     
@@ -174,6 +175,9 @@ def return_weights_from_regression(geodataframe,
     
     na_value               : int. Default is 255.
                              The number which is considered to be 'Not a Number' (NaN) in the raster pixel values.
+                             
+    ReLU                   : bool. Default is True.
+                             Wheter the Rectified Linear Units (ReLU) transformation will be used to avoid negative weights for the land types.
     
     Notes
     -----
@@ -211,6 +215,9 @@ def return_weights_from_regression(geodataframe,
     weights = np.zeros(n_pixels_option_values)
     weights[codes] = results.params
     
+    if ReLU:
+        weights = np.where(weights < 0, 0, weights)
+    
     return weights
 
 
@@ -232,7 +239,8 @@ def return_weights_from_xgboost(geodataframe,
                                                        'max_depth': [4, 5, 6],
                                                        'num_boosting_rounds': [10, 20]},
                                 force_crs_match = True,
-                                na_value = 255):
+                                na_value = 255,
+                                ReLU = True):
     
     """Function that returns the weights of each land type according to NLCD types/codes given by Extreme Gradient Boost model (XGBoost)
     
@@ -263,6 +271,9 @@ def return_weights_from_xgboost(geodataframe,
     
     na_value               : int. Default is 255.
                              The number which is considered to be 'Not a Number' (NaN) in the raster pixel values.
+                             
+    ReLU                   : bool. Default is True.
+                             Wheter the Rectified Linear Units (ReLU) transformation will be used to avoid negative weights for the land types.
     
     Notes
     -----
@@ -331,6 +342,9 @@ def return_weights_from_xgboost(geodataframe,
     
     weights = np.zeros(n_pixels_option_values)
     weights[codes] = list(weights_from_xgb) # Convert to list a dict_values
+    
+    if ReLU:
+        weights = np.where(weights < 0, 0, weights)
     
     return weights
 
@@ -480,11 +494,11 @@ def create_non_zero_population_by_pixels_locations(geodataframe,
 
 
 
-def calculate_interpolated_polygon_population_from_correspondence_NLCD_table(polygon, 
-                                                                             raster, 
-                                                                             corresp_table,
-                                                                             force_crs_match = True,
-                                                                             na_value = 255):
+def calculate_interpolated_polygon_population_from_correspondence_table(polygon, 
+                                                                        raster, 
+                                                                        corresp_table,
+                                                                        force_crs_match = True,
+                                                                        na_value = 255):
     
     """Function that returns the interpolated population of a given polygon according to a correspondence table previous built
     
@@ -543,10 +557,10 @@ def calculate_interpolated_polygon_population_from_correspondence_NLCD_table(pol
 
 
 
-def calculate_interpolated_population_from_correspondence_NLCD_table(geodataframe, 
-                                                                     raster, 
-                                                                     corresp_table,
-                                                                     force_crs_match = True):
+def calculate_interpolated_population_from_correspondence_table(geodataframe, 
+                                                                raster, 
+                                                                corresp_table,
+                                                                force_crs_match = True):
     
     """Function that returns the interpolated population of an entire geopandas according to a correspondence table previous built
     
@@ -576,7 +590,7 @@ def calculate_interpolated_population_from_correspondence_NLCD_table(geodatafram
     
     for line_index in range(len(geodataframe)):
         polygon = geodataframe.iloc[[line_index]]
-        pop_aux = calculate_interpolated_polygon_population_from_correspondence_NLCD_table(polygon, raster, corresp_table, force_crs_match)
+        pop_aux = calculate_interpolated_polygon_population_from_correspondence_table(polygon, raster, corresp_table, force_crs_match)
         pop_final[line_index] = pop_aux
         
         print('Polygon {} processed out of {}'.format(line_index + 1, len(geodataframe)), end = "\r")
