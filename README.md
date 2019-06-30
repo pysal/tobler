@@ -1,6 +1,8 @@
-# Tobler: A Library for Areal Interpolation
+# tobler: a library fo spatial interpolation in Python
 
 A library for spatial interpolation
+
+![Perform enhanced interpolation using raster image files from satellites](figs/raster_lattice_example.png)
 
 ## Roadmap
 
