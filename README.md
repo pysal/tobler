@@ -1,7 +1,7 @@
 # tobler: a library for spatial interpolation in Python
 
 **Easily perform area interpolation for different set of set of polygons:**
-![](figs/toy_census_tracts_example.png){ width=50% }
+![](figs/toy_census_tracts_example.png){:height="50%" width="50%"}
 
 **Perform enhanced interpolation using raster image files from satellites:**
 ![](figs/raster_lattice_example.png)
