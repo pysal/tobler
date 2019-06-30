@@ -2,7 +2,11 @@
 
 A library for spatial interpolation
 
-![Perform enhanced interpolation using raster image files from satellites](figs/raster_lattice_example.png)
+**Easily perform area interpolation for different set of set of polygons:**
+![](figs/toy_census_tracts_example.png)
+
+**Perform enhanced interpolation using raster image files from satellites:**
+![](figs/raster_lattice_example.png)
 
 ## Roadmap
 
