@@ -16,9 +16,10 @@ In `tobler` you can execute:
 	+ overlay
 	+ binning
 	
-* use raster files to improve interpolation of variables
-    + vectorized version
-    + leverage scanlines to perform interpolation
+* use raster files to improve interpolation of variables'
+    + areal interpolation assuming only specific land types
+    + regression using vectorized version
+    + regression leveraged by scanlines to perform interpolation
 
 * harmonize different set of unmatching polygons
 
