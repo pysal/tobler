@@ -22,15 +22,6 @@ In `tobler` you can execute:
 
 * harmonize different set of unmatching polygons
 
-## Roadmap
-
-* TODO r-tree or binning for indexing and table generation
-* TODO allow for weights parameter
-* TODO hybrid harmonization
-* TODO union harmonization
-* TODO nlcd auxiliary regressions
-
-
 ## Installation
 
 ```bash
@@ -38,3 +29,11 @@ $ conda env create -f environment.yml
 $ conda activate tobler 
 $ python setup.py develop
 ```
+
+## Roadmap
+
+* TODO r-tree or binning for indexing and table generation
+* TODO allow for weights parameter
+* TODO hybrid harmonization
+* TODO union harmonization
+* TODO nlcd auxiliary regressions
