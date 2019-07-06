@@ -19,8 +19,8 @@ def harmonize(raw_community,
     Parameters
     ----------
 
-    raw_community : tuple
-        Multiple GeoDataFrames given by geosnap.data.Community(..., type = "raw") (see (1) in Notes).
+    raw_community : list
+        Multiple GeoDataFrames given by a list (see (1) in Notes).
     
     target_year_of_reference : string
         The target year that represents the bondaries of all datasets generated in the harmonization. Could be, for example '2010'.
