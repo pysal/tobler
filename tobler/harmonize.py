@@ -142,12 +142,12 @@ def harmonize(raw_community,
             
         for j in list(range(interpolation[0].shape[1])):
             print('Harmonizing extensive variable {} of the year {}.'.format(extensive_variables[j], years_set[i]))
-            profile = pd.DataFrame.from_dict({'interpolated_' + extensive_variables[j] : interpolation[0][j]})
+            profile = pd.DataFrame.from_dict({'interpolated_' + extensive_variables[j] : interpolation[0][:,j]})
             reference_df = pd.concat([reference_df.reset_index(drop=True), profile], axis = 1)
             
         for k in list(range(interpolation[1].shape[1])):
             print('Harmonizing intensive variable {} of the year {}.'.format(intensive_variables[k], years_set[i]))
-            profile = pd.DataFrame.from_dict({'interpolated_' + intensive_variables[k] : interpolation[1][k]})
+            profile = pd.DataFrame.from_dict({'interpolated_' + intensive_variables[k] : interpolation[1][:,k]})
             reference_df = pd.concat([reference_df.reset_index(drop=True), profile], axis = 1)
         
         # Resetting the year column to the year that it is been harmonized
