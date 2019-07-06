@@ -27,10 +27,10 @@ def harmonize(raw_community,
         
     weights_method : string
         The method that the harmonization will be conducted. This can be set to:
-            "area": harmonization according to area weights.
-            "nlcd_land_type_area" : harmonization according to the Land Types according to National Land Cover Data (NLCD)  considered 'populated' areas.
-            "nlcd_Poisson"        : NOT YET INTRODUCED.
-            "nlcd_Gaussian"       : NOT YET INTRODUCED.
+            "area"                          : harmonization according to area weights.
+            "land_type_area"                : harmonization according to the Land Types according to National Land Cover Data (NLCD)  considered 'populated' areas.
+            "land_type_Poisson_regression"  : NOT YET INTRODUCED.
+            "land_type_Gaussian_regression" : NOT YET INTRODUCED.
 
     extensive_variables : list
         The names of variables in each dataset of raw_community that contains extensive variables to be harmonized (see (2) in Notes).
@@ -121,13 +121,7 @@ def harmonize(raw_community,
                                                      intensive_variables = intensive_variables,
                                                      allocate_total = allocate_total)
             
-            #if (len(interpolation_pre) == 3):
-            #    interpolation = (interpolation_pre[0][0], interpolation_pre[1][0])
-                
-            #if (len(interpolation_pre) == 2):
-            #    interpolation = interpolation_pre
-            
-        if (weights_method == 'nlcd_land_type_area'):
+        if (weights_method == 'land_type_area'):
             
             area_tables_nlcd_fitted = area_tables_nlcd(source_df, reference_df, raster, codes = codes, force_crs_match = force_crs_match)
             
