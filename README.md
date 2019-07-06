@@ -18,10 +18,10 @@ In `tobler` you can execute:
 	
 * use raster files to improve interpolation of variables'
     + areal interpolation assuming only specific land types
-    + regression using vectorized version
+    + [regression using vectorized version](https://github.com/spatialucr/tobler/blob/master/examples/vectorized_raster_example.ipynb)
     + regression leveraged by scanlines to perform interpolation
 
-* harmonize different set of unmatching polygons
+* [harmonize different set of unmatching polygons with different methods](https://github.com/spatialucr/tobler/blob/master/examples/harmonizing_community_example.ipynb)
 
 ## Installation
 
