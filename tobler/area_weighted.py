@@ -355,11 +355,11 @@ def area_interpolate(
 
 
 
-def area_tables_nlcd(
+def area_tables_raster(
     source_df, target_df, raster, codes=[21, 22, 23, 24], force_crs_match=True
 ):
     """
-    Construct area allocation and source-target correspondence tables according to National Land Cover Data (NLCD) 'populated' areas
+    Construct area allocation and source-target correspondence tables according to a raster 'populated' areas
     Parameters
     ----------
 
@@ -369,9 +369,10 @@ def area_tables_nlcd(
 
     raster          : the associated NLCD raster (from rasterio.open)
 
-    codes           : an integer list of codes values that should be considered as 'populated' from the National Land Cover Database (NLCD).
+    codes           : an integer list of codes values that should be considered as 'populated'.
+                      Since this draw inspiration using the National Land Cover Database (NLCD), the default is 21 (Developed, Open Space), 22 (Developed, Low Intensity), 23 (Developed, Medium Intensity) and 24 (Developed, High Intensity).
                       The description of each code can be found here: https://www.mrlc.gov/sites/default/files/metadata/landcover.html
-                      The default is 21 (Developed, Open Space), 22 (Developed, Low Intensity), 23 (Developed, Medium Intensity) and 24 (Developed, High Intensity).
+                      Only taken into consideration for harmonization raster based.
 
     force_crs_match : bool. Default is True.
                       Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file.

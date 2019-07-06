@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import geopandas as gpd
-from tobler.area_weighted import area_interpolate_binning, area_tables_nlcd, area_interpolate
+from tobler.area_weighted import area_interpolate_binning, area_tables_raster, area_interpolate
 from tobler.util.util import _check_presence_of_crs
 
 def harmonize(raw_community, 
@@ -28,7 +28,7 @@ def harmonize(raw_community,
     weights_method : string
         The method that the harmonization will be conducted. This can be set to:
             "area"                          : harmonization according to area weights.
-            "land_type_area"                : harmonization according to the Land Types according to National Land Cover Data (NLCD)  considered 'populated' areas.
+            "land_type_area"                : harmonization according to the Land Types considered 'populated' areas.
             "land_type_Poisson_regression"  : NOT YET INTRODUCED.
             "land_type_Gaussian_regression" : NOT YET INTRODUCED.
 
@@ -44,18 +44,18 @@ def harmonize(raw_community,
         would be identical when the area of the source polygon is
         exhausted by intersections. See (3) in Notes for more details.
         
-    raster : the associated NLCD raster (from rasterio.open) that has the types of each pixel in the spatial context.
-        Only taken into consideration for harmonization NLCD based.
+    raster : the associated raster (from rasterio.open) that has the types of each pixel in the spatial context.
+        Only taken into consideration for harmonization raster based.
         
-    codes : an integer list of codes values that should be considered as 'populated' from the National Land Cover Database (NLCD).
+    codes : an integer list of codes values that should be considered as 'populated'.
+        Since this draw inspiration using the National Land Cover Database (NLCD), the default is 21 (Developed, Open Space), 22 (Developed, Low Intensity), 23 (Developed, Medium Intensity) and 24 (Developed, High Intensity).
         The description of each code can be found here: https://www.mrlc.gov/sites/default/files/metadata/landcover.html
-        The default is 21 (Developed, Open Space), 22 (Developed, Low Intensity), 23 (Developed, Medium Intensity) and 24 (Developed, High Intensity).
-        Only taken into consideration for harmonization NLCD based.
+        Only taken into consideration for harmonization raster based.
         
     force_crs_match : bool. Default is True.
         Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file. 
         It is recommended to let this argument as True.
-        Only taken into consideration for harmonization NLCD based.
+        Only taken into consideration for harmonization raster based.
 
     
     Notes
@@ -123,7 +123,7 @@ def harmonize(raw_community,
             
         if (weights_method == 'land_type_area'):
             
-            area_tables_nlcd_fitted = area_tables_nlcd(source_df, reference_df, raster, codes = codes, force_crs_match = force_crs_match)
+            area_tables_raster_fitted = area_tables_raster(source_df, reference_df, raster, codes = codes, force_crs_match = force_crs_match)
             
             # In area_interpolate, the resulting variable has same lenght as target_df
             interpolation = area_interpolate(source_df, 
@@ -131,7 +131,7 @@ def harmonize(raw_community,
                                              extensive_variables = extensive_variables,
                                              intensive_variables = intensive_variables,
                                              allocate_total = allocate_total,
-                                             tables = area_tables_nlcd_fitted)
+                                             tables = area_tables_raster_fitted)
 
             
         for j in list(range(interpolation[0].shape[1])):
