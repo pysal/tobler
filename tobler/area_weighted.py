@@ -350,7 +350,7 @@ def area_interpolate(
         intensive.append(est)
     intensive = np.array(intensive)
 
-    return (extensive, intensive)
+    return (extensive.T, intensive.T)
 
 
 
