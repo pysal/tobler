@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import geopandas as gpd
-from tobler.area_weighted import area_interpolate_binning, area_tables_nlcd
+from tobler.area_weighted import area_interpolate_binning, area_tables_raster, area_interpolate
 from tobler.util.util import _check_presence_of_crs
 
 def harmonize(raw_community, 
@@ -10,7 +10,7 @@ def harmonize(raw_community,
               extensive_variables = [], 
               intensive_variables = [],
               allocate_total = True,
-              raster = None,
+              raster_path = None,
               codes = [21, 22, 23, 24],
               force_crs_match = True):
     """
@@ -19,18 +19,18 @@ def harmonize(raw_community,
     Parameters
     ----------
 
-    raw_community : tuple
-        Multiple GeoDataFrames given by geosnap.data.Community(..., type = "raw") (see (1) in Notes).
+    raw_community : list
+        Multiple GeoDataFrames given by a list (see (1) in Notes).
     
     target_year_of_reference : string
         The target year that represents the bondaries of all datasets generated in the harmonization. Could be, for example '2010'.
         
     weights_method : string
         The method that the harmonization will be conducted. This can be set to:
-            "area": harmonization according to area weights.
-            "nlcd_land_type_area" : harmonization according to the Land Types according to National Land Cover Data (NLCD)  considered 'populated' areas.
-            "nlcd_Poisson"        : NOT YET INTRODUCED.
-            "nlcd_Gaussian"       : NOT YET INTRODUCED.
+            "area"                          : harmonization according to area weights.
+            "land_type_area"                : harmonization according to the Land Types considered 'populated' areas.
+            "land_type_Poisson_regression"  : NOT YET INTRODUCED.
+            "land_type_Gaussian_regression" : NOT YET INTRODUCED.
 
     extensive_variables : list
         The names of variables in each dataset of raw_community that contains extensive variables to be harmonized (see (2) in Notes).
@@ -38,24 +38,24 @@ def harmonize(raw_community,
     intensive_variables : list
         The names of variables in each dataset of raw_community that contains intensive variables to be harmonized (see (2) in Notes).
     
-    allocate_total: boolean
+    allocate_total : boolean
         True if total value of source area should be allocated.
         False if denominator is area of i. Note that the two cases
         would be identical when the area of the source polygon is
         exhausted by intersections. See (3) in Notes for more details.
         
-    raster : the associated NLCD raster (from rasterio.open) that has the types of each pixel in the spatial context.
-        Only taken into consideration for harmonization NLCD based.
+    raster_path : the path to the associated raster image that has the types of each pixel in the spatial context.
+        Only taken into consideration for harmonization raster based.
         
-    codes : an integer list of codes values that should be considered as 'populated' from the National Land Cover Database (NLCD).
+    codes : an integer list of codes values that should be considered as 'populated'.
+        Since this draw inspiration using the National Land Cover Database (NLCD), the default is 21 (Developed, Open Space), 22 (Developed, Low Intensity), 23 (Developed, Medium Intensity) and 24 (Developed, High Intensity).
         The description of each code can be found here: https://www.mrlc.gov/sites/default/files/metadata/landcover.html
-        The default is 21 (Developed, Open Space), 22 (Developed, Low Intensity), 23 (Developed, Medium Intensity) and 24 (Developed, High Intensity).
-        Only taken into consideration for harmonization NLCD based.
+        Only taken into consideration for harmonization raster based.
         
     force_crs_match : bool. Default is True.
         Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file. 
         It is recommended to let this argument as True.
-        Only taken into consideration for harmonization NLCD based.
+        Only taken into consideration for harmonization raster based.
 
     
     Notes
@@ -116,38 +116,32 @@ def harmonize(raw_community,
             
             # In area_interpolate, the resulting variable has same lenght as target_df
             interpolation = area_interpolate_binning(source_df, 
-                                                         reference_df,
-                                                         extensive_variables = extensive_variables,
-                                                         intensive_variables = intensive_variables,
-                                                         allocate_total = allocate_total)
-            
-            #if (len(interpolation_pre) == 3):
-            #    interpolation = (interpolation_pre[0][0], interpolation_pre[1][0])
-                
-            #if (len(interpolation_pre) == 2):
-            #    interpolation = interpolation_pre
-            
-        if (weights_method == 'nlcd_land_type_area'):
-            
-            area_tables_nlcd_fitted = area_tables_nlcd(source_df, reference_df, raster, codes = codes, force_crs_match = force_crs_match)
-            
-            # In area_interpolate, the resulting variable has same lenght as target_df
-            interpolation = area_interpolate_binning(source_df, 
                                                      reference_df,
                                                      extensive_variables = extensive_variables,
                                                      intensive_variables = intensive_variables,
-                                                     allocate_total = allocate_total,
-                                                     tables = area_tables_nlcd_fitted)
+                                                     allocate_total = allocate_total)
+            
+        if (weights_method == 'land_type_area'):
+            
+            area_tables_raster_fitted = area_tables_raster(source_df, reference_df, raster_path, codes = codes, force_crs_match = force_crs_match)
+            
+            # In area_interpolate, the resulting variable has same lenght as target_df
+            interpolation = area_interpolate(source_df, 
+                                             reference_df,
+                                             extensive_variables = extensive_variables,
+                                             intensive_variables = intensive_variables,
+                                             allocate_total = allocate_total,
+                                             tables = area_tables_raster_fitted)
 
             
         for j in list(range(interpolation[0].shape[1])):
             print('Harmonizing extensive variable {} of the year {}.'.format(extensive_variables[j], years_set[i]))
-            profile = pd.DataFrame.from_dict({'interpolated_' + extensive_variables[j] : interpolation[0][j]})
+            profile = pd.DataFrame.from_dict({'interpolated_' + extensive_variables[j] : interpolation[0][:,j]})
             reference_df = pd.concat([reference_df.reset_index(drop=True), profile], axis = 1)
             
         for k in list(range(interpolation[1].shape[1])):
             print('Harmonizing intensive variable {} of the year {}.'.format(intensive_variables[k], years_set[i]))
-            profile = pd.DataFrame.from_dict({'interpolated_' + intensive_variables[k] : interpolation[1][k]})
+            profile = pd.DataFrame.from_dict({'interpolated_' + intensive_variables[k] : interpolation[1][:,k]})
             reference_df = pd.concat([reference_df.reset_index(drop=True), profile], axis = 1)
         
         # Resetting the year column to the year that it is been harmonized

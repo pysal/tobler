@@ -1,5 +1,5 @@
 """
-Functions to perform Population Interpolation using the National Land Cover Data (NLCD).
+Functions to perform Population Interpolation using a vectorized version of a raster file.
 This is a generic framework that can be used to distribute population more accurately in harmonized spatial structures. 
 
 Inspired by Reibel, Michael, and Aditya Agrawal. "Areal interpolation of population counts using pre-classified land cover data." Population Research and Policy Review 26.5-6 (2007): 619-633.
@@ -11,10 +11,14 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.ed
 
 import json
 import pandas as pd
+from geopandas import GeoDataFrame
 import geopandas as gpd
 import numpy as np
+import rasterio
 from rasterio.mask import mask
+import rasterstats as rs
 import warnings
+from tobler.util.util import _check_presence_of_crs
 
 import statsmodels.formula.api as smf
 from statsmodels.genmod.families import Poisson, Gaussian
@@ -36,8 +40,8 @@ __all__ = ['getFeatures',
            'return_weights_from_xgboost',
            'create_lon_lat',
            'create_non_zero_population_by_pixels_locations',
-           'calculate_interpolated_polygon_population_from_correspondence_NLCD_table',
-           'calculate_interpolated_population_from_correspondence_NLCD_table']
+           'calculate_interpolated_polygon_population_from_correspondence_table',
+           'calculate_interpolated_population_from_correspondence_table']
 
 
 def getFeatures(gdf):
@@ -57,7 +61,9 @@ def getFeatures(gdf):
 
 def return_area_profile(polygon, raster, force_crs_match = True):
     
-    """Function that counts the amount of pixel types it is inside a polygon within a given raster
+    """DEPRECATED
+    
+    Function that counts the amount of pixel types it is inside a polygon within a given raster
     
     Parameters
     ----------
@@ -99,7 +105,9 @@ def return_area_profile(polygon, raster, force_crs_match = True):
 
 def append_profile_in_gdf(geodataframe, raster, force_crs_match = True):
     
-    """Function that appends the columns of the profile in a geopandas according to a given raster
+    """DEPRECATED
+    
+    Function that appends the columns of the profile in a geopandas according to a given raster
     
     geodataframe    : a GeoDataFrame from geopandas that has overlay with the raster. The variables of the profile will be appended in this data.
                       If some polygon do not overlay the raster, consider a preprocessing step using the function subset_gdf_polygons_from_raster.
@@ -136,15 +144,55 @@ def append_profile_in_gdf(geodataframe, raster, force_crs_match = True):
 
 
 
+def fast_append_profile_in_gdf(geodataframe, raster_path, force_crs_match = True):
+    
+    """Function that appends the columns of the profile in a geopandas according to a given raster taking advantage of rasterstats
+    
+    geodataframe    : a GeoDataFrame from geopandas that has overlay with the raster. The variables of the profile will be appended in this data.
+                      If some polygon do not overlay the raster, consider a preprocessing step using the function subset_gdf_polygons_from_raster.
+    
+    raster_path     : the path to the associated raster image.
+    
+    force_crs_match : bool. Default is True.
+                      Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file. 
+                      It is recommended to let this argument as True.
+                      
+    Notes
+    -----
+    The generated geodataframe will input the value 0 for each Type that is not present in the raster for each polygon. 
+    
+    """
+    
+    _check_presence_of_crs(geodataframe)
+    
+    if force_crs_match:
+        raster = rasterio.open(raster_path)
+        reprojected_gdf = geodataframe.to_crs(crs = raster.crs.data)
+    else:
+        warnings.warn('The GeoDataFrame is not being reprojected. The clipping might be being performing on unmatching polygon to the raster.')
+    
+    zonal_gjson = rs.zonal_stats(reprojected_gdf, 
+                                 raster_path, 
+                                 prefix='Type_',
+                                 geojson_out=True,
+                                 categorical = True)
+    
+    zonal_ppt_gdf = GeoDataFrame.from_features(zonal_gjson)
+    
+    return zonal_ppt_gdf
+
+
+
 
 def return_weights_from_regression(geodataframe, 
-                                   raster, 
+                                   raster_path, 
                                    pop_string, 
                                    codes = [21, 22, 23, 24], 
                                    likelihood = 'Poisson', 
                                    n_pixels_option_values = 256,
                                    force_crs_match = True,
-                                   na_value = 255):
+                                   na_value = 255,
+                                   ReLU = True):
     
     """Function that returns the weights of each land type according to NLCD types/codes
     
@@ -153,7 +201,7 @@ def return_weights_from_regression(geodataframe,
     
     geodataframe           : a geopandas geoDataFrame used to build regression
     
-    raster                 : a raster (from rasterio.open) that has the types of each pixel in the geodataframe
+    raster_path            : the path to the associated raster image.
     
     pop_string             : the name of the variable on geodataframe that the regression shall be conducted
     
@@ -173,6 +221,9 @@ def return_weights_from_regression(geodataframe,
     
     na_value               : int. Default is 255.
                              The number which is considered to be 'Not a Number' (NaN) in the raster pixel values.
+                             
+    ReLU                   : bool. Default is True.
+                             Wheter the Rectified Linear Units (ReLU) transformation will be used to avoid negative weights for the land types.
     
     Notes
     -----
@@ -190,7 +241,7 @@ def return_weights_from_regression(geodataframe,
         raise ValueError('likelihood must one of \'Poisson\', \'Gaussian\'')
     
     print('Appending profile...')
-    profiled_df = append_profile_in_gdf(geodataframe[['geometry', pop_string]], raster, force_crs_match) # Use only two columns to build the weights (this avoids error, if the original dataset has already types appended on it).
+    profiled_df = fast_append_profile_in_gdf(geodataframe[['geometry', pop_string]], raster_path, force_crs_match) # Use only two columns to build the weights (this avoids error, if the original dataset has already types appended on it).
     print('Append profile: Done.')
     
     # If the list is unsorted, the codes will be sorted to guarantee that the position of the weights will match
@@ -210,6 +261,9 @@ def return_weights_from_regression(geodataframe,
     weights = np.zeros(n_pixels_option_values)
     weights[codes] = results.params
     
+    if ReLU:
+        weights = np.where(weights < 0, 0, weights)
+    
     return weights
 
 
@@ -220,7 +274,7 @@ def return_weights_from_regression(geodataframe,
 
 
 def return_weights_from_xgboost(geodataframe, 
-                                raster, 
+                                raster_path, 
                                 pop_string, 
                                 codes = [21, 22, 23, 24], 
                                 n_pixels_option_values = 256,
@@ -231,7 +285,8 @@ def return_weights_from_xgboost(geodataframe,
                                                        'max_depth': [4, 5, 6],
                                                        'num_boosting_rounds': [10, 20]},
                                 force_crs_match = True,
-                                na_value = 255):
+                                na_value = 255,
+                                ReLU = True):
     
     """Function that returns the weights of each land type according to NLCD types/codes given by Extreme Gradient Boost model (XGBoost)
     
@@ -240,7 +295,7 @@ def return_weights_from_xgboost(geodataframe,
     
     geodataframe           : a geopandas geoDataFrame used to build regression
     
-    raster                 : a raster (from rasterio.open) that has the types of each pixel in the geodataframe
+    raster_path            : the path to the associated raster image.
     
     pop_string             : the name of the variable on geodataframe that the regression shall be conducted
     
@@ -262,6 +317,9 @@ def return_weights_from_xgboost(geodataframe,
     
     na_value               : int. Default is 255.
                              The number which is considered to be 'Not a Number' (NaN) in the raster pixel values.
+                             
+    ReLU                   : bool. Default is True.
+                             Wheter the Rectified Linear Units (ReLU) transformation will be used to avoid negative weights for the land types.
     
     Notes
     -----
@@ -277,7 +335,7 @@ def return_weights_from_xgboost(geodataframe,
         raise ValueError('codes should not assume the na_value value.')
     
     print('Appending profile...')
-    profiled_df = append_profile_in_gdf(geodataframe[['geometry', pop_string]], raster, force_crs_match) # Use only two columns to build the weights (this avoids error, if the original dataset has already types appended on it).
+    profiled_df = fast_append_profile_in_gdf(geodataframe[['geometry', pop_string]], raster_path, force_crs_match) # Use only two columns to build the weights (this avoids error, if the original dataset has already types appended on it).
     print('Append profile: Done.')
     
     # If the list is unsorted, the codes will be sorted to guarantee that the position of the weights will match
@@ -331,6 +389,9 @@ def return_weights_from_xgboost(geodataframe,
     weights = np.zeros(n_pixels_option_values)
     weights[codes] = list(weights_from_xgb) # Convert to list a dict_values
     
+    if ReLU:
+        weights = np.where(weights < 0, 0, weights)
+    
     return weights
 
 
@@ -383,7 +444,6 @@ def create_non_zero_population_by_pixels_locations(geodataframe,
                                                    raster, 
                                                    pop_string, 
                                                    weights = None, 
-                                                   save_polygon_index = False,
                                                    force_crs_match = True):
     
     '''Function that returns the actual population of each pixel from a given geodataframe and variable.
@@ -395,8 +455,6 @@ def create_non_zero_population_by_pixels_locations(geodataframe,
     pop_string         : a string of the column name of the geodataframe that the estimation will be made
     
     weights            : vector of weights in each position of the pixel values according 'return_weights_from_regression' function. This must be provided by the user.
-                         
-    save_polygon_index : bool. If True, it saves the polygon row index of each pixel. 
     
     force_crs_match    : bool. Default is True.
                          Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file. 
@@ -415,9 +473,6 @@ def create_non_zero_population_by_pixels_locations(geodataframe,
     result_pops_array = np.array([])
     result_lons_array = np.array([])
     result_lats_array = np.array([])
-    
-    if (save_polygon_index == True):
-        result_poly_index = np.array([])
 
     for line_index in range(len(geodataframe_projected)):
         polygon_projected = geodataframe_projected.iloc[[line_index]]
@@ -444,28 +499,16 @@ def create_non_zero_population_by_pixels_locations(geodataframe,
         final_lons = np.ndarray.flatten(lons)[non_zero_pop_index]
         final_lats = np.ndarray.flatten(lats)[non_zero_pop_index]
         
-        result_poly_index_aux = np.full(len(np.ndarray.flatten(lons)), line_index)[non_zero_pop_index]
-        
         '''Append all flattens numpy arrays'''
         result_pops_array = np.append(result_pops_array, final_pop_numpy)
         result_lons_array = np.append(result_lons_array, final_lons)
         result_lats_array = np.append(result_lats_array, final_lats)
         
-        if (save_polygon_index == True):
-            result_poly_index = np.append(result_poly_index, result_poly_index_aux)
-        
         print('Polygon {} processed out of {}'.format(line_index + 1, len(geodataframe)), end = "\r")
         
-    if (save_polygon_index == False):
-        data = {'pop_value': result_pops_array,
-                'lons': result_lons_array.round().astype(int).tolist(), 
-                'lats': result_lats_array.round().astype(int).tolist()}        
-
-    if (save_polygon_index == True):
-        data = {'pop_value': result_pops_array,
-                'lons': result_lons_array.round().astype(int).tolist(), 
-                'lats': result_lats_array.round().astype(int).tolist(),
-                'polygon': result_poly_index}
+    data = {'pop_value': result_pops_array,
+            'lons': result_lons_array.round().astype(int).tolist(), 
+            'lats': result_lats_array.round().astype(int).tolist()}
         
     corresp = pd.DataFrame.from_dict(data)
         
@@ -479,11 +522,11 @@ def create_non_zero_population_by_pixels_locations(geodataframe,
 
 
 
-def calculate_interpolated_polygon_population_from_correspondence_NLCD_table(polygon, 
-                                                                             raster, 
-                                                                             corresp_table,
-                                                                             force_crs_match = True,
-                                                                             na_value = 255):
+def calculate_interpolated_polygon_population_from_correspondence_table(polygon, 
+                                                                        raster, 
+                                                                        corresp_table,
+                                                                        force_crs_match = True,
+                                                                        na_value = 255):
     
     """Function that returns the interpolated population of a given polygon according to a correspondence table previous built
     
@@ -542,10 +585,10 @@ def calculate_interpolated_polygon_population_from_correspondence_NLCD_table(pol
 
 
 
-def calculate_interpolated_population_from_correspondence_NLCD_table(geodataframe, 
-                                                                     raster, 
-                                                                     corresp_table,
-                                                                     force_crs_match = True):
+def calculate_interpolated_population_from_correspondence_table(geodataframe, 
+                                                                raster, 
+                                                                corresp_table,
+                                                                force_crs_match = True):
     
     """Function that returns the interpolated population of an entire geopandas according to a correspondence table previous built
     
@@ -575,7 +618,7 @@ def calculate_interpolated_population_from_correspondence_NLCD_table(geodatafram
     
     for line_index in range(len(geodataframe)):
         polygon = geodataframe.iloc[[line_index]]
-        pop_aux = calculate_interpolated_polygon_population_from_correspondence_NLCD_table(polygon, raster, corresp_table, force_crs_match)
+        pop_aux = calculate_interpolated_polygon_population_from_correspondence_table(polygon, raster, corresp_table, force_crs_match)
         pop_final[line_index] = pop_aux
         
         print('Polygon {} processed out of {}'.format(line_index + 1, len(geodataframe)), end = "\r")

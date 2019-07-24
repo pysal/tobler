@@ -13,9 +13,7 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Samriddhi Singla <ssing068@ucr.e
 
 
 import pandas as pd
-import geopandas as gpd
 import numpy as np
-from rasterio.mask import mask
 
 import statsmodels.formula.api as smf
 from statsmodels.genmod.families import Poisson, Gaussian

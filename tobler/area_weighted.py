@@ -5,11 +5,11 @@ Area Weighted Interpolation
 
 import numpy as np
 import geopandas as gpd
-from tobler.vectorized_raster_interpolation import append_profile_in_gdf
+from tobler.vectorized_raster_interpolation import fast_append_profile_in_gdf
 import warnings
 from scipy.sparse import dok_matrix, diags
 
-from tobler.util.util import _check_crs, _nan_check
+from tobler.util.util import _check_crs, _nan_check, _check_presence_of_crs
 
 
 def area_tables_binning(source_df, target_df):
@@ -350,16 +350,16 @@ def area_interpolate(
         intensive.append(est)
     intensive = np.array(intensive)
 
-    return (extensive, intensive)
+    return (extensive.T, intensive.T)
 
 
 
 
-def area_tables_nlcd(
-    source_df, target_df, raster, codes=[21, 22, 23, 24], force_crs_match=True
+def area_tables_raster(
+    source_df, target_df, raster_path, codes=[21, 22, 23, 24], force_crs_match=True
 ):
     """
-    Construct area allocation and source-target correspondence tables according to National Land Cover Data (NLCD) 'populated' areas
+    Construct area allocation and source-target correspondence tables according to a raster 'populated' areas
     Parameters
     ----------
 
@@ -367,11 +367,12 @@ def area_tables_nlcd(
 
     target_df       : geopandas GeoDataFrame with geometry column of polygon type
 
-    raster          : the associated NLCD raster (from rasterio.open)
+    raster_path     : the path to the associated raster image.
 
-    codes           : an integer list of codes values that should be considered as 'populated' from the National Land Cover Database (NLCD).
+    codes           : an integer list of codes values that should be considered as 'populated'.
+                      Since this draw inspiration using the National Land Cover Database (NLCD), the default is 21 (Developed, Open Space), 22 (Developed, Low Intensity), 23 (Developed, Medium Intensity) and 24 (Developed, High Intensity).
                       The description of each code can be found here: https://www.mrlc.gov/sites/default/files/metadata/landcover.html
-                      The default is 21 (Developed, Open Space), 22 (Developed, Low Intensity), 23 (Developed, Medium Intensity) and 24 (Developed, High Intensity).
+                      Only taken into consideration for harmonization raster based.
 
     force_crs_match : bool. Default is True.
                       Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file.
@@ -418,8 +419,8 @@ def area_tables_nlcd(
     res_union_pre.crs = source_df.crs
 
     # The 'append_profile_in_gdf' function is present in nlcd.py script
-    res_union = append_profile_in_gdf(
-        res_union_pre, raster=raster, force_crs_match=force_crs_match
+    res_union = fast_append_profile_in_gdf(
+        res_union_pre, raster_path, force_crs_match=force_crs_match
     )
 
     str_codes = [str(i) for i in codes]
