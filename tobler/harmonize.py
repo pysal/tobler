@@ -10,7 +10,7 @@ def harmonize(raw_community,
               extensive_variables = [], 
               intensive_variables = [],
               allocate_total = True,
-              raster = None,
+              raster_path = None,
               codes = [21, 22, 23, 24],
               force_crs_match = True):
     """
@@ -38,13 +38,13 @@ def harmonize(raw_community,
     intensive_variables : list
         The names of variables in each dataset of raw_community that contains intensive variables to be harmonized (see (2) in Notes).
     
-    allocate_total: boolean
+    allocate_total : boolean
         True if total value of source area should be allocated.
         False if denominator is area of i. Note that the two cases
         would be identical when the area of the source polygon is
         exhausted by intersections. See (3) in Notes for more details.
         
-    raster : the associated raster (from rasterio.open) that has the types of each pixel in the spatial context.
+    raster_path : the path to the associated raster image that has the types of each pixel in the spatial context.
         Only taken into consideration for harmonization raster based.
         
     codes : an integer list of codes values that should be considered as 'populated'.
@@ -123,7 +123,7 @@ def harmonize(raw_community,
             
         if (weights_method == 'land_type_area'):
             
-            area_tables_raster_fitted = area_tables_raster(source_df, reference_df, raster, codes = codes, force_crs_match = force_crs_match)
+            area_tables_raster_fitted = area_tables_raster(source_df, reference_df, raster_path, codes = codes, force_crs_match = force_crs_match)
             
             # In area_interpolate, the resulting variable has same lenght as target_df
             interpolation = area_interpolate(source_df, 
