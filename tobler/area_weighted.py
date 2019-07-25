@@ -13,6 +13,11 @@ from tobler.util.util import _check_crs, _nan_check, _check_presence_of_crs
 
 
 def area_tables_binning(source_df, target_df):
+    
+    if _check_crs(source_df, target_df):
+        pass
+    else:
+        return None
 
     df1 = source_df
     df2 = target_df
@@ -205,6 +210,12 @@ def area_interpolate_binning(
     v_j = \sum_i v_i w_{i,j}
     w_{i,j} = a_{i,j} / \sum_k a_{k,j}
     """
+    
+    if _check_crs(source_df, target_df):
+        pass
+    else:
+        return None
+    
     if table is None:
         table = area_tables_binning(source_df, target_df)
 
@@ -319,6 +330,12 @@ def area_interpolate(
 
 
     """
+    
+    if _check_crs(source_df, target_df):
+        pass
+    else:
+        return None
+    
     if tables is None:
         SU, UT = area_tables(source_df, target_df)
     else:
