@@ -36,6 +36,7 @@ import shap
 __all__ = ['getFeatures', 
            'return_area_profile', 
            'append_profile_in_gdf', 
+           'fast_append_profile_in_gdf',
            'return_weights_from_regression',
            'return_weights_from_xgboost',
            'create_lon_lat',
