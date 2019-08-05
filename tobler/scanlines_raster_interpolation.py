@@ -13,9 +13,7 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Samriddhi Singla <ssing068@ucr.e
 
 
 import pandas as pd
-import geopandas as gpd
 import numpy as np
-from rasterio.mask import mask
 
 import statsmodels.formula.api as smf
 from statsmodels.genmod.families import Poisson, Gaussian
@@ -27,8 +25,7 @@ from sklearn.model_selection import GridSearchCV
 # pip install git+https://github.com/slundberg/shap.git
 import shap
 
-from tobler.area_weighted import _check_crs
-from tobler.vectorized_raster_interpolation import _check_presence_of_crs
+from tobler.util.util import _check_crs, _check_presence_of_crs
 
 import os
 import tempfile

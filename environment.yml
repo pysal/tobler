@@ -9,7 +9,3 @@ dependencies:
   - statsmodels
   - scikit-learn
   - pip
-  - pip:
-    - xgboost
-
-
