@@ -13,7 +13,7 @@ from tobler.util.util import _check_crs, _nan_check, _check_presence_of_crs
 
 
 def area_tables_binning(source_df, target_df):
-    
+
     if _check_crs(source_df, target_df):
         pass
     else:
@@ -61,7 +61,7 @@ def area_tables_binning(source_df, target_df):
     poly2Row2 = [set() for i in range(n2)]
 
     for i in range(n1):
-        shpObj = df1.geometry[i]
+        shpObj = df1.geometry.iloc[i]
         bbcache[i] = shpObj.bounds
         projBBox = [
             int((shpObj.bounds[:][j] - minbox[j]) / binWidth[j]) for j in range(4)
@@ -74,7 +74,7 @@ def area_tables_binning(source_df, target_df):
             poly2Row1[i].add(j)
 
     for i in range(n2):
-        shpObj = df2.geometry[i]
+        shpObj = df2.geometry.iloc[i]
         bbcache[i] = shpObj.bounds
         projBBox = [
             int((shpObj.bounds[:][j] - minbox[j]) / binWidth[j]) for j in range(4)
@@ -98,10 +98,12 @@ def area_tables_binning(source_df, target_df):
             colNeighbors = colNeighbors.union(columns2[col])
         neighbors = rowNeighbors.intersection(colNeighbors)
         for neighbor in neighbors:
-            if df1.geometry[polyId].intersects(df2.geometry[neighbor]):
-                intersection = df1.geometry[polyId].intersection(df2.geometry[neighbor])
+            if df1.geometry.iloc[polyId].intersects(df2.geometry.iloc[neighbor]):
+                intersection = df1.geometry.iloc[polyId].intersection(
+                    df2.geometry.iloc[neighbor]
+                )
                 table[polyId, neighbor] = intersection.area
-                
+
     return table
 
 
@@ -210,12 +212,12 @@ def area_interpolate_binning(
     v_j = \sum_i v_i w_{i,j}
     w_{i,j} = a_{i,j} / \sum_k a_{k,j}
     """
-    
+
     if _check_crs(source_df, target_df):
         pass
     else:
         return None
-    
+
     if table is None:
         table = area_tables_binning(source_df, target_df)
 
@@ -330,12 +332,12 @@ def area_interpolate(
 
 
     """
-    
+
     if _check_crs(source_df, target_df):
         pass
     else:
         return None
-    
+
     if tables is None:
         SU, UT = area_tables(source_df, target_df)
     else:
@@ -368,8 +370,6 @@ def area_interpolate(
     intensive = np.array(intensive)
 
     return (extensive.T, intensive.T)
-
-
 
 
 def area_tables_raster(
