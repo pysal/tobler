@@ -5,12 +5,19 @@ Area Weighted Interpolation
 
 import numpy as np
 import geopandas as gpd
-from .vectorized_raster_interpolation import *
+from tobler.vectorized_raster_interpolation import fast_append_profile_in_gdf
 import warnings
 from scipy.sparse import dok_matrix, diags
 
+from tobler.util.util import _check_crs, _nan_check, _check_presence_of_crs
+
 
 def area_tables_binning(source_df, target_df):
+
+    if _check_crs(source_df, target_df):
+        pass
+    else:
+        return None
 
     df1 = source_df
     df2 = target_df
@@ -54,7 +61,7 @@ def area_tables_binning(source_df, target_df):
     poly2Row2 = [set() for i in range(n2)]
 
     for i in range(n1):
-        shpObj = df1.geometry[i]
+        shpObj = df1.geometry.iloc[i]
         bbcache[i] = shpObj.bounds
         projBBox = [
             int((shpObj.bounds[:][j] - minbox[j]) / binWidth[j]) for j in range(4)
@@ -67,7 +74,7 @@ def area_tables_binning(source_df, target_df):
             poly2Row1[i].add(j)
 
     for i in range(n2):
-        shpObj = df2.geometry[i]
+        shpObj = df2.geometry.iloc[i]
         bbcache[i] = shpObj.bounds
         projBBox = [
             int((shpObj.bounds[:][j] - minbox[j]) / binWidth[j]) for j in range(4)
@@ -91,9 +98,12 @@ def area_tables_binning(source_df, target_df):
             colNeighbors = colNeighbors.union(columns2[col])
         neighbors = rowNeighbors.intersection(colNeighbors)
         for neighbor in neighbors:
-            if df1.geometry[polyId].intersects(df2.geometry[neighbor]):
-                intersection = df1.geometry[polyId].intersection(df2.geometry[neighbor])
+            if df1.geometry.iloc[polyId].intersects(df2.geometry.iloc[neighbor]):
+                intersection = df1.geometry.iloc[polyId].intersection(
+                    df2.geometry.iloc[neighbor]
+                )
                 table[polyId, neighbor] = intersection.area
+
     return table
 
 
@@ -167,28 +177,18 @@ def area_interpolate_binning(
 ):
     """
     Area interpolation for extensive and intensive variables.
-
     Parameters
     ----------
-
     source_df: geopandas GeoDataFrame with geometry column of polygon type
-
     target_df: geopandas GeoDataFrame with geometry column of polygon type
-
     extensive_variables: list of columns in dataframes for extensive variables
-
     intensive_variables: list of columns in dataframes for intensive variables
-
-
     table: scipy.sparse dok_matrix
-
-
     allocate_total: boolean
                     True if total value of source area should be allocated.
                     False if denominator is area of i. Note that the two cases
                     would be identical when the area of the source polygon is
                     exhausted by intersections. See Notes for more details.
-
     Returns
     -------
     estimates: tuple (2)
@@ -198,36 +198,26 @@ def area_interpolate_binning(
     Notes
     -----
     The assumption is both dataframes have the same coordinate reference system.
-
-
     For an extensive variable, the estimate at target polygon j (default case) is:
-
     v_j = \sum_i v_i w_{i,j}
-
     w_{i,j} = a_{i,j} / \sum_k a_{i,k}
-
-
     If the area of the source polygon is not exhausted by intersections with
     target polygons and there is reason to not allocate the complete value of
     an extensive attribute, then setting allocate_total=False will use the
     following weights:
-
-
     v_j = \sum_i v_i w_{i,j}
-
     w_{i,j} = a_{i,j} / a_i
-
     where a_i is the total area of source polygon i.
-
-
     For an intensive variable, the estimate at target polygon j is:
-
     v_j = \sum_i v_i w_{i,j}
-
     w_{i,j} = a_{i,j} / \sum_k a_{k,j}
-
-
     """
+
+    if _check_crs(source_df, target_df):
+        pass
+    else:
+        return None
+
     if table is None:
         table = area_tables_binning(source_df, target_df)
 
@@ -236,7 +226,7 @@ def area_interpolate_binning(
         den = np.asarray(table.sum(axis=1))
     den = den + (den == 0)
     den = 1.0 / den
-    n, k = den.shape
+    n = den.shape[0]
     den = den.reshape((n,))
     den = diags([den], [0])
     weights = den.dot(table)  # row standardize table
@@ -342,6 +332,12 @@ def area_interpolate(
 
 
     """
+
+    if _check_crs(source_df, target_df):
+        pass
+    else:
+        return None
+
     if tables is None:
         SU, UT = area_tables(source_df, target_df)
     else:
@@ -373,35 +369,14 @@ def area_interpolate(
         intensive.append(est)
     intensive = np.array(intensive)
 
-    return (extensive, intensive)
+    return (extensive.T, intensive.T)
 
 
-def _check_crs(source_df, target_df):
-    """check if crs is identical"""
-    if not (source_df.crs == target_df.crs):
-        print("Source and target dataframes have different crs. Please correct.")
-        return False
-    return True
-
-
-def _nan_check(df, column):
-    """Check if variable has nan values.
-
-    Warn and replace nan with 0.0.
-    """
-    values = df[column].values
-    if np.any(np.isnan(values)):
-        wherenan = np.isnan(values)
-        values[wherenan] = 0.0
-        print("nan values in variable: {var}, replacing with 0.0".format(var=column))
-    return values
-
-
-def area_tables_nlcd(
-    source_df, target_df, raster, codes=[21, 22, 23, 24], force_crs_match=True
+def area_tables_raster(
+    source_df, target_df, raster_path, codes=[21, 22, 23, 24], force_crs_match=True
 ):
     """
-    Construct area allocation and source-target correspondence tables according to National Land Cover Data (NLCD) 'populated' areas
+    Construct area allocation and source-target correspondence tables according to a raster 'populated' areas
     Parameters
     ----------
 
@@ -409,11 +384,12 @@ def area_tables_nlcd(
 
     target_df       : geopandas GeoDataFrame with geometry column of polygon type
 
-    raster          : the associated NLCD raster (from rasterio.open)
+    raster_path     : the path to the associated raster image.
 
-    codes           : an integer list of codes values that should be considered as 'populated' from the National Land Cover Database (NLCD).
+    codes           : an integer list of codes values that should be considered as 'populated'.
+                      Since this draw inspiration using the National Land Cover Database (NLCD), the default is 21 (Developed, Open Space), 22 (Developed, Low Intensity), 23 (Developed, Medium Intensity) and 24 (Developed, High Intensity).
                       The description of each code can be found here: https://www.mrlc.gov/sites/default/files/metadata/landcover.html
-                      The default is 21 (Developed, Open Space), 22 (Developed, Low Intensity), 23 (Developed, Medium Intensity) and 24 (Developed, High Intensity).
+                      Only taken into consideration for harmonization raster based.
 
     force_crs_match : bool. Default is True.
                       Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file.
@@ -460,8 +436,8 @@ def area_tables_nlcd(
     res_union_pre.crs = source_df.crs
 
     # The 'append_profile_in_gdf' function is present in nlcd.py script
-    res_union = append_profile_in_gdf(
-        res_union_pre, raster=raster, force_crs_match=force_crs_match
+    res_union = fast_append_profile_in_gdf(
+        res_union_pre, raster_path, force_crs_match=force_crs_match
     )
 
     str_codes = [str(i) for i in codes]
