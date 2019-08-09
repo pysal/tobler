@@ -4,3 +4,4 @@ geopandas
 rasterio
 scipy
 statsmodels
+rasterstats
