@@ -20,13 +20,6 @@ from rasterio.mask import mask
 import statsmodels.formula.api as smf
 from statsmodels.genmod.families import Poisson, Gaussian
 
-import xgboost as xgb
-from sklearn.model_selection import GridSearchCV
-
-# An option worth to consider to install `shap` (that could avoid dependency conflict) is direct from github:
-# pip install git+https://github.com/slundberg/shap.git
-import shap
-
 from tobler.area_weighted import _check_crs
 from tobler.vectorized_raster_interpolation import _check_presence_of_crs
 
@@ -345,6 +338,12 @@ def _return_xgboost_weights(profiled_df,
                                                   'max_depth': [4, 5, 6],
                                                   'num_boosting_rounds': [10, 20]}):
     
+    try:
+        import xgboost as xgb
+        import shap
+    except ImportError as e:
+        raise ImportError('xgboost and shap are required to perform this.')
+    
     feature_names = ['Type_' + s for s in str_codes]
     
     y = profiled_df[pop_string]
@@ -362,6 +361,11 @@ def _return_xgboost_weights(profiled_df,
         xg_reg = xgb.train(params = params, dtrain = xgb_dmatrix)
         
     if (tuned_xgb == True):
+        
+        try:
+            from sklearn.model_selection import GridSearchCV
+        except ImportError as e:
+            raise ImportError('sklearn is required to perform this.')
         
         gbm = xgb.XGBRegressor()
         grid_mse = GridSearchCV(estimator = gbm,
