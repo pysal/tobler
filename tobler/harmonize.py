@@ -180,7 +180,6 @@ def harmonize(
         profile = pd.concat(profiles, sort=True)
         profile["geometry"] = target_df["geometry"]
         profile[index] = target_df[index]
-        # profile = profile.join(stub)
         profile[time_col] = i
 
         interpolated_dfs[i] = profile
@@ -188,6 +187,5 @@ def harmonize(
     harmonized_df = gpd.GeoDataFrame(
         pd.concat(list(interpolated_dfs.values()), sort=True)
     )
-    # harmonized_df = pd.concat([harmonized_df.reset_index(drop=True), value], axis=0)
 
     return harmonized_df
