@@ -1,4 +1,4 @@
-# tobler: a library for spatial interpolation in Python
+# tobler: a library for areal interpolation in Python
 
 **Easily perform area interpolation for different set of set of polygons:**
 
