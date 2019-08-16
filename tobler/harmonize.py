@@ -124,12 +124,12 @@ def harmonize(
             "Reference System (CRS) of the GeoDataFrames of raw_community. "
             "All of them must be the same."
         )
+    # store the input crs so we can reassign it at the end
+    crs = raw_community[0].crs
     dfs = pd.concat(raw_community)
     times = dfs[time_col].unique()
 
     target_df = dfs[dfs[time_col] == target_year].reset_index()
-
-    stub = target_df[[index, "geometry"]].copy()
 
     interpolated_dfs = {}
     interpolated_dfs[target_year] = target_df.copy()
@@ -177,7 +177,7 @@ def harmonize(
             profile = pd.DataFrame(interpolation[1], columns=extensive_variables)
             profiles.append(profile)
 
-        profile = pd.concat(profiles, sort=True)
+        profile = pd.concat(profiles, axis=1)
         profile["geometry"] = target_df["geometry"]
         profile[index] = target_df[index]
         profile[time_col] = i
@@ -187,5 +187,6 @@ def harmonize(
     harmonized_df = gpd.GeoDataFrame(
         pd.concat(list(interpolated_dfs.values()), sort=True)
     )
+    harmonized_df.crs = crs
 
     return harmonized_df
