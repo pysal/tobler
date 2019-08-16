@@ -23,15 +23,6 @@ from tobler.util.util import _check_presence_of_crs
 import statsmodels.formula.api as smf
 from statsmodels.genmod.families import Poisson, Gaussian
 
-import xgboost as xgb
-from sklearn.model_selection import GridSearchCV
-
-# An option worth to consider to install `shap` (that could avoid dependency conflict) is direct from github:
-# pip install git+https://github.com/slundberg/shap.git
-import shap
-
-
-
 
 __all__ = ['getFeatures', 
            'return_area_profile', 
@@ -330,6 +321,12 @@ def return_weights_from_xgboost(geodataframe,
     
     """
     
+    try:
+        import xgboost as xgb
+        import shap
+    except ImportError as e:
+        raise ImportError('xgboost and shap are required to perform this.')
+    
     _check_presence_of_crs(geodataframe)
     
     if (na_value in codes):
@@ -361,6 +358,11 @@ def return_weights_from_xgboost(geodataframe,
         xg_reg = xgb.train(params = params, dtrain = xgb_dmatrix)
         
     if (tuned_xgb == True):
+        
+        try:
+            from sklearn.model_selection import GridSearchCV
+        except ImportError as e:
+            raise ImportError('sklearn is required to perform this.')
         
         gbm = xgb.XGBRegressor()
         grid_mse = GridSearchCV(estimator = gbm,

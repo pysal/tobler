@@ -187,6 +187,5 @@ def harmonize(
     harmonized_df = gpd.GeoDataFrame(
         pd.concat(list(interpolated_dfs.values()), sort=True)
     )
-    harmonized_df.crs = crs
 
     return harmonized_df

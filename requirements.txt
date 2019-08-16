@@ -1,2 +1,7 @@
+numpy
+pandas
 geopandas
 rasterio
+scipy
+statsmodels
+rasterstats
