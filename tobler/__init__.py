@@ -5,5 +5,4 @@ __version__ = "0.1.0"
 
 """
 from .area_weighted import *
-from .harmonize import *
 from .vectorized_raster_interpolation import *
