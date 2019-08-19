@@ -8,3 +8,4 @@ from .area_weighted import *
 from .harmonize import *
 from .vectorized_raster_interpolation import *
 from .scanlines_raster_interpolation import *
+from .data import *
