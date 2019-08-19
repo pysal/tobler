@@ -21,7 +21,8 @@ def fetch_quilt_path(path):
     ----------
     path : str
         string identifying raster from CGS quilt database, or full path to
-        a local raster file.
+        a local raster file. Current options include "nlcd_2001", "nlcd_2011",
+        or the path to a local file.
 
     Returns
     -------
@@ -37,8 +38,9 @@ def fetch_quilt_path(path):
             full_path = unquote(nlcd[path+'.tif'].get())
         except ImportError:
             raise(
-                "Unable to locate local raster data. You store it locally for "
-                "use with the `data.store_rasters()` function"
+                "Unable to locate local raster data. If you would like to use "
+                "raster data from the National Land Cover Database, you can "
+                "store it locally using the `data.store_rasters()` function"
             )
 
     else:
