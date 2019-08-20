@@ -1,0 +1,63 @@
+language: python
+dist: xenial
+sudo: true
+branches:
+only:
+  - master
+
+python:
+  - 3.6
+  - 3.7
+env:
+    - PYSAL_PYPI=true
+    - PYSAL_PYPI=false
+      
+matrix:
+  allow_failures:
+      - python: 3.6
+        env: PYSAL_PYPI=false
+      - python: 3.7
+        env: PYSAL_PYPI=false
+
+before_install:
+  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+  - chmod +x miniconda.sh
+  - ./miniconda.sh -b -p ./miniconda
+  - export PATH=`pwd`/miniconda/bin:$PATH
+  - conda update --yes conda
+  - conda config --add channels conda-forge
+  - conda config --set channel_priority strict
+  - conda create -y -q -n test-env python=$TRAVIS_PYTHON_VERSION
+  - source activate test-env
+
+install:
+  - conda install --yes pip nose
+  - conda install --yes -c conda-forge geopandas #comment this line if geopandas is not a dependency for the package
+  - conda install --yes --file requirements.txt;
+  - which pip
+  - if "$PYSAL_PYPI"; then
+      echo 'testing pypi libpysal';
+    else
+      echo 'testing git libpysal';
+      pip install https://github.com/pysal/libpysal/archive/master.zip;
+    fi;
+
+
+script:
+  - pwd
+  - ls -al
+  - python setup.py sdist >/dev/null
+  - python setup.py install
+  - nosetests -v tobler --with-coverage
+
+notifications:
+    email:
+        recipients:
+            - sjsrey+travis@gmail.com
+            - knaaptime+travis@gmail.com
+            - renanxcortes+travis@gmail.com
+        on_change: always
+        on_failure: always
+
+after_success:
+  - coveralls
