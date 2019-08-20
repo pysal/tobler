@@ -232,11 +232,12 @@ def area_interpolate_binning(
     weights = den.dot(table)  # row standardize table
 
     extensive = []
-    for variable in extensive_variables:
-        vals = _nan_check(source_df, variable)
-        estimates = diags([vals], [0]).dot(weights)
-        estimates = estimates.sum(axis=0)
-        extensive.append(estimates.tolist()[0])
+    if extensive_variables:
+        for variable in extensive_variables:
+            vals = _nan_check(source_df, variable)
+            estimates = diags([vals], [0]).dot(weights)
+            estimates = estimates.sum(axis=0)
+            extensive.append(estimates.tolist()[0])
 
     extensive = np.asarray(extensive)
 
@@ -246,14 +247,16 @@ def area_interpolate_binning(
     den = den.reshape((k,))
     den = diags([den], [0])
     weights = table.dot(den)
+
     intensive = []
-    for variable in intensive_variables:
-        vals = _nan_check(source_df, variable)
-        n = vals.shape[0]
-        vals = vals.reshape((n,))
-        estimates = diags([vals], [0])
-        estimates = estimates.dot(weights).sum(axis=0)
-        intensive.append(estimates.tolist()[0])
+    if intensive_variables:
+        for variable in intensive_variables:
+            vals = _nan_check(source_df, variable)
+            n = vals.shape[0]
+            vals = vals.reshape((n,))
+            estimates = diags([vals], [0])
+            estimates = estimates.dot(weights).sum(axis=0)
+            intensive.append(estimates.tolist()[0])
 
     intensive = np.asarray(intensive)
     return (extensive.T, intensive.T)
@@ -349,12 +352,13 @@ def area_interpolate(
     weights = np.dot(np.diag(1 / den), SU)
 
     extensive = []
-    for variable in extensive_variables:
-        vals = _nan_check(source_df, variable)
-        estimates = np.dot(np.diag(vals), weights)
-        estimates = np.dot(estimates, UT)
-        estimates = estimates.sum(axis=0)
-        extensive.append(estimates)
+    if extensive_variables:
+        for variable in extensive_variables:
+            vals = _nan_check(source_df, variable)
+            estimates = np.dot(np.diag(vals), weights)
+            estimates = np.dot(estimates, UT)
+            estimates = estimates.sum(axis=0)
+            extensive.append(estimates)
     extensive = np.array(extensive)
 
     ST = np.dot(SU, UT)
@@ -362,11 +366,12 @@ def area_interpolate(
     den = np.diag(1.0 / (area + (area == 0)))
     weights = np.dot(ST, den)
     intensive = []
-    for variable in intensive_variables:
-        vals = _nan_check(source_df, variable)
-        vals.shape = (len(vals), 1)
-        est = (vals * weights).sum(axis=0)
-        intensive.append(est)
+    if intensive_variables:
+        for variable in intensive_variables:
+            vals = _nan_check(source_df, variable)
+            vals.shape = (len(vals), 1)
+            est = (vals * weights).sum(axis=0)
+            intensive.append(est)
     intensive = np.array(intensive)
 
     return (extensive.T, intensive.T)
