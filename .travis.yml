@@ -48,7 +48,7 @@ script:
   - ls -al
   - python setup.py sdist >/dev/null
   - python setup.py install
-  - nosetests -v tobler --with-coverage
+  - pytest -v tobler --with-coverage
 
 notifications:
     email:
