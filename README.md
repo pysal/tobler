@@ -1,5 +1,8 @@
 # tobler: a library for areal interpolation in Python
 
+[![Build Status](https://travis-ci.com/pysal/tobler.svg?branch=master)](https://travis-ci.org/pysal/tobler)
+[![Coverage Status](https://coveralls.io/github/pysal/tobler?branch=master.svg?branch=master)](https://coveralls.io/github/pysal/tobler?branch=master&service=github&kill_cache=1)
+					
 **Easily perform area interpolation for different set of set of polygons:**
 
 ![](figs/toy_census_tracts_example.png)
