@@ -34,6 +34,7 @@ install:
   - conda install --yes pip nose
   - conda install --yes -c conda-forge geopandas #comment this line if geopandas is not a dependency for the package
   - conda install --yes --file requirements.txt;
+  - pip install -r requirements_tests.txt;
   - which pip
   - if "$PYSAL_PYPI"; then
       echo 'testing pypi libpysal';
