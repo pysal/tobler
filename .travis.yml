@@ -1,47 +1,34 @@
-language: python
-dist: xenial
-sudo: true
-branches:
-only:
-  - master
+language: minimal
 
-python:
-  - 3.6
-  - 3.7
-env:
-    - PYSAL_PYPI=true
-    - PYSAL_PYPI=false
-      
+sudo: false
+
 matrix:
-  allow_failures:
-      - python: 3.6
-        env: PYSAL_PYPI=false
-      - python: 3.7
-        env: PYSAL_PYPI=false
+  fast_finish: true
+  include:
+    - name: "python-3.6"
+      env: PY=3.6
+    - name: "python-3.7"
+      env: PY=3.7
+    - name: "tarball"
+      env: PY=3.7
 
 before_install:
-  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-  - chmod +x miniconda.sh
-  - ./miniconda.sh -b -p ./miniconda
-  - export PATH=`pwd`/miniconda/bin:$PATH
-  - conda update --yes conda
-  - conda config --add channels conda-forge
-  - conda config --set channel_priority strict
-  - conda create -y -q -n test-env python=$TRAVIS_PYTHON_VERSION
-  - source activate test-env
-
+  # Install miniconda and create TEST env.
+  - |
+    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+    bash miniconda.sh -b -p $HOME/miniconda
+    export PATH="$HOME/miniconda/bin:$PATH"
+    export DLPATH=`pwd`
+    conda config --set always_yes yes --set changeps1 no --set show_channel_urls true
+    conda update --quiet conda
+    conda config --add channels conda-forge --force
+    conda config --set channel_priority strict
+    conda config --set safety_checks disabled
+    conda create --name TEST python=$PY --file requirements.txt --file requirements_docs.txt --file requirements_tests.txt
+    source activate TEST
+    conda info --all
 install:
-  - conda install --yes pip nose
-  - conda install --yes -c conda-forge geopandas #comment this line if geopandas is not a dependency for the package
-  - conda install --yes --file requirements.txt;
-  - which pip
-  - if "$PYSAL_PYPI"; then
-      echo 'testing pypi libpysal';
-    else
-      echo 'testing git libpysal';
-      pip install https://github.com/pysal/libpysal/archive/master.zip;
-    fi;
-
+  - pip install -e . --no-deps --force-reinstall
 
 script:
   - if [[ $TRAVIS_JOB_NAME == python-* ]]; then
