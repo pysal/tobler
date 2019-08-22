@@ -44,11 +44,14 @@ install:
 
 
 script:
-  - pwd
-  - ls -al
-  - python setup.py sdist >/dev/null
-  - python setup.py install
-  - pytest -v tobler --with-coverage
+  - if [[ $TRAVIS_JOB_NAME == python-* ]]; then
+      travis_wait 45 pytest --cov tobler ;
+    fi
+
+  - if [[ $TRAVIS_JOB_NAME == 'tarball' ]]; then
+      pip wheel . -w dist --no-deps ;
+      twine check dist/* ;
+    fi
 
 notifications:
     email:
