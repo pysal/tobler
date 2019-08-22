@@ -6,3 +6,10 @@ scipy
 statsmodels
 rasterstats
 libpysal
+coverage
+coveralls
+matplotlib
+pytest
+pytest-mpl
+pytest-cov
+twine

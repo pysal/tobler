@@ -5,3 +5,4 @@ rasterio
 scipy
 statsmodels
 rasterstats
+quilt3
