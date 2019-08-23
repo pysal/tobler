@@ -154,7 +154,7 @@ class VectorizedRasterInterpolation_Tester(unittest.TestCase):
         df = df[((df.centroid.x < -121.4) & (df.centroid.x > -121.5) & (df.centroid.y > 38.5) & (df.centroid.y < 38.8))]
         df = df.set_geometry('geometry')
         
-        weights = return_weights_from_xgboost(df, local_raster_path, 'TOT_POP', tuned_xgb=True)
+        weights = return_weights_from_xgboost(df, local_raster_path, 'TOT_POP', tuned_xgb=True, gbm_hyperparam_grid={"learning_rate": [0.01]})
         
         correspondence_table = create_non_zero_population_by_pixels_locations(df, nlcd_raster, 'TOT_POP', weights)
         
@@ -194,14 +194,14 @@ class VectorizedRasterInterpolation_Tester(unittest.TestCase):
         x = np.array(interpolated['interpolated_population'])
         x.sort()
         
-        np.testing.assert_almost_equal(x, np.array([1.66765472e+01, 7.53196688e+01, 1.27809688e+03, 1.53475131e+03,
-       1.60711514e+03, 2.28743083e+03, 2.41140294e+03, 3.10713361e+03,
-       3.75836747e+03, 4.13069647e+03, 4.69143768e+03, 5.77737305e+03,
-       8.29062817e+03, 9.45173452e+03, 1.01396413e+04, 1.02357063e+04,
-       1.30614837e+04, 1.68147005e+04, 1.86268271e+04, 1.86686822e+04,
-       1.89044722e+04, 2.09619637e+04, 2.13998256e+04, 2.26697378e+04,
-       2.34233088e+04, 2.53917181e+04, 3.01877983e+04, 3.05998693e+04,
-       3.06156541e+04, 3.16531931e+04, 3.23199550e+04, 3.46584376e+04,
-       4.10448331e+04, 4.54388296e+04]), decimal = 3)
+        np.testing.assert_almost_equal(x, np.array([7.94275201e+00, 3.23305161e+01, 1.29817102e+03, 1.63662479e+03,
+       1.69880785e+03, 2.58954372e+03, 2.72008993e+03, 2.83888406e+03,
+       3.88606112e+03, 4.74542953e+03, 5.04243256e+03, 5.71170529e+03,
+       8.09424356e+03, 8.89014392e+03, 9.31156523e+03, 1.03061387e+04,
+       1.31094584e+04, 1.70605442e+04, 1.83368644e+04, 1.84115205e+04,
+       1.92882217e+04, 2.15500526e+04, 2.15672205e+04, 2.33767047e+04,
+       2.34402726e+04, 2.56923320e+04, 2.94053560e+04, 3.06803910e+04,
+       3.08641646e+04, 3.13994173e+04, 3.20735589e+04, 3.45226403e+04,
+       4.08243883e+04, 4.47745432e+04]), decimal = 3)
 if __name__ == '__main__':
     unittest.main()
