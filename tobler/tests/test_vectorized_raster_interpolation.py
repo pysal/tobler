@@ -60,17 +60,20 @@ class VectorizedRasterInterpolation_Tester(unittest.TestCase):
         res_union = gpd.overlay(df_region, envgdf_final, how='intersection')
         res_union.crs = df.crs
         
-        interpolated_pa = calculate_interpolated_population_from_correspondence_table(res_union, nlcd_raster, correspondence_table)
+        interpolated = calculate_interpolated_population_from_correspondence_table(res_union, nlcd_raster, correspondence_table)
         
-        np.testing.assert_almost_equal(np.array(interpolated_pa['interpolated_population']), np.array([5.12532031e+03, 2.29409707e+01, 1.83378287e+03, 6.48706970e+01,
-                                       1.90379325e+03, 3.19341907e+04, 5.75600935e+03, 2.15440941e+04,
-                                       1.89447344e+04, 2.97869188e+04, 4.49694860e+04, 1.91294133e+04,
-                                       1.29541218e+04, 3.37013110e+04, 4.10443313e+04, 2.49861096e+04,
-                                       2.99332151e+04, 2.29075806e+04, 1.56270494e+04, 1.93945973e+04,
-                                       8.63080789e+03, 2.30862412e+04, 3.18697373e+04, 2.06785383e+04,
-                                       3.12133550e+04, 9.26963356e+03, 1.87042079e+03, 3.71181098e+03,
-                                       1.04378577e+04, 1.00591807e+04, 2.25049982e+03, 3.41236645e+03,
-                                       3.21650854e+03, 1.21688696e+03]), decimal = 3)
+        x = np.array(interpolated['interpolated_population'])
+        x.sort()
+        
+        np.testing.assert_almost_equal(x, np.array([2.29409707e+01, 6.48706970e+01, 1.21688696e+03, 1.83378287e+03,
+       1.87042079e+03, 1.90379325e+03, 2.25049982e+03, 3.21650854e+03,
+       3.41236645e+03, 3.71181098e+03, 5.12532031e+03, 5.75600935e+03,
+       8.63080789e+03, 9.26963356e+03, 1.00591807e+04, 1.04378577e+04,
+       1.29541218e+04, 1.56270494e+04, 1.89447344e+04, 1.91294133e+04,
+       1.93945973e+04, 2.06785383e+04, 2.15440941e+04, 2.29075806e+04,
+       2.30862412e+04, 2.49861096e+04, 2.97869188e+04, 2.99332151e+04,
+       3.12133550e+04, 3.18697373e+04, 3.19341907e+04, 3.37013110e+04,
+       4.10443313e+04, 4.49694860e+04]), decimal = 3)
 
 if __name__ == '__main__':
     unittest.main()
