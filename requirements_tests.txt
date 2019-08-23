@@ -13,3 +13,5 @@ pytest
 pytest-mpl
 pytest-cov
 twine
+xgboost
+shap
