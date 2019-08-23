@@ -1,3 +1,11 @@
+numpy
+pandas
+geopandas
+rasterio
+scipy
+statsmodels
+rasterstats
+libpysal
 coverage
 coveralls
 matplotlib
