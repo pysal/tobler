@@ -1,79 +1,67 @@
-# coding: utf-8
+"""TOBLER: Areal Interpolation
 
-from setuptools import setup, find_packages
+Tobler is a Python library for areal interpolation.
+"""
 
-from distutils.command.build_py import build_py
 
-import os
 
-with open('README.md') as file:
+DOCLINES = __doc__.split("\n")
+
+with open('README.md', 'r', encoding='utf8') as file:
     long_description = file.read()
 
-MAJOR = 0
-MINOR = 1
-MICRO = 0
-ISRELEASED = False
-VERSION = '%d.%d.%d' % (MAJOR, MINOR, MICRO)
+
+from setuptools import setup, find_packages
+from distutils.command.build_py import build_py
+import os
+
+# Get __version__ from tobler/__init__.py without importing the package
+# __version__ has to be defined in the first line
+with open('tobler/__init__.py', 'r') as f:
+    exec(f.readline())
 
 # BEFORE importing distutils, remove MANIFEST. distutils doesn't properly
 # update it when the contents of directories change.
 if os.path.exists('MANIFEST'):
     os.remove('MANIFEST')
 
-
 def _get_requirements_from_files(groups_files):
     groups_reqlist = {}
 
-    for k, v in groups_files.items():
+    for k,v in groups_files.items():
         with open(v, 'r') as f:
             pkg_list = f.read().splitlines()
         groups_reqlist[k] = pkg_list
 
     return groups_reqlist
 
-
 def setup_package():
-    # get all file endings and copy whole file names without a file suffix
-    # assumes nested directories are only down one level
     _groups_files = {
         'base': 'requirements.txt',
+        'tests': 'requirements_tests.txt',
+        'docs': 'requirements_docs.txt'
     }
 
     reqs = _get_requirements_from_files(_groups_files)
     install_reqs = reqs.pop('base')
+    extras_reqs = reqs
 
-    # get all file endings and copy whole file names without a file suffix
-    # assumes nested directories are only down one level
-    #example_data_files = set()
-    #for i in os.listdir("libpysal/examples"):
-    #    if i.endswith(('py', 'pyc')):
-    #        continue
-    #    if not os.path.isdir("libpysal/examples/" + i):
-    #        if "." in i:
-    #            glob_name = "examples/*." + i.split(".")[-1]
-    #        else:
-    #            glob_name = "examples/" + i
-    #    else:
-    #        glob_name = "examples/" + i + "/*"
-
-    #    example_data_files.add(glob_name)
-
-    setup(
-        name='tobler',
-        version=VERSION,
-        description="A Library for Areal Interpolation",
-        long_description=long_description,
-        maintainer="Tobler Developers",
-        maintainer_email='pysal-dev@googlegroups.com',
-        url='https://github.com/pysal/tobler',
-        license='BSD',
-        py_modules=['tobler'],
-        packages=find_packages(),
-        setup_requires=["pytest-runner"],
-        tests_require=["pytest"],
-        keywords=['spatial statistics', 'areal interpolation', 'demography'],
-        classifiers=[
-            'Development Status :: 1 - Alpha',
+    setup(name='tobler',  # name of package
+          version=__version__,
+          description=DOCLINES[0],
+          #long_description="\n".join(DOCLINES[2:]),
+          long_description = long_description,
+          long_description_content_type = 'text/markdown',
+          url='https://github.com/pysal/tobler',
+          maintainer='Serge Rey',
+          maintainer_email='sjsrey@gmail.com',
+          py_modules=['tobler'],
+          python_requires='>3.5',
+          test_suite='nose.collector',
+          tests_require=['nose'],
+          keywords='spatial statistics,  interpolation',
+          classifiers=[
+            'Development Status :: 3 - Alpha',
             'Intended Audience :: Science/Research',
             'Intended Audience :: Developers',
             'Intended Audience :: Education',
@@ -81,13 +69,15 @@ def setup_package():
             'Topic :: Scientific/Engineering :: GIS',
             'License :: OSI Approved :: BSD License',
             'Programming Language :: Python',
-            'Programming Language :: Python :: 3.5',
-            'Programming Language :: Python :: 3.6'
-        ],
-        install_requires=install_reqs,
-        cmdclass={'build_py': build_py},
-        python_requires='>3.4')
-
+            'Programming Language :: Python :: 3.6',
+            'Programming Language :: Python :: 3.7'
+            ],
+          license='3-Clause BSD',
+          packages=find_packages(),
+          install_requires=install_reqs,
+          extras_require=extras_reqs,
+          zip_safe=False,
+          cmdclass={'build.py': build_py})
 
 if __name__ == '__main__':
     setup_package()
