@@ -1,6 +1,6 @@
+from urllib.parse import unquote, urlparse
+
 import quilt3
-from urllib.parse import unquote
-from urllib.parse import urlparse
 
 
 def store_rasters():
@@ -41,7 +41,7 @@ def fetch_quilt_path(path):
             full_path = unquote(nlcd[path + ".tif"].get())
             full_path = urlparse(full_path).path
         except ImportError:
-            raise (
+            raise IOError(
                 "Unable to locate local raster data. If you would like to use "
                 "raster data from the National Land Cover Database, you can "
                 "store it locally using the `data.store_rasters()` function"
