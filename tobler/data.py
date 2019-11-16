@@ -1,6 +1,6 @@
+from urllib.parse import unquote, urlparse
+
 import quilt3
-from urllib.parse import unquote
-from urllib.parse import urlparse
 
 
 def store_rasters():
