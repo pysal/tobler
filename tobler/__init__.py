@@ -4,7 +4,8 @@ __version__ = "0.1.0"
 =================================================
 
 """
-from .interpolate import area_weighted
-from .harmonize import *
+from . import area_weighted 
+
+
 from .vectorized_raster_interpolation import *
 from .scanlines_raster_interpolation import *
