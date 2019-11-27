@@ -3,6 +3,7 @@ channels:
   - defaults
   - conda-forge
 dependencies:
+  - python-dateutil<=2.8.0
   - jupyterlab
   - geopandas
   - rasterio
