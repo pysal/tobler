@@ -7,4 +7,3 @@ __version__ = "0.1.0"
 from . import area_weighted 
 from . import data
 from .vectorized_raster_interpolation import *
-from .scanlines_raster_interpolation import *
