@@ -1,7 +1,11 @@
 import unittest
 import numpy as np
 import geopandas as gpd
-from tobler import *
+from tobler.area_weighted import (area_tables,
+                                  area_tables_binning,
+                                  area_interpolate,
+                                  area_interpolate_binning)
+
 from shapely.geometry import Polygon
 
 

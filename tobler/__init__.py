@@ -4,6 +4,6 @@ __version__ = "0.1.0"
 =================================================
 
 """
-from .area_weighted import *
+from . import area_weighted
+from . import data
 from .vectorized_raster_interpolation import *
-from .data import *
