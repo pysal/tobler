@@ -1,7 +1,7 @@
 name: tobler
 channels:
-  - defaults
   - conda-forge
+  - defaults
 dependencies:
   - python-dateutil<=2.8.0
   - jupyterlab
@@ -9,4 +9,5 @@ dependencies:
   - rasterio
   - statsmodels
   - scikit-learn
+  - quilt3
   - pip
