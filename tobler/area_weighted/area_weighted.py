@@ -5,7 +5,7 @@ Area Weighted Interpolation
 
 import numpy as np
 import geopandas as gpd
-from tobler.vectorized_raster_interpolation import fast_append_profile_in_gdf
+from .vectorized_raster_interpolation import fast_append_profile_in_gdf
 import warnings
 from scipy.sparse import dok_matrix, diags
 

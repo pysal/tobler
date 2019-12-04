@@ -22,7 +22,7 @@ from tobler.util.util import _check_presence_of_crs
 
 import statsmodels.formula.api as smf
 from statsmodels.genmod.families import Poisson, Gaussian
-from .data import fetch_quilt_path
+from ..data import fetch_quilt_path
 
 __all__ = [
     "getFeatures",
