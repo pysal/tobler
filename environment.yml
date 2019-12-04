@@ -5,9 +5,14 @@ channels:
 dependencies:
   - python-dateutil<=2.8.0
   - jupyterlab
+  - numpy
   - geopandas
   - rasterio
   - statsmodels
   - scikit-learn
+  - scipy
+  - libpysal
+  - xgboost
+  - shap
   - quilt3
   - pip
