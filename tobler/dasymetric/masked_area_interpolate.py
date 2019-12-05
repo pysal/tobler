@@ -14,7 +14,7 @@ def masked_area_interpolate(
     allocate_total=True,
     tables=None,
 ):
-    """Short summary.
+    """Interpolate data between two polygonal datasets using an auxiliary raster to mask out uninhabited land.
 
     Parameters
     ----------
