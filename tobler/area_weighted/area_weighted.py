@@ -5,7 +5,7 @@ Area Weighted Interpolation
 
 import numpy as np
 import geopandas as gpd
-from tobler.vectorized_raster_interpolation import fast_append_profile_in_gdf
+from .vectorized_raster_interpolation import fast_append_profile_in_gdf
 import warnings
 from scipy.sparse import dok_matrix, diags
 
@@ -13,6 +13,27 @@ from tobler.util.util import _check_crs, _nan_check, _check_presence_of_crs
 
 
 def area_tables_binning(source_df, target_df):
+    """Construct area allocation and source-target correspondence tables using a spatial indexing approach
+
+    Parameters
+    ----------
+    source_df : geopandas.GeoDataFrame
+        GeoDataFrame containing input data and polygons
+    target_df : geopandas.GeoDataFramee
+        GeoDataFrame defining the output geometries
+
+    Returns
+    -------
+    type
+        Description of returned object.
+
+    Examples
+    -------
+    Examples should be written in doctest format, and
+    should illustrate how to use the function/class.
+    >>>
+
+    """
 
     if _check_crs(source_df, target_df):
         pass
@@ -109,7 +130,8 @@ def area_tables_binning(source_df, target_df):
 
 def area_tables(source_df, target_df):
     """
-    Construct area allocation and source-target correspondence tables
+    Construct area allocation and source-target correspondence tables.
+
     Parameters
     ----------
 
@@ -177,6 +199,7 @@ def area_interpolate_binning(
 ):
     """
     Area interpolation for extensive and intensive variables.
+
     Parameters
     ----------
     source_df: geopandas GeoDataFrame with geometry column of polygon type
@@ -382,6 +405,7 @@ def area_tables_raster(
 ):
     """
     Construct area allocation and source-target correspondence tables according to a raster 'populated' areas
+
     Parameters
     ----------
 

@@ -22,7 +22,7 @@ from tobler.util.util import _check_presence_of_crs
 
 import statsmodels.formula.api as smf
 from statsmodels.genmod.families import Poisson, Gaussian
-from .data import fetch_quilt_path
+from ..data import fetch_quilt_path
 
 __all__ = [
     "getFeatures",
@@ -199,16 +199,16 @@ def return_weights_from_regression(
 ):
 
     """Function that returns the weights of each land type according to NLCD types/codes
-    
+
     Parameters
     ----------
-    
+
     geodataframe           : a geopandas geoDataFrame used to build regression
-    
+
     raster_path            : the path to the associated raster image.
-    
+
     pop_string             : the name of the variable on geodataframe that the regression shall be conducted
-    
+
     codes                  : an integer list of codes values that should be considered as 'populated' from the National Land Cover Database (NLCD).
                              The description of each code can be found here: https://www.mrlc.gov/sites/default/files/metadata/landcover.html
                              The default is 21 (Developed, Open Space), 22 (Developed, Low Intensity), 23 (Developed, Medium Intensity) and 24 (Developed, High Intensity).
