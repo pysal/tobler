@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>API reference &#8212; tobler v0.1.0 Manual</title>
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/pysal-styles.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="tobler.area_weighted.area_interpolate" href="generated/tobler.area_weighted.area_interpolate.html" />
+    <link rel="prev" title="Installation" href="installation.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          tobler</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="installation.html">Installation</a></li>
+                <li><a href="#">API</a></li>
+                <li><a href="references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#installing-released-version">Installing released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#installing-development-version">Installing development version</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#area-weighted">Area Weighted</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dasymetric">Dasymetric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data">Data</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">API reference</a><ul>
+<li><a class="reference internal" href="#area-weighted">Area Weighted</a></li>
+<li><a class="reference internal" href="#dasymetric">Dasymetric</a></li>
+<li><a class="reference internal" href="#data">Data</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="api-reference">
+<span id="api-ref"></span><h1>API reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="area-weighted">
+<span id="data-api"></span><h2>Area Weighted<a class="headerlink" href="#area-weighted" title="Permalink to this headline">¶</a></h2>
+<p>Area weighted approaches use the area of overlap between the source and target geometries to weight the
+variables being assigned to the target</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/tobler.area_weighted.area_interpolate.html#tobler.area_weighted.area_interpolate" title="tobler.area_weighted.area_interpolate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">area_interpolate</span></code></a>(source_df, target_df[, …])</p></td>
+<td><p>Area interpolation for extensive and intensive variables.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/tobler.area_weighted.area_tables.html#tobler.area_weighted.area_tables" title="tobler.area_weighted.area_tables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">area_tables</span></code></a>(source_df, target_df)</p></td>
+<td><p>Construct area allocation and source-target correspondence tables.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/tobler.area_weighted.area_tables_binning.html#tobler.area_weighted.area_tables_binning" title="tobler.area_weighted.area_tables_binning"><code class="xref py py-obj docutils literal notranslate"><span class="pre">area_tables_binning</span></code></a>(source_df, target_df)</p></td>
+<td><p>Construct area allocation and source-target correspondence tables using a spatial indexing approach</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/tobler.area_weighted.area_tables_raster.html#tobler.area_weighted.area_tables_raster" title="tobler.area_weighted.area_tables_raster"><code class="xref py py-obj docutils literal notranslate"><span class="pre">area_tables_raster</span></code></a>(source_df, target_df, …)</p></td>
+<td><p>Construct area allocation and source-target correspondence tables according to a raster ‘populated’ areas</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="dasymetric">
+<h2>Dasymetric<a class="headerlink" href="#dasymetric" title="Permalink to this headline">¶</a></h2>
+<p>Dasymetric approaches use auxiliary data in addition to use the area of overlap between the source and target geometries to weight the
+variables being assigned to the target</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/tobler.dasymetric.masked_area_interpolate.html#tobler.dasymetric.masked_area_interpolate" title="tobler.dasymetric.masked_area_interpolate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_area_interpolate</span></code></a>(source_df, target_df)</p></td>
+<td><p>Interpolate data between two polygonal datasets using an auxiliary raster to mask out uninhabited land.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="data">
+<h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/tobler.data.store_rasters.html#tobler.data.store_rasters" title="tobler.data.store_rasters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">store_rasters</span></code></a>()</p></td>
+<td><p>Save raster data to the local quilt package storage.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="_sources/api.rst.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

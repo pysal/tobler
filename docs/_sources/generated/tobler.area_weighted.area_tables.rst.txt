@@ -1,0 +1,6 @@
+tobler.area\_weighted.area\_tables
+==================================
+
+.. currentmodule:: tobler.area_weighted
+
+.. autofunction:: area_tables

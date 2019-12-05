@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>tobler.area_weighted.area_interpolate &#8212; tobler v0.1.0 Manual</title>
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="tobler.area_weighted.area_tables" href="tobler.area_weighted.area_tables.html" />
+    <link rel="prev" title="API reference" href="../api.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          tobler</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../installation.html">Installation</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-released-version">Installing released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-development-version">Installing development version</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#area-weighted">Area Weighted</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#dasymetric">Dasymetric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#data">Data</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">tobler.area_weighted.area_interpolate</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="tobler-area-weighted-area-interpolate">
+<h1>tobler.area_weighted.area_interpolate<a class="headerlink" href="#tobler-area-weighted-area-interpolate" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="tobler.area_weighted.area_interpolate">
+<code class="sig-prename descclassname">tobler.area_weighted.</code><code class="sig-name descname">area_interpolate</code><span class="sig-paren">(</span><em class="sig-param">source_df</em>, <em class="sig-param">target_df</em>, <em class="sig-param">extensive_variables=[]</em>, <em class="sig-param">intensive_variables=[]</em>, <em class="sig-param">table=None</em>, <em class="sig-param">allocate_total=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tobler/area_weighted/area_weighted.html#area_interpolate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tobler.area_weighted.area_interpolate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Area interpolation for extensive and intensive variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>source_df: geopandas GeoDataFrame with geometry column of polygon type</strong></dt><dd></dd>
+<dt><strong>target_df: geopandas GeoDataFrame with geometry column of polygon type</strong></dt><dd></dd>
+<dt><strong>extensive_variables: list of columns in dataframes for extensive variables</strong></dt><dd></dd>
+<dt><strong>intensive_variables: list of columns in dataframes for intensive variables</strong></dt><dd></dd>
+<dt><strong>table: scipy.sparse dok_matrix</strong></dt><dd></dd>
+<dt><strong>allocate_total: boolean</strong></dt><dd><p>True if total value of source area should be allocated.
+False if denominator is area of i. Note that the two cases
+would be identical when the area of the source polygon is
+exhausted by intersections. See Notes for more details.</p>
+</dd>
+<dt><strong>Returns</strong></dt><dd></dd>
+<dt><strong>——-</strong></dt><dd></dd>
+<dt><strong>estimates: tuple (2)</strong></dt><dd><p>(extensive variable array, intensive variables array)
+Each is of shape n,v where n is number of target units and v is the number of variables for each variable type.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The assumption is both dataframes have the same coordinate reference system.
+For an extensive variable, the estimate at target polygon j (default case) is:
+v_j = sum_i v_i w_{i,j}
+w_{i,j} = a_{i,j} / sum_k a_{i,k}
+If the area of the source polygon is not exhausted by intersections with
+target polygons and there is reason to not allocate the complete value of
+an extensive attribute, then setting allocate_total=False will use the
+following weights:
+v_j = sum_i v_i w_{i,j}
+w_{i,j} = a_{i,j} / a_i
+where a_i is the total area of source polygon i.
+For an intensive variable, the estimate at target polygon j is:
+v_j = sum_i v_i w_{i,j}
+w_{i,j} = a_{i,j} / sum_k a_{k,j}</p>
+</dd></dl>
+
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="../_sources/generated/tobler.area_weighted.area_interpolate.rst.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

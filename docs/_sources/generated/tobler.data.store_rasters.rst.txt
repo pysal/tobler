@@ -1,0 +1,6 @@
+tobler.data.store\_rasters
+==========================
+
+.. currentmodule:: tobler.data
+
+.. autofunction:: store_rasters
