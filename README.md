@@ -1,4 +1,4 @@
-# tobler: a library for areal interpolation in Python
+#  <img src="https://vignette.wikia.nocookie.net/waldo/images/9/9d/Character.Waldo.jpg/revision/latest?cb=20071001045624" height="200px" style="float:left" />  tobler: a library for areal interpolation in Python
 
 
 [![Build Status](https://travis-ci.com/pysal/tobler.svg?branch=master)](https://travis-ci.org/pysal/tobler)
@@ -8,7 +8,6 @@
 ![Conda (channel only)](https://img.shields.io/conda/vn/conda-forge/tobler)
 ![GitHub commits since latest release (branch)](https://img.shields.io/github/commits-since/pysal/tobler/latest)
 [![DOI](https://zenodo.org/badge/202220824.svg)](https://zenodo.org/badge/latestdoi/202220824)
-<h1> <img src="https://vignette.wikia.nocookie.net/waldo/images/9/9d/Character.Waldo.jpg/revision/latest?cb=20071001045624" height="200px" style="float:left" /> Tobler </h1>
 
 Tobler is a python package for areal interpolation, dasymetric mapping, and change of support.
 <p></p>
