@@ -8,22 +8,11 @@
 ![Conda (channel only)](https://img.shields.io/conda/vn/conda-forge/tobler)
 ![GitHub commits since latest release (branch)](https://img.shields.io/github/commits-since/pysal/tobler/latest)
 [![DOI](https://zenodo.org/badge/202220824.svg)](https://zenodo.org/badge/latestdoi/202220824)
-
-<h1> <img src="https://vignette.wikia.nocookie.net/waldo/images/9/9d/Character.Waldo.jpg/revision/latest?cb=20071001045624" style="float:left;height:200px" > Tobler </h1>
+<h1> <img src="https://vignette.wikia.nocookie.net/waldo/images/9/9d/Character.Waldo.jpg/revision/latest?cb=20071001045624" style="float:left;width:100px" > Tobler </h1>
 
 Tobler is a python package for areal interpolation, dasymetric mapping, and change of support.
+<p></p>
 
-<br>
-<br>
-**Easily convert geospatial data from one polygonal representation to another:**
-
-![](docs/figs/toy_census_tracts_example.png)
-
-**Improve conversion accuracy by incorporating raster image data from satellites:**
-
-![](docs/figs/raster_lattice_example.png)
-
-## Functionalities
 
 `tobler` provides:
 
@@ -32,6 +21,16 @@ Tobler is a python package for areal interpolation, dasymetric mapping, and chan
     + areal interpolation assuming data should only be allocated to specific land types
     + model-based interpolation using [regression](https://github.com/spatialucr/tobler/blob/master/examples/vectorized_raster_example.ipynb) approaches that incorporates auxiliary data
 * Much more to come!
+
+
+**Easily convert geospatial data from one polygonal representation to another:**
+
+![](docs/figs/toy_census_tracts_example.png)
+
+**Improve conversion accuracy by incorporating raster image data from satellites:**
+
+![](docs/figs/raster_lattice_example.png)
+
 
 ## Installation
 
