@@ -9,9 +9,12 @@
 ![GitHub commits since latest release (branch)](https://img.shields.io/github/commits-since/pysal/tobler/latest)
 [![DOI](https://zenodo.org/badge/202220824.svg)](https://zenodo.org/badge/latestdoi/202220824)
 
+<h1> <img src="https://vignette.wikia.nocookie.net/waldo/images/9/9d/Character.Waldo.jpg/revision/latest?cb=20071001045624" style="float:left;height:200px" > Tobler </h1>
 
 Tobler is a python package for areal interpolation, dasymetric mapping, and change of support.
 
+<br>
+<br>
 **Easily convert geospatial data from one polygonal representation to another:**
 
 ![](docs/figs/toy_census_tracts_example.png)
