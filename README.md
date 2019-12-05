@@ -1,4 +1,5 @@
-#  <img src="https://vignette.wikia.nocookie.net/waldo/images/9/9d/Character.Waldo.jpg/revision/latest?cb=20071001045624" height="200px" style="float:left" />  tobler: a library for areal interpolation in Python
+<img src="https://vignette.wikia.nocookie.net/waldo/images/9/9d/Character.Waldo.jpg/revision/latest?cb=20071001045624" height="160px" style="float:left" />  
+<h1 style="position:relative;bottom:40px">tobler: a library for areal interpolation in Python</h1>
 
 
 [![Build Status](https://travis-ci.com/pysal/tobler.svg?branch=master)](https://travis-ci.org/pysal/tobler)
