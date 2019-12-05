@@ -12,10 +12,6 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/language_data.js"></script>
-    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
-    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
-    <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="API reference" href="api.html" />
@@ -24,6 +20,10 @@
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
 
   </head><body>
 
@@ -116,7 +116,7 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-md-12 content">
+    <div class="body col-md-12 content" role="main">
       
   <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
@@ -124,12 +124,12 @@
 operating in a python 3 environment.</p>
 <div class="section" id="installing-released-version">
 <h2>Installing released version<a class="headerlink" href="#installing-released-version" title="Permalink to this headline">¶</a></h2>
-<p>tobler has not yet been released on the <a class="reference external" href="https://pypi.org/pysal/tobler/">Python Package Index</a>.</p>
+<p>You can install tobler with <code class="code python docutils literal notranslate"><span class="name"><span class="pre">pip</span></span> <span class="name"><span class="pre">install</span></span> <span class="name"><span class="pre">tobler</span></span></code></p>
 </div>
 <div class="section" id="installing-development-version">
 <h2>Installing development version<a class="headerlink" href="#installing-development-version" title="Permalink to this headline">¶</a></h2>
 <p>The recommended method for installing tobler is with <a class="reference external" href="https://www.anaconda.com/download/">anaconda</a>. To get started with the development version, clone this repository or download it manually then <cite>cd</cite> into the directory and run the following commands:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conda env create -f environment.yml
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span>$ conda env create -f environment.yml
 $ source activate tobler
 $ python setup.py develop
 </pre></div>
