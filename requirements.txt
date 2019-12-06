@@ -6,3 +6,6 @@ scipy
 statsmodels
 rasterstats
 quilt3
+shap
+xgboost
+libpysal

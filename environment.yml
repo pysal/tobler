@@ -8,6 +8,7 @@ dependencies:
   - numpy
   - geopandas
   - rasterio
+  - rasterstats
   - statsmodels
   - scikit-learn
   - scipy

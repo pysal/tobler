@@ -1,5 +1,11 @@
 .. Installation
 
+.. highlight:: rst
+
+.. role:: python(code)
+    :language: python
+
+
 Installation
 ===============
 
@@ -9,8 +15,7 @@ operating in a python 3 environment.
 Installing released version
 ---------------------------
 
-tobler has not yet been released on the `Python Package Index`_. 
-
+You can install tobler with :python:`pip install tobler`
 
 Installing development version
 ------------------------------
