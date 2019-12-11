@@ -327,13 +327,13 @@ def return_weights_from_xgboost(
                              
     ReLU                   : bool. Default is True.
                              Wheter the Rectified Linear Units (ReLU) transformation will be used to avoid negative weights for the land types.
-    
+
     Notes
     -----
     1) The formula uses a substring called 'Type_' before the code number due to the 'append_profile_in_gdf' function.
     2) The pixel value, usually, ranges from 0 to 255. That is why the default of 'n_pixels_option_values' is 256.
     3) The returning weights represent the average of the Shapley's values from each feature.
-    
+
     """
     raster_path = fetch_quilt_path(raster_path)
 

@@ -24,17 +24,9 @@ def area_tables_binning(source_df, target_df):
 
     Returns
     -------
-    type
-        Description of returned object.
-
-    Examples
-    -------
-    Examples should be written in doctest format, and
-    should illustrate how to use the function/class.
-    >>>
+    tables : scipy.sparse.dok_matrix
 
     """
-
     if _check_crs(source_df, target_df):
         pass
     else:
@@ -134,14 +126,12 @@ def area_tables(source_df, target_df):
 
     Parameters
     ----------
-
-    source_df: geopandas GeoDataFrame with geometry column of polygon type
-
-    target_df: geopandas GeoDataFrame with geometry column of polygon type
+    source_df : geopandas.GeoDataFrame
+    target_df : geopandas.GeoDataFrame
 
     Returns
     -------
-    tables: tuple (optional)
+    tables : tuple (optional)
             two 2-D numpy arrays
             SU: area of intersection of source geometry i with union geometry j
             UT: binary mapping of union geometry j to target geometry t
@@ -156,10 +146,7 @@ def area_tables(source_df, target_df):
 
     SU Maps source geometry to union geometry, UT maps union geometry to target geometry
 
-
-
     """
-
     if _check_crs(source_df, target_df):
         pass
     else:
@@ -202,19 +189,22 @@ def area_interpolate_binning(
 
     Parameters
     ----------
-    source_df: geopandas GeoDataFrame with geometry column of polygon type
-    target_df: geopandas GeoDataFrame with geometry column of polygon type
-    extensive_variables: list of columns in dataframes for extensive variables
-    intensive_variables: list of columns in dataframes for intensive variables
-    table: scipy.sparse dok_matrix
-    allocate_total: boolean
-                    True if total value of source area should be allocated.
-                    False if denominator is area of i. Note that the two cases
-                    would be identical when the area of the source polygon is
-                    exhausted by intersections. See Notes for more details.
+    source_df : geopandas.GeoDataFrame
+    target_df : geopandas.GeoDataFrame
+    extensive_variables : list
+        columns in dataframes for extensive variables
+    intensive_variables : list
+        columns in dataframes for intensive variables
+    table : scipy.sparse.dok_matrix
+    allocate_total : boolean
+        True if total value of source area should be allocated.
+        False if denominator is area of i. Note that the two cases
+        would be identical when the area of the source polygon is
+        exhausted by intersections. See Notes for more details.
+
     Returns
     -------
-    estimates: tuple (2)
+    estimates : tuple (2)
               (extensive variable array, intensive variables array)
               Each is of shape n,v where n is number of target units and v is the number of variables for each variable type.
 
@@ -222,18 +212,29 @@ def area_interpolate_binning(
     -----
     The assumption is both dataframes have the same coordinate reference system.
     For an extensive variable, the estimate at target polygon j (default case) is:
-    v_j = \sum_i v_i w_{i,j}
-    w_{i,j} = a_{i,j} / \sum_k a_{i,k}
+
+    .. math::
+     v_j = \sum_i v_i w_{i,j}
+
+     w_{i,j} = a_{i,j} / \sum_k a_{i,k}
+
     If the area of the source polygon is not exhausted by intersections with
     target polygons and there is reason to not allocate the complete value of
     an extensive attribute, then setting allocate_total=False will use the
     following weights:
-    v_j = \sum_i v_i w_{i,j}
-    w_{i,j} = a_{i,j} / a_i
+
+    .. math::
+     v_j = \sum_i v_i w_{i,j}
+
+     w_{i,j} = a_{i,j} / a_i
+
     where a_i is the total area of source polygon i.
     For an intensive variable, the estimate at target polygon j is:
-    v_j = \sum_i v_i w_{i,j}
-    w_{i,j} = a_{i,j} / \sum_k a_{k,j}
+
+    .. math::
+     v_j = \sum_i v_i w_{i,j}
+
+     w_{i,j} = a_{i,j} / \sum_k a_{k,j}
     """
 
     if _check_crs(source_df, target_df):
@@ -298,32 +299,28 @@ def area_interpolate(
 
     Parameters
     ----------
-
-    source_df: geopandas GeoDataFrame with geometry column of polygon type
-
-    target_df: geopandas GeoDataFrame with geometry column of polygon type
-
-    extensive_variables: list of columns in dataframes for extensive variables
-
-    intensive_variables: list of columns in dataframes for intensive variables
-
-
-    tables: tuple (optional)
-            two 2-D numpy arrays
-            SU: area of intersection of source geometry i with union geometry j
-            UT: binary mapping of union geometry j to target geometry t
-
-
-    allocate_total: boolean
-                    True if total value of source area should be allocated.
-                    False if denominator is area of i. Note that the two cases
-                    would be identical when the area of the source polygon is
-                    exhausted by intersections. See Notes for more details.
+    source_df : geopandas.GeoDataFrame (required)
+        geodataframe with polygon geometries
+    target_df : geopandas.GeoDataFrame (required)
+        geodataframe with polygon geometries
+    extensive_variables : list, (optional)
+        columns in dataframes for extensive variables
+    intensive_variables : list, (optional)
+        columns in dataframes for intensive variables
+    tables : tuple (optional)
+        two 2-D numpy arrays
+        SU: area of intersection of source geometry i with union geometry j
+        UT: binary mapping of union geometry j to target geometry t
+    allocate_total : boolean
+        True if total value of source area should be allocated.
+        False if denominator is area of i. Note that the two cases
+        would be identical when the area of the source polygon is
+        exhausted by intersections. See Notes for more details.
 
     Returns
     -------
-    estimates: tuple (2)
-              (extensive variable array, intensive variables array)
+    estimates : tuple (2)
+        (extensive variable array, intensive variables array)
 
     Notes
     -----
@@ -356,9 +353,7 @@ def area_interpolate(
 
     w_{i,j} = a_{i,j} / \sum_k a_{k,j}
 
-
     """
-
     if _check_crs(source_df, target_df):
         pass
     else:
@@ -408,29 +403,27 @@ def area_tables_raster(
 
     Parameters
     ----------
-
-    source_df       : geopandas GeoDataFrame with geometry column of polygon type
-
-    target_df       : geopandas GeoDataFrame with geometry column of polygon type
-
-    raster_path     : the path to the associated raster image.
-
-    codes           : an integer list of codes values that should be considered as 'populated'.
-                      Since this draw inspiration using the National Land Cover Database (NLCD), the default is 21 (Developed, Open Space), 22 (Developed, Low Intensity), 23 (Developed, Medium Intensity) and 24 (Developed, High Intensity).
-                      The description of each code can be found here: https://www.mrlc.gov/sites/default/files/metadata/landcover.html
-                      Only taken into consideration for harmonization raster based.
-
-    force_crs_match : bool. Default is True.
-                      Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file.
-                      It is recommended to let this argument as True.
-
+    source_df : geopandas.GeoDataFrame 
+        geeodataframe with geometry column of polygon type
+    target_df : geopandas.GeoDataFrame 
+        geodataframe with geometry column of polygon type
+    raster_path : str
+        the path to the associated raster image.
+    codes : list
+        list of integer code values that should be considered as 'populated'.
+        Since this draw inspiration using the National Land Cover Database (NLCD), the default is 21 (Developed, Open Space), 22 (Developed, Low Intensity), 23 (Developed, Medium Intensity) and 24 (Developed, High Intensity).
+        The description of each code can be found here: https://www.mrlc.gov/sites/default/files/metadata/landcover.html
+        Only taken into consideration for harmonization raster based.
+    force_crs_match : bool (default is True)
+        Whether the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file.
+        It is recommended to let this argument as True.
 
     Returns
     -------
     tables: tuple (optional)
-            two 2-D numpy arrays
-            SU: area of intersection of source geometry i with union geometry j
-            UT: binary mapping of union geometry j to target geometry t
+        two 2-D numpy arrays
+        SU: area of intersection of source geometry i with union geometry j
+        UT: binary mapping of union geometry j to target geometry t
 
     Notes
     -----

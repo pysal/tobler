@@ -12,6 +12,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
 <meta charset='utf-8'>
@@ -146,12 +147,12 @@
 <span class="sd">        whether to force the input and target data to share the same CRS (the default is True).</span>
 <span class="sd">    extensive_variables : list</span>
 <span class="sd">        Columns of the input dataframe containing extensive variables to interpolate</span>
-<span class="sd">    intensive_variables : type</span>
+<span class="sd">    intensive_variables : list</span>
 <span class="sd">        Columns of the input dataframe containing intensive variables to interpolate</span>
 <span class="sd">    allocate_total : bool</span>
-<span class="sd">        whether  (the default is True).</span>
-<span class="sd">    tables : type</span>
-<span class="sd">        Description of parameter `tables` (the default is None).</span>
+<span class="sd">        whether to allocate the total from the source geometries (the default is True).</span>
+<span class="sd">    tables : tuple of two numpy.array (optional)</span>
+<span class="sd">         As generated from `tobler.area_weighted.area_tables_raster` (the default is None).</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>

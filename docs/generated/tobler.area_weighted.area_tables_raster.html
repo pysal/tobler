@@ -12,6 +12,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="tobler.dasymetric.masked_area_interpolate" href="tobler.dasymetric.masked_area_interpolate.html" />
@@ -120,24 +121,28 @@
 <dt id="tobler.area_weighted.area_tables_raster">
 <code class="sig-prename descclassname">tobler.area_weighted.</code><code class="sig-name descname">area_tables_raster</code><span class="sig-paren">(</span><em class="sig-param">source_df, target_df, raster_path, codes=[21, 22, 23, 24], force_crs_match=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tobler/area_weighted/area_weighted.html#area_tables_raster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tobler.area_weighted.area_tables_raster" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct area allocation and source-target correspondence tables according to a raster ‘populated’ areas</p>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>source_df</strong><span class="classifier">geopandas GeoDataFrame with geometry column of polygon type</span></dt><dd></dd>
-<dt><strong>target_df</strong><span class="classifier">geopandas GeoDataFrame with geometry column of polygon type</span></dt><dd></dd>
-<dt><strong>raster_path</strong><span class="classifier">the path to the associated raster image.</span></dt><dd></dd>
-<dt><strong>codes</strong><span class="classifier">an integer list of codes values that should be considered as ‘populated’.</span></dt><dd><p>Since this draw inspiration using the National Land Cover Database (NLCD), the default is 21 (Developed, Open Space), 22 (Developed, Low Intensity), 23 (Developed, Medium Intensity) and 24 (Developed, High Intensity).
+<dd class="field-odd"><dl>
+<dt><strong>source_df</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.6.1+27.g1a0376c)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></span></dt><dd><p>geeodataframe with geometry column of polygon type</p>
+</dd>
+<dt><strong>target_df</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.6.1+27.g1a0376c)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></span></dt><dd><p>geodataframe with geometry column of polygon type</p>
+</dd>
+<dt><strong>raster_path</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>the path to the associated raster image.</p>
+</dd>
+<dt><strong>codes</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a></span></dt><dd><p>list of integer code values that should be considered as ‘populated’.
+Since this draw inspiration using the National Land Cover Database (NLCD), the default is 21 (Developed, Open Space), 22 (Developed, Low Intensity), 23 (Developed, Medium Intensity) and 24 (Developed, High Intensity).
 The description of each code can be found here: <a class="reference external" href="https://www.mrlc.gov/sites/default/files/metadata/landcover.html">https://www.mrlc.gov/sites/default/files/metadata/landcover.html</a>
 Only taken into consideration for harmonization raster based.</p>
 </dd>
-<dt><strong>force_crs_match</strong><span class="classifier">bool. Default is True.</span></dt><dd><p>Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file.
+<dt><strong>force_crs_match</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.8)"><span class="xref std std-ref">bool</span></a> (default <code class="xref py py-obj docutils literal notranslate"><span class="pre">is</span></code> <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="docutils literal notranslate"><span class="pre">True</span></code></a>)</span></dt><dd><p>Whether the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file.
 It is recommended to let this argument as True.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt>tables: tuple (optional)</dt><dd><p>two 2-D numpy arrays
+<dt>tables: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><code class="docutils literal notranslate"><span class="pre">tuple</span></code></a> (optional)</dt><dd><p>two 2-D numpy arrays
 SU: area of intersection of source geometry i with union geometry j
 UT: binary mapping of union geometry j to target geometry t</p>
 </dd>

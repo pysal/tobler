@@ -34,12 +34,12 @@ def masked_area_interpolate(
         whether to force the input and target data to share the same CRS (the default is True).
     extensive_variables : list
         Columns of the input dataframe containing extensive variables to interpolate
-    intensive_variables : type
+    intensive_variables : list
         Columns of the input dataframe containing intensive variables to interpolate
     allocate_total : bool
-        whether  (the default is True).
-    tables : type
-        Description of parameter `tables` (the default is None).
+        whether to allocate the total from the source geometries (the default is True).
+    tables : tuple of two numpy.array (optional)
+         As generated from `tobler.area_weighted.area_tables_raster` (the default is None).
 
     Returns
     -------
