@@ -48,6 +48,10 @@ def masked_area_interpolate(
         variables as the columns
 
     """
+    if not codes:
+        codes = [21, 22, 23, 24]
+    if not raster_path:
+        raster_path = 'nlcd_2011'
 
     if not tables:
         tables = area_tables_raster(
@@ -57,8 +61,6 @@ def masked_area_interpolate(
             codes=codes,
             force_crs_match=force_crs_match,
         )
-    if not codes:
-        codes = [21, 22, 23, 24]
 
     # In area_interpolate, the resulting variable has same length as target_df
     interpolation = _slow_area_interpolate(

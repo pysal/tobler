@@ -8,6 +8,7 @@ import geopandas as gpd
 from .vectorized_raster_interpolation import fast_append_profile_in_gdf
 import warnings
 from scipy.sparse import dok_matrix, diags
+import pandas as pd
 
 from tobler.util.util import _check_crs, _nan_check, _check_presence_of_crs
 
@@ -179,8 +180,8 @@ def area_tables(source_df, target_df):
 def area_interpolate_binning(
     source_df,
     target_df,
-    extensive_variables=[],
-    intensive_variables=[],
+    extensive_variables=None,
+    intensive_variables=None,
     table=None,
     allocate_total=True,
 ):
@@ -204,9 +205,9 @@ def area_interpolate_binning(
 
     Returns
     -------
-    estimates : tuple (2)
-              (extensive variable array, intensive variables array)
-              Each is of shape n,v where n is number of target units and v is the number of variables for each variable type.
+    estimates : geopandas.GeoDataFrame
+         new geodaraframe with interpolated variables as columns and target_df geometry
+         as output geometry
 
     Notes
     -----
@@ -255,6 +256,7 @@ def area_interpolate_binning(
     den = diags([den], [0])
     weights = den.dot(table)  # row standardize table
 
+    dfs = []
     extensive = []
     if extensive_variables:
         for variable in extensive_variables:
@@ -264,6 +266,8 @@ def area_interpolate_binning(
             extensive.append(estimates.tolist()[0])
 
     extensive = np.asarray(extensive)
+    extensive = np.array(extensive)
+    extensive = pd.DataFrame(extensive.T, columns=extensive_variables)
 
     area = np.asarray(table.sum(axis=0))
     den = 1.0 / (area + (area == 0))
@@ -283,14 +287,24 @@ def area_interpolate_binning(
             intensive.append(estimates.tolist()[0])
 
     intensive = np.asarray(intensive)
-    return (extensive.T, intensive.T)
+    intensive = pd.DataFrame(intensive.T, columns=intensive_variables)
+
+    if extensive_variables:
+        dfs.append(extensive)
+    if intensive_variables:
+        dfs.append(intensive)
+
+    df = pd.concat(dfs, axis=0)
+    df['geometry'] = target_df['geometry']
+    df = gpd.GeoDataFrame(df)
+    return df
 
 
 def area_interpolate(
     source_df,
     target_df,
-    extensive_variables=[],
-    intensive_variables=[],
+    extensive_variables=None,
+    intensive_variables=None,
     tables=None,
     allocate_total=True,
 ):
@@ -319,8 +333,9 @@ def area_interpolate(
 
     Returns
     -------
-    estimates : tuple (2)
-        (extensive variable array, intensive variables array)
+    estimates : geopandas.GeoDataFrame
+        new geodaraframe with interpolated variables as columns and target_df geometry
+        as output geometry
 
     Notes
     -----
@@ -369,6 +384,7 @@ def area_interpolate(
     den = den + (den == 0)
     weights = np.dot(np.diag(1 / den), SU)
 
+    dfs = []
     extensive = []
     if extensive_variables:
         for variable in extensive_variables:
@@ -378,6 +394,7 @@ def area_interpolate(
             estimates = estimates.sum(axis=0)
             extensive.append(estimates)
     extensive = np.array(extensive)
+    extensive = pd.DataFrame(extensive.T, columns=extensive_variables)
 
     ST = np.dot(SU, UT)
     area = ST.sum(axis=0)
@@ -391,8 +408,17 @@ def area_interpolate(
             est = (vals * weights).sum(axis=0)
             intensive.append(est)
     intensive = np.array(intensive)
+    intensive = pd.DataFrame(intensive.T, columns=intensive_variables)
 
-    return (extensive.T, intensive.T)
+    if extensive_variables:
+        dfs.append(extensive)
+    if intensive_variables:
+        dfs.append(intensive)
+
+    df = pd.concat(dfs, axis=0)
+    df['geometry'] = target_df['geometry']
+    df = gpd.GeoDataFrame(df)
+    return df
 
 
 def area_tables_raster(
