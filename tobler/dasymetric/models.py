@@ -25,7 +25,7 @@ def linear_model(
     ----------
     source_df : geopandas.GeoDataFrame, required
         geodataframe containing source original data to be represented by another geometry
-    target_df : geopandas.GeoDataFrane, required
+    target_df : geopandas.GeoDataFrame, required
         geodataframe containing target boundaries that will be used to represent the source data
     raster : str, required (default="nlcd_2011")
         path to raster file that will be used to input data to the regression model.

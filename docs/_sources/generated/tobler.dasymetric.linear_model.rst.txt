@@ -1,0 +1,6 @@
+tobler.dasymetric.linear\_model
+===============================
+
+.. currentmodule:: tobler.dasymetric
+
+.. autofunction:: linear_model
