@@ -14,6 +14,6 @@ dependencies:
   - scipy
   - libpysal
   - xgboost
-  - shap
+  - shap >=0.33
   - quilt3
   - pip

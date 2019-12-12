@@ -327,9 +327,9 @@
 <span class="sd">    For an extensive variable, the estimate at target polygon j (default case) is:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">     v_j = \sum_i v_i w_{i,j}</span>
+<span class="sd">     v_j = \\sum_i v_i w_{i,j}</span>
 
-<span class="sd">     w_{i,j} = a_{i,j} / \sum_k a_{i,k}</span>
+<span class="sd">     w_{i,j} = a_{i,j} / \\sum_k a_{i,k}</span>
 
 <span class="sd">    If the area of the source polygon is not exhausted by intersections with</span>
 <span class="sd">    target polygons and there is reason to not allocate the complete value of</span>
@@ -337,7 +337,7 @@
 <span class="sd">    following weights:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">     v_j = \sum_i v_i w_{i,j}</span>
+<span class="sd">     v_j = \\sum_i v_i w_{i,j}</span>
 
 <span class="sd">     w_{i,j} = a_{i,j} / a_i</span>
 
@@ -345,9 +345,9 @@
 <span class="sd">    For an intensive variable, the estimate at target polygon j is:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">     v_j = \sum_i v_i w_{i,j}</span>
+<span class="sd">     v_j = \\sum_i v_i w_{i,j}</span>
 
-<span class="sd">     w_{i,j} = a_{i,j} / \sum_k a_{k,j}</span>
+<span class="sd">     w_{i,j} = a_{i,j} / \\sum_k a_{k,j}</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">_check_crs</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">target_df</span><span class="p">):</span>
