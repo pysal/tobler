@@ -34,7 +34,7 @@ def linear_model(
         are considered developed land types in the NLCD
     variable : str, required
         name of the variable (column) to be modeled from the `source_df`
-    formula : str, required
+    formula : str, optional
         patsy-style model formula
 
     Returns
@@ -48,7 +48,7 @@ def linear_model(
 
         # build weights from raster and vector data
         weights = return_weights_from_regression(
-            geodataframe=source_df, raster_path=raster, pop_string=variable, codes=raster_codes, force_crs_match=force_crs_match
+            geodataframe=source_df, raster_path=raster, pop_string=variable, formula_string=formula, codes=raster_codes, force_crs_match=force_crs_match
         )
 
         # match vector population to pixel counts
