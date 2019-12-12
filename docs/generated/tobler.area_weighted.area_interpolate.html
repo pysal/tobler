@@ -12,6 +12,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="tobler.area_weighted.area_tables" href="tobler.area_weighted.area_tables.html" />
@@ -120,22 +121,26 @@
 <dt id="tobler.area_weighted.area_interpolate">
 <code class="sig-prename descclassname">tobler.area_weighted.</code><code class="sig-name descname">area_interpolate</code><span class="sig-paren">(</span><em class="sig-param">source_df</em>, <em class="sig-param">target_df</em>, <em class="sig-param">extensive_variables=[]</em>, <em class="sig-param">intensive_variables=[]</em>, <em class="sig-param">table=None</em>, <em class="sig-param">allocate_total=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tobler/area_weighted/area_weighted.html#area_interpolate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tobler.area_weighted.area_interpolate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Area interpolation for extensive and intensive variables.</p>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>source_df: geopandas GeoDataFrame with geometry column of polygon type</strong></dt><dd></dd>
-<dt><strong>target_df: geopandas GeoDataFrame with geometry column of polygon type</strong></dt><dd></dd>
-<dt><strong>extensive_variables: list of columns in dataframes for extensive variables</strong></dt><dd></dd>
-<dt><strong>intensive_variables: list of columns in dataframes for intensive variables</strong></dt><dd></dd>
-<dt><strong>table: scipy.sparse dok_matrix</strong></dt><dd></dd>
-<dt><strong>allocate_total: boolean</strong></dt><dd><p>True if total value of source area should be allocated.
+<dd class="field-odd"><dl>
+<dt><strong>source_df</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.6.1+27.g1a0376c)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></span></dt><dd></dd>
+<dt><strong>target_df</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.6.1+27.g1a0376c)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></span></dt><dd></dd>
+<dt><strong>extensive_variables</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a></span></dt><dd><p>columns in dataframes for extensive variables</p>
+</dd>
+<dt><strong>intensive_variables</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a></span></dt><dd><p>columns in dataframes for intensive variables</p>
+</dd>
+<dt><strong>table</strong><span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.dok_matrix.html#scipy.sparse.dok_matrix" title="(in SciPy v1.3.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.sparse.dok_matrix</span></code></a></span></dt><dd></dd>
+<dt><strong>allocate_total</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.8)"><span class="xref std std-ref">bool</span></a></span></dt><dd><p>True if total value of source area should be allocated.
 False if denominator is area of i. Note that the two cases
 would be identical when the area of the source polygon is
 exhausted by intersections. See Notes for more details.</p>
 </dd>
-<dt><strong>Returns</strong></dt><dd></dd>
-<dt><strong>——-</strong></dt><dd></dd>
-<dt><strong>estimates: tuple (2)</strong></dt><dd><p>(extensive variable array, intensive variables array)
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>estimates</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><code class="docutils literal notranslate"><span class="pre">tuple</span></code></a> (2)</span></dt><dd><p>(extensive variable array, intensive variables array)
 Each is of shape n,v where n is number of target units and v is the number of variables for each variable type.</p>
 </dd>
 </dl>
@@ -143,19 +148,19 @@ Each is of shape n,v where n is number of target units and v is the number of va
 </dl>
 <p class="rubric">Notes</p>
 <p>The assumption is both dataframes have the same coordinate reference system.
-For an extensive variable, the estimate at target polygon j (default case) is:
-v_j = sum_i v_i w_{i,j}
-w_{i,j} = a_{i,j} / sum_k a_{i,k}
-If the area of the source polygon is not exhausted by intersections with
+For an extensive variable, the estimate at target polygon j (default case) is:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}v_j = \sum_i v_i w_{i,j}\\w_{i,j} = a_{i,j} / \sum_k a_{i,k}\end{aligned}\end{align} \]</div>
+<p>If the area of the source polygon is not exhausted by intersections with
 target polygons and there is reason to not allocate the complete value of
 an extensive attribute, then setting allocate_total=False will use the
-following weights:
-v_j = sum_i v_i w_{i,j}
-w_{i,j} = a_{i,j} / a_i
-where a_i is the total area of source polygon i.
-For an intensive variable, the estimate at target polygon j is:
-v_j = sum_i v_i w_{i,j}
-w_{i,j} = a_{i,j} / sum_k a_{k,j}</p>
+following weights:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}v_j = \sum_i v_i w_{i,j}\\w_{i,j} = a_{i,j} / a_i\end{aligned}\end{align} \]</div>
+<p>where a_i is the total area of source polygon i.
+For an intensive variable, the estimate at target polygon j is:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}v_j = \sum_i v_i w_{i,j}\\w_{i,j} = a_{i,j} / \sum_k a_{k,j}\end{aligned}\end{align} \]</div>
 </dd></dl>
 
 </div>

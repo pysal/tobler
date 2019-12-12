@@ -12,6 +12,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
 <meta charset='utf-8'>
@@ -136,17 +137,9 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    type</span>
-<span class="sd">        Description of returned object.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    -------</span>
-<span class="sd">    Examples should be written in doctest format, and</span>
-<span class="sd">    should illustrate how to use the function/class.</span>
-<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    tables : scipy.sparse.dok_matrix</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">if</span> <span class="n">_check_crs</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">target_df</span><span class="p">):</span>
         <span class="k">pass</span>
     <span class="k">else</span><span class="p">:</span>
@@ -246,14 +239,12 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-
-<span class="sd">    source_df: geopandas GeoDataFrame with geometry column of polygon type</span>
-
-<span class="sd">    target_df: geopandas GeoDataFrame with geometry column of polygon type</span>
+<span class="sd">    source_df : geopandas.GeoDataFrame</span>
+<span class="sd">    target_df : geopandas.GeoDataFrame</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    tables: tuple (optional)</span>
+<span class="sd">    tables : tuple (optional)</span>
 <span class="sd">            two 2-D numpy arrays</span>
 <span class="sd">            SU: area of intersection of source geometry i with union geometry j</span>
 <span class="sd">            UT: binary mapping of union geometry j to target geometry t</span>
@@ -268,10 +259,7 @@
 
 <span class="sd">    SU Maps source geometry to union geometry, UT maps union geometry to target geometry</span>
 
-
-
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">if</span> <span class="n">_check_crs</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">target_df</span><span class="p">):</span>
         <span class="k">pass</span>
     <span class="k">else</span><span class="p">:</span>
@@ -314,19 +302,22 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    source_df: geopandas GeoDataFrame with geometry column of polygon type</span>
-<span class="sd">    target_df: geopandas GeoDataFrame with geometry column of polygon type</span>
-<span class="sd">    extensive_variables: list of columns in dataframes for extensive variables</span>
-<span class="sd">    intensive_variables: list of columns in dataframes for intensive variables</span>
-<span class="sd">    table: scipy.sparse dok_matrix</span>
-<span class="sd">    allocate_total: boolean</span>
-<span class="sd">                    True if total value of source area should be allocated.</span>
-<span class="sd">                    False if denominator is area of i. Note that the two cases</span>
-<span class="sd">                    would be identical when the area of the source polygon is</span>
-<span class="sd">                    exhausted by intersections. See Notes for more details.</span>
+<span class="sd">    source_df : geopandas.GeoDataFrame</span>
+<span class="sd">    target_df : geopandas.GeoDataFrame</span>
+<span class="sd">    extensive_variables : list</span>
+<span class="sd">        columns in dataframes for extensive variables</span>
+<span class="sd">    intensive_variables : list</span>
+<span class="sd">        columns in dataframes for intensive variables</span>
+<span class="sd">    table : scipy.sparse.dok_matrix</span>
+<span class="sd">    allocate_total : boolean</span>
+<span class="sd">        True if total value of source area should be allocated.</span>
+<span class="sd">        False if denominator is area of i. Note that the two cases</span>
+<span class="sd">        would be identical when the area of the source polygon is</span>
+<span class="sd">        exhausted by intersections. See Notes for more details.</span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    estimates: tuple (2)</span>
+<span class="sd">    estimates : tuple (2)</span>
 <span class="sd">              (extensive variable array, intensive variables array)</span>
 <span class="sd">              Each is of shape n,v where n is number of target units and v is the number of variables for each variable type.</span>
 
@@ -334,18 +325,29 @@
 <span class="sd">    -----</span>
 <span class="sd">    The assumption is both dataframes have the same coordinate reference system.</span>
 <span class="sd">    For an extensive variable, the estimate at target polygon j (default case) is:</span>
-<span class="sd">    v_j = \sum_i v_i w_{i,j}</span>
-<span class="sd">    w_{i,j} = a_{i,j} / \sum_k a_{i,k}</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">     v_j = \\sum_i v_i w_{i,j}</span>
+
+<span class="sd">     w_{i,j} = a_{i,j} / \\sum_k a_{i,k}</span>
+
 <span class="sd">    If the area of the source polygon is not exhausted by intersections with</span>
 <span class="sd">    target polygons and there is reason to not allocate the complete value of</span>
 <span class="sd">    an extensive attribute, then setting allocate_total=False will use the</span>
 <span class="sd">    following weights:</span>
-<span class="sd">    v_j = \sum_i v_i w_{i,j}</span>
-<span class="sd">    w_{i,j} = a_{i,j} / a_i</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">     v_j = \\sum_i v_i w_{i,j}</span>
+
+<span class="sd">     w_{i,j} = a_{i,j} / a_i</span>
+
 <span class="sd">    where a_i is the total area of source polygon i.</span>
 <span class="sd">    For an intensive variable, the estimate at target polygon j is:</span>
-<span class="sd">    v_j = \sum_i v_i w_{i,j}</span>
-<span class="sd">    w_{i,j} = a_{i,j} / \sum_k a_{k,j}</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">     v_j = \\sum_i v_i w_{i,j}</span>
+
+<span class="sd">     w_{i,j} = a_{i,j} / \\sum_k a_{k,j}</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">_check_crs</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">target_df</span><span class="p">):</span>
@@ -410,32 +412,28 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-
-<span class="sd">    source_df: geopandas GeoDataFrame with geometry column of polygon type</span>
-
-<span class="sd">    target_df: geopandas GeoDataFrame with geometry column of polygon type</span>
-
-<span class="sd">    extensive_variables: list of columns in dataframes for extensive variables</span>
-
-<span class="sd">    intensive_variables: list of columns in dataframes for intensive variables</span>
-
-
-<span class="sd">    tables: tuple (optional)</span>
-<span class="sd">            two 2-D numpy arrays</span>
-<span class="sd">            SU: area of intersection of source geometry i with union geometry j</span>
-<span class="sd">            UT: binary mapping of union geometry j to target geometry t</span>
-
-
-<span class="sd">    allocate_total: boolean</span>
-<span class="sd">                    True if total value of source area should be allocated.</span>
-<span class="sd">                    False if denominator is area of i. Note that the two cases</span>
-<span class="sd">                    would be identical when the area of the source polygon is</span>
-<span class="sd">                    exhausted by intersections. See Notes for more details.</span>
+<span class="sd">    source_df : geopandas.GeoDataFrame (required)</span>
+<span class="sd">        geodataframe with polygon geometries</span>
+<span class="sd">    target_df : geopandas.GeoDataFrame (required)</span>
+<span class="sd">        geodataframe with polygon geometries</span>
+<span class="sd">    extensive_variables : list, (optional)</span>
+<span class="sd">        columns in dataframes for extensive variables</span>
+<span class="sd">    intensive_variables : list, (optional)</span>
+<span class="sd">        columns in dataframes for intensive variables</span>
+<span class="sd">    tables : tuple (optional)</span>
+<span class="sd">        two 2-D numpy arrays</span>
+<span class="sd">        SU: area of intersection of source geometry i with union geometry j</span>
+<span class="sd">        UT: binary mapping of union geometry j to target geometry t</span>
+<span class="sd">    allocate_total : boolean</span>
+<span class="sd">        True if total value of source area should be allocated.</span>
+<span class="sd">        False if denominator is area of i. Note that the two cases</span>
+<span class="sd">        would be identical when the area of the source polygon is</span>
+<span class="sd">        exhausted by intersections. See Notes for more details.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    estimates: tuple (2)</span>
-<span class="sd">              (extensive variable array, intensive variables array)</span>
+<span class="sd">    estimates : tuple (2)</span>
+<span class="sd">        (extensive variable array, intensive variables array)</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -468,9 +466,7 @@
 
 <span class="sd">    w_{i,j} = a_{i,j} / \sum_k a_{k,j}</span>
 
-
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">if</span> <span class="n">_check_crs</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">target_df</span><span class="p">):</span>
         <span class="k">pass</span>
     <span class="k">else</span><span class="p">:</span>
@@ -520,29 +516,27 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-
-<span class="sd">    source_df       : geopandas GeoDataFrame with geometry column of polygon type</span>
-
-<span class="sd">    target_df       : geopandas GeoDataFrame with geometry column of polygon type</span>
-
-<span class="sd">    raster_path     : the path to the associated raster image.</span>
-
-<span class="sd">    codes           : an integer list of codes values that should be considered as &#39;populated&#39;.</span>
-<span class="sd">                      Since this draw inspiration using the National Land Cover Database (NLCD), the default is 21 (Developed, Open Space), 22 (Developed, Low Intensity), 23 (Developed, Medium Intensity) and 24 (Developed, High Intensity).</span>
-<span class="sd">                      The description of each code can be found here: https://www.mrlc.gov/sites/default/files/metadata/landcover.html</span>
-<span class="sd">                      Only taken into consideration for harmonization raster based.</span>
-
-<span class="sd">    force_crs_match : bool. Default is True.</span>
-<span class="sd">                      Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file.</span>
-<span class="sd">                      It is recommended to let this argument as True.</span>
-
+<span class="sd">    source_df : geopandas.GeoDataFrame </span>
+<span class="sd">        geeodataframe with geometry column of polygon type</span>
+<span class="sd">    target_df : geopandas.GeoDataFrame </span>
+<span class="sd">        geodataframe with geometry column of polygon type</span>
+<span class="sd">    raster_path : str</span>
+<span class="sd">        the path to the associated raster image.</span>
+<span class="sd">    codes : list</span>
+<span class="sd">        list of integer code values that should be considered as &#39;populated&#39;.</span>
+<span class="sd">        Since this draw inspiration using the National Land Cover Database (NLCD), the default is 21 (Developed, Open Space), 22 (Developed, Low Intensity), 23 (Developed, Medium Intensity) and 24 (Developed, High Intensity).</span>
+<span class="sd">        The description of each code can be found here: https://www.mrlc.gov/sites/default/files/metadata/landcover.html</span>
+<span class="sd">        Only taken into consideration for harmonization raster based.</span>
+<span class="sd">    force_crs_match : bool (default is True)</span>
+<span class="sd">        Whether the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file.</span>
+<span class="sd">        It is recommended to let this argument as True.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    tables: tuple (optional)</span>
-<span class="sd">            two 2-D numpy arrays</span>
-<span class="sd">            SU: area of intersection of source geometry i with union geometry j</span>
-<span class="sd">            UT: binary mapping of union geometry j to target geometry t</span>
+<span class="sd">        two 2-D numpy arrays</span>
+<span class="sd">        SU: area of intersection of source geometry i with union geometry j</span>
+<span class="sd">        UT: binary mapping of union geometry j to target geometry t</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>

@@ -12,6 +12,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="tobler.area_weighted.area_tables_binning" href="tobler.area_weighted.area_tables_binning.html" />
@@ -120,16 +121,16 @@
 <dt id="tobler.area_weighted.area_tables">
 <code class="sig-prename descclassname">tobler.area_weighted.</code><code class="sig-name descname">area_tables</code><span class="sig-paren">(</span><em class="sig-param">source_df</em>, <em class="sig-param">target_df</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tobler/area_weighted/area_weighted.html#area_tables"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tobler.area_weighted.area_tables" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct area allocation and source-target correspondence tables.</p>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>source_df: geopandas GeoDataFrame with geometry column of polygon type</strong></dt><dd></dd>
-<dt><strong>target_df: geopandas GeoDataFrame with geometry column of polygon type</strong></dt><dd></dd>
+<dd class="field-odd"><dl>
+<dt><strong>source_df</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.6.1+27.g1a0376c)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></span></dt><dd></dd>
+<dt><strong>target_df</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.6.1+27.g1a0376c)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></span></dt><dd></dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt>tables: tuple (optional)</dt><dd><p>two 2-D numpy arrays
+<dd class="field-even"><dl>
+<dt><strong>tables</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><code class="docutils literal notranslate"><span class="pre">tuple</span></code></a> (optional)</span></dt><dd><p>two 2-D numpy arrays
 SU: area of intersection of source geometry i with union geometry j
 UT: binary mapping of union geometry j to target geometry t</p>
 </dd>

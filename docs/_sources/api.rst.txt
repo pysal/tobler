@@ -33,7 +33,8 @@ variables being assigned to the target
 
 .. autosummary::
    :toctree: generated/
-   
+
+   linear_model
    masked_area_interpolate
    
 

@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>tobler.area_weighted.area_tables_raster &#8212; tobler v0.1.0 Manual</title>
+    <title>tobler.dasymetric.linear_model &#8212; tobler v0.1.0 Manual</title>
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css" />
@@ -15,8 +15,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="tobler.dasymetric.linear_model" href="tobler.dasymetric.linear_model.html" />
-    <link rel="prev" title="tobler.area_weighted.area_tables_binning" href="tobler.area_weighted.area_tables_binning.html" />
+    <link rel="next" title="tobler.dasymetric.masked_area_interpolate" href="tobler.dasymetric.masked_area_interpolate.html" />
+    <link rel="prev" title="tobler.area_weighted.area_tables_raster" href="tobler.area_weighted.area_tables_raster.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -66,8 +66,8 @@
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../api.html#area-weighted">Area Weighted</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api.html#dasymetric">Dasymetric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#area-weighted">Area Weighted</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#dasymetric">Dasymetric</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api.html#data">Data</a></li>
 </ul>
 </li>
@@ -85,7 +85,7 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#">tobler.area_weighted.area_tables_raster</a></li>
+<li><a class="reference internal" href="#">tobler.dasymetric.linear_model</a></li>
 </ul>
 </ul>
 </li>
@@ -115,44 +115,41 @@
   <div class="row">
     <div class="body col-md-12 content" role="main">
       
-  <div class="section" id="tobler-area-weighted-area-tables-raster">
-<h1>tobler.area_weighted.area_tables_raster<a class="headerlink" href="#tobler-area-weighted-area-tables-raster" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="tobler-dasymetric-linear-model">
+<h1>tobler.dasymetric.linear_model<a class="headerlink" href="#tobler-dasymetric-linear-model" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="tobler.area_weighted.area_tables_raster">
-<code class="sig-prename descclassname">tobler.area_weighted.</code><code class="sig-name descname">area_tables_raster</code><span class="sig-paren">(</span><em class="sig-param">source_df, target_df, raster_path, codes=[21, 22, 23, 24], force_crs_match=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tobler/area_weighted/area_weighted.html#area_tables_raster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tobler.area_weighted.area_tables_raster" title="Permalink to this definition">¶</a></dt>
-<dd><p>Construct area allocation and source-target correspondence tables according to a raster ‘populated’ areas</p>
+<dt id="tobler.dasymetric.linear_model">
+<code class="sig-prename descclassname">tobler.dasymetric.</code><code class="sig-name descname">linear_model</code><span class="sig-paren">(</span><em class="sig-param">source_df=None</em>, <em class="sig-param">target_df=None</em>, <em class="sig-param">raster='nlcd_2011'</em>, <em class="sig-param">raster_codes=None</em>, <em class="sig-param">variable=None</em>, <em class="sig-param">formula=None</em>, <em class="sig-param">likelihood='poisson'</em>, <em class="sig-param">force_crs_match=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tobler/dasymetric/models.html#linear_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tobler.dasymetric.linear_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interpolate data between two polygonal datasets using an auxiliary raster to as inut to a linear regression model.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt><strong>source_df</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.6.1+27.g1a0376c)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></span></dt><dd><p>geeodataframe with geometry column of polygon type</p>
+<dt><strong>source_df</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.6.1+27.g1a0376c)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a>, required</span></dt><dd><p>geodataframe containing source original data to be represented by another geometry</p>
 </dd>
-<dt><strong>target_df</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.6.1+27.g1a0376c)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></span></dt><dd><p>geodataframe with geometry column of polygon type</p>
+<dt><strong>target_df</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.6.1+27.g1a0376c)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a>, required</span></dt><dd><p>geodataframe containing target boundaries that will be used to represent the source data</p>
 </dd>
-<dt><strong>raster_path</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>the path to the associated raster image.</p>
+<dt><strong>raster</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, required (default=”nlcd_2011”)</span></dt><dd><p>path to raster file that will be used to input data to the regression model.
+i.e. a coefficients refer to the relationship between pixel counts and population counts.
+Defaults to 2011 NLCD</p>
 </dd>
-<dt><strong>codes</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a></span></dt><dd><p>list of integer code values that should be considered as ‘populated’.
-Since this draw inspiration using the National Land Cover Database (NLCD), the default is 21 (Developed, Open Space), 22 (Developed, Low Intensity), 23 (Developed, Medium Intensity) and 24 (Developed, High Intensity).
-The description of each code can be found here: <a class="reference external" href="https://www.mrlc.gov/sites/default/files/metadata/landcover.html">https://www.mrlc.gov/sites/default/files/metadata/landcover.html</a>
-Only taken into consideration for harmonization raster based.</p>
+<dt><strong>raster_codes</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a>, required (default =[21, 22, 23, 24])</span></dt><dd><p>list of inteegers that represent different types of raster cells. Defaults to [21, 22, 23, 24] which
+are considered developed land types in the NLCD</p>
 </dd>
-<dt><strong>force_crs_match</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.8)"><span class="xref std std-ref">bool</span></a> (default <code class="xref py py-obj docutils literal notranslate"><span class="pre">is</span></code> <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="docutils literal notranslate"><span class="pre">True</span></code></a>)</span></dt><dd><p>Whether the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file.
-It is recommended to let this argument as True.</p>
+<dt><strong>variable</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, required</span></dt><dd><p>name of the variable (column) to be modeled from the <cite>source_df</cite></p>
+</dd>
+<dt><strong>formula</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, optional</span></dt><dd><p>patsy-style model formula</p>
+</dd>
+<dt><strong>likelihood</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, {‘poisson’, ‘gaussian’} (default = “poisson”)</span></dt><dd><p>the likelihood function used in the model</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt>tables: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><code class="docutils literal notranslate"><span class="pre">tuple</span></code></a> (optional)</dt><dd><p>two 2-D numpy arrays
-SU: area of intersection of source geometry i with union geometry j
-UT: binary mapping of union geometry j to target geometry t</p>
+<dt>interpolated: <a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.6.1+27.g1a0376c)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></dt><dd><p>a new geopandas dataframe with boundaries from <cite>target_df</cite> and modeled attribute data from the <cite>source_df</cite></p>
 </dd>
 </dl>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
-<p>The assumption is both dataframes have the same coordinate reference system.</p>
-<p>Union geometry is a geometry formed by the intersection of a source geometry and a target geometry</p>
-<p>SU Maps source geometry to union geometry, UT maps union geometry to target geometry</p>
 </dd></dl>
 
 </div>
@@ -170,7 +167,7 @@ UT: binary mapping of union geometry j to target geometry t</p>
         <br/>
         
 <div id="sourcelink">
-  <a href="../_sources/generated/tobler.area_weighted.area_tables_raster.rst.txt"
+  <a href="../_sources/generated/tobler.dasymetric.linear_model.rst.txt"
      rel="nofollow">Source</a>
 </div>
       
