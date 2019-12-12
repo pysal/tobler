@@ -18,6 +18,7 @@ import rasterio
 from rasterio.mask import mask
 import rasterstats as rs
 import warnings
+from tqdm.auto import tqdm
 from tobler.util.util import _check_presence_of_crs
 
 import statsmodels.formula.api as smf
@@ -71,8 +72,11 @@ def fast_append_profile_in_gdf(geodataframe, raster_path, force_crs_match=True):
     _check_presence_of_crs(geodataframe)
     raster_path = fetch_quilt_path(raster_path)
     if force_crs_match:
-        raster = rasterio.open(raster_path)
-        geodataframe = geodataframe.to_crs(crs=raster.crs.data)
+        with rasterio.open(raster_path) as raster:
+            # raster =
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                geodataframe = geodataframe.to_crs(crs=raster.crs.data)
     else:
         warnings.warn(
             "The GeoDataFrame is not being reprojected. The clipping might be being performing on unmatching polygon to the raster."
@@ -146,11 +150,9 @@ def return_weights_from_regression(
     if not likelihood in ["Poisson", "Gaussian"]:
         raise ValueError("likelihood must one of 'Poisson', 'Gaussian'")
 
-    print("Appending profile...")
     profiled_df = fast_append_profile_in_gdf(
         geodataframe[["geometry", pop_string]], raster_path, force_crs_match
     )  # Use only two columns to build the weights (this avoids error, if the original dataset has already types appended on it).
-    print("Append profile: Done.")
 
     # If the list is unsorted, the codes will be sorted to guarantee that the position of the weights will match
     codes.sort()
@@ -161,7 +163,6 @@ def return_weights_from_regression(
         pop_string + " ~ -1 + " + " + ".join(["Type_" + s for s in str_codes])
     )
 
-    print("Starting to fit regression...")
     if likelihood == "Poisson":
         results = smf.glm(formula_string, data=profiled_df, family=Poisson()).fit()
 
@@ -249,11 +250,9 @@ def return_weights_from_xgboost(
     if na_value in codes:
         raise ValueError("codes should not assume the na_value value.")
 
-    print("Appending profile...")
     profiled_df = fast_append_profile_in_gdf(
         geodataframe[["geometry", pop_string]], raster_path, force_crs_match
     )  # Use only two columns to build the weights (this avoids error, if the original dataset has already types appended on it).
-    print("Append profile: Done.")
 
     # If the list is unsorted, the codes will be sorted to guarantee that the position of the weights will match
     codes.sort()
@@ -264,7 +263,6 @@ def return_weights_from_xgboost(
     y = profiled_df[pop_string]
     X = profiled_df[feature_names]
 
-    print("Starting to fit XGBoost...")
     if tuned_xgb == False:
 
         # Create the DMatrix
@@ -306,7 +304,7 @@ def return_weights_from_xgboost(
         xg_reg = xgb.train(params=best_params, dtrain=xgb_dmatrix)
 
     # Build explainer and fit Shapley's values (https://github.com/slundberg/shap)
-    explainer = shap.TreeExplainer(xg_reg, feature_dependence='independent')
+    explainer = shap.TreeExplainer(xg_reg, feature_dependence="independent")
     shap_values = explainer.shap_values(X)
     weights_from_xgb = shap_values.mean(axis=0)  # This is already sorted by pixel Type
 
@@ -375,61 +373,65 @@ def create_non_zero_population_by_pixels_locations(
 
     _check_presence_of_crs(geodataframe)
 
-    if force_crs_match:
-        geodataframe_projected = geodataframe.to_crs(crs=raster.crs.data)
-    else:
+    if not force_crs_match:
         warnings.warn(
             "The polygon is not being reprojected. The clipping might be being performing on unmatching polygon to the raster."
         )
 
-    result_pops_array = np.array([])
-    result_lons_array = np.array([])
-    result_lats_array = np.array([])
+        
+    else:
+        with rasterio.open(fetch_quilt_path(raster)) as raster:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                geodataframe_projected = geodataframe.to_crs(crs=raster.crs.data)
+            result_pops_array = np.array([])
+            result_lons_array = np.array([])
+            result_lats_array = np.array([])
+            
+            pbar = tqdm(total=len(geodataframe_projected), desc="Estimating population per pixel")
 
-    for line_index in range(len(geodataframe_projected)):
-        polygon_projected = geodataframe_projected.iloc[[line_index]]
+            for line_index in range(len(geodataframe_projected)):
+                polygon_projected = geodataframe_projected.iloc[[line_index]]
 
-        coords = getFeatures(polygon_projected)
+                coords = getFeatures(polygon_projected)
 
-        out_img, out_transform = mask(dataset=raster, shapes=coords, crop=True)
+                out_img, out_transform = mask(dataset=raster, shapes=coords, crop=True)
 
-        """Calculating the population for each pixel"""
-        trans_numpy = weights[out_img]  # Pixel population from regression
-        orig_estimate = polygon_projected[
-            pop_string
-        ]  # Original Population Value of The polygon
-        correction_term = orig_estimate / trans_numpy.sum()
-        final_pop_numpy_pre = trans_numpy * np.array(correction_term)
+                """Calculating the population for each pixel"""
+                trans_numpy = weights[out_img]  # Pixel population from regression
+                orig_estimate = polygon_projected[
+                    pop_string
+                ]  # Original Population Value of The polygon
+                correction_term = orig_estimate / trans_numpy.sum()
+                final_pop_numpy_pre = trans_numpy * np.array(correction_term)
 
-        flatten_final_pop_numpy_pre = np.ndarray.flatten(final_pop_numpy_pre)
+                flatten_final_pop_numpy_pre = np.ndarray.flatten(final_pop_numpy_pre)
 
-        non_zero_pop_index = np.where(flatten_final_pop_numpy_pre != 0)
+                non_zero_pop_index = np.where(flatten_final_pop_numpy_pre != 0)
 
-        final_pop_numpy = flatten_final_pop_numpy_pre[non_zero_pop_index]
+                final_pop_numpy = flatten_final_pop_numpy_pre[non_zero_pop_index]
 
-        """Retrieving location of each pixel"""
-        lons, lats = create_lon_lat(out_img, out_transform)
+                """Retrieving location of each pixel"""
+                lons, lats = create_lon_lat(out_img, out_transform)
 
-        final_lons = np.ndarray.flatten(lons)[non_zero_pop_index]
-        final_lats = np.ndarray.flatten(lats)[non_zero_pop_index]
+                final_lons = np.ndarray.flatten(lons)[non_zero_pop_index]
+                final_lats = np.ndarray.flatten(lats)[non_zero_pop_index]
 
-        """Append all flattens numpy arrays"""
-        result_pops_array = np.append(result_pops_array, final_pop_numpy)
-        result_lons_array = np.append(result_lons_array, final_lons)
-        result_lats_array = np.append(result_lats_array, final_lats)
+                """Append all flattens numpy arrays"""
+                result_pops_array = np.append(result_pops_array, final_pop_numpy)
+                result_lons_array = np.append(result_lons_array, final_lons)
+                result_lats_array = np.append(result_lats_array, final_lats)
 
-        print(
-            "Polygon {} processed out of {}".format(line_index + 1, len(geodataframe)),
-            end="\r",
-        )
+                pbar.update(1)
 
-    data = {
-        "pop_value": result_pops_array,
-        "lons": result_lons_array.round().astype(int).tolist(),
-        "lats": result_lats_array.round().astype(int).tolist(),
-    }
+            data = {
+                "pop_value": result_pops_array,
+                "lons": result_lons_array.round().astype(int).tolist(),
+                "lats": result_lats_array.round().astype(int).tolist(),
+            }
 
-    corresp = pd.DataFrame.from_dict(data)
+            corresp = pd.DataFrame.from_dict(data)
+        pbar.close()
 
     return corresp
 
@@ -467,7 +469,9 @@ def calculate_interpolated_polygon_population_from_correspondence_table(
     _check_presence_of_crs(polygon)
 
     if force_crs_match:
-        polygon_projected = polygon.to_crs(crs=raster.crs.data)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            polygon_projected = polygon.to_crs(crs=raster.crs.data)
     else:
         warnings.warn(
             "The polygon is not being reprojected. The clipping might be being performing on unmatching polygon to the raster."
@@ -522,20 +526,22 @@ def calculate_interpolated_population_from_correspondence_table(
 
     final_geodataframe = geodataframe.copy()
     pop_final = np.empty(len(geodataframe))
+    raster = fetch_quilt_path(raster)
+    with rasterio.open(raster) as raster:
 
-    for line_index in range(len(geodataframe)):
-        polygon = geodataframe.iloc[[line_index]]
-        pop_aux = calculate_interpolated_polygon_population_from_correspondence_table(
-            polygon, raster, corresp_table, force_crs_match
-        )
-        pop_final[line_index] = pop_aux
+        pbar = tqdm(total=len(geodataframe), desc="Estimating target polygon values")
 
-        print(
-            "Polygon {} processed out of {}".format(line_index + 1, len(geodataframe)),
-            end="\r",
-        )
+        for line_index in range(len(geodataframe)):
+            polygon = geodataframe.iloc[[line_index]]
+            pop_aux = calculate_interpolated_polygon_population_from_correspondence_table(
+                polygon, raster, corresp_table, force_crs_match
+            )
+            pop_final[line_index] = pop_aux
+            
+            pbar.update(1)
 
-    final_geodataframe["interpolated_population"] = pop_final
+        pbar.close()
+        final_geodataframe["interpolated_population"] = pop_final
 
     return final_geodataframe
 
@@ -557,9 +563,10 @@ def subset_gdf_polygons_from_raster(geodataframe, raster, force_crs_match=True):
     """
 
     _check_presence_of_crs(geodataframe)
-
     if force_crs_match:
-        reprojected_gdf = geodataframe.to_crs(crs=raster.crs.data)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            reprojected_gdf = geodataframe.to_crs(crs=raster.crs.data)
     else:
         warnings.warn(
             "The geodataframe is not being reprojected. The clipping might be being performing on unmatching polygon to the raster."
@@ -567,14 +574,17 @@ def subset_gdf_polygons_from_raster(geodataframe, raster, force_crs_match=True):
 
     # has_intersection is a boolean vector: True if the polygon has some overlay with raster, False otherwise
     has_intersection = []
+    
+    pbar = tqdm(total=len(reprojected_gdf), desc="Subsetting polygons")
     for i in list(range(len(reprojected_gdf))):
-        print("Polygon {} checked out of {}".format(i, len(reprojected_gdf)), end="\r")
+        pbar.update(1)
         coords = getFeatures(reprojected_gdf.iloc[[i]])
         try:
             out_img = mask(dataset=raster, shapes=coords, crop=True)[0]
             has_intersection.append(True)
         except:
             has_intersection.append(False)
+    pbar.close()
 
     overlayed_subset_gdf = reprojected_gdf.iloc[has_intersection]
     overlayed_subset_gdf = overlayed_subset_gdf.set_geometry("geometry")

@@ -7,3 +7,4 @@ statsmodels
 rasterstats
 quilt3
 libpysal
+tqdm

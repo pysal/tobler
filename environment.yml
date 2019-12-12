@@ -18,4 +18,5 @@ dependencies:
   - xgboost
   - shap >=0.33
   - quilt3
+  - tqdm
   - pip
