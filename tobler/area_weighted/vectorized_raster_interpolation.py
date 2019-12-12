@@ -26,8 +26,6 @@ from ..data import fetch_quilt_path
 
 __all__ = [
     "getFeatures",
-    "return_area_profile",
-    "append_profile_in_gdf",
     "fast_append_profile_in_gdf",
     "return_weights_from_regression",
     "return_weights_from_xgboost",
@@ -51,116 +49,19 @@ def getFeatures(gdf):
     return [json.loads(gdf.to_json())["features"][0]["geometry"]]
 
 
-def return_area_profile(polygon, raster, force_crs_match=True):
-
-    """DEPRECATED
-    
-    Function that counts the amount of pixel types it is inside a polygon within a given raster
-    
-    Parameters
-    ----------
-    
-    polygon         : polygon for the profile (it can be a row of a geopandas)
-    
-    raster          : the associated raster (from rasterio.open)
-    
-    force_crs_match : bool. Default is True.
-                      Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file. 
-                      It is recommended to let this argument as True.
-
-    """
-
-    _check_presence_of_crs(polygon)
-
-    if force_crs_match:
-        polygon_projected = polygon.to_crs(crs=raster.crs.data)
-    else:
-        warnings.warn(
-            "The polygon is not being reprojected. The clipping might be being performing on unmatching polygon to the raster."
-        )
-
-    coords = getFeatures(polygon_projected)
-    out_img = mask(dataset=raster, shapes=coords, crop=True)[0]
-
-    x = np.ndarray.flatten(out_img)
-    y = np.bincount(x)
-    ii = np.nonzero(y)[0]
-
-    profile = pd.DataFrame.from_dict(
-        dict(
-            zip(
-                np.core.defchararray.add("Type_", ii.astype(str)),
-                y[ii].reshape(len(y[ii]), 1),
-            )
-        )
-    )  # pandas like
-
-    polygon_with_profile = pd.concat(
-        [polygon.reset_index(drop=True), profile], axis=1
-    )  # Appends in the end
-
-    return polygon_with_profile
-
-
-def append_profile_in_gdf(geodataframe, raster, force_crs_match=True):
-
-    """DEPRECATED
-    
-    Function that appends the columns of the profile in a geopandas according to a given raster
-    
-    geodataframe    : a GeoDataFrame from geopandas that has overlay with the raster. The variables of the profile will be appended in this data.
-                      If some polygon do not overlay the raster, consider a preprocessing step using the function subset_gdf_polygons_from_raster.
-    
-    raster          : the associated NLCD raster (from rasterio.open).
-    
-    force_crs_match : bool. Default is True.
-                      Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file. 
-                      It is recommended to let this argument as True.
-                      
-    Notes
-    -----
-    The generated geodataframe will input the value 0 for each Type that is not present in the raster for each polygon. 
-    
-    """
-
-    _check_presence_of_crs(geodataframe)
-
-    final_geodata = gpd.GeoDataFrame()
-
-    for i in range(len(geodataframe)):
-
-        aux = return_area_profile(
-            geodataframe.iloc[[i]], raster=raster, force_crs_match=force_crs_match
-        )
-        final_geodata = pd.concat(
-            [final_geodata.reset_index(drop=True), aux], axis=0, sort=False
-        )  # sort = False means that the profile will be appended in the end of the result
-        final_geodata.reset_index(drop=True)
-        print(
-            "Polygon profile {} appended out of {}".format(i + 1, len(geodataframe)),
-            end="\r",
-        )
-
-    # Input 0 in Types which are not present in the raster for the polygons
-    filter_col = [col for col in final_geodata if col.startswith("Type_")]
-    final_geodata[filter_col] = final_geodata[filter_col].fillna(value=0)
-
-    return final_geodata
-
-
 def fast_append_profile_in_gdf(geodataframe, raster_path, force_crs_match=True):
 
     """Function that appends the columns of the profile in a geopandas according to a given raster taking advantage of rasterstats
     
-    geodataframe    : a GeoDataFrame from geopandas that has overlay with the raster. The variables of the profile will be appended in this data.
-                      If some polygon do not overlay the raster, consider a preprocessing step using the function subset_gdf_polygons_from_raster.
-    
-    raster_path     : the path to the associated raster image.
-    
-    force_crs_match : bool. Default is True.
-                      Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file. 
-                      It is recommended to let this argument as True.
-                      
+    geodataframe    : geopandas.GeoDataFrame  
+        geodataframe that has overlay with the raster. The variables of the profile will be appended in this data.
+        If some polygon do not overlay the raster, consider a preprocessing step using the function subset_gdf_polygons_from_raster.
+    raster_path     : str
+        the path to the associated raster image.
+    force_crs_match : bool, Default is True.
+        Wheter the Coordinate Reference System (CRS) of the polygon will be reprojected to the CRS of the raster file. 
+        It is recommended to let this argument as True.
+        
     Notes
     -----
     The generated geodataframe will input the value 0 for each Type that is not present in the raster for each polygon. 
@@ -405,7 +306,7 @@ def return_weights_from_xgboost(
         xg_reg = xgb.train(params=best_params, dtrain=xgb_dmatrix)
 
     # Build explainer and fit Shapley's values (https://github.com/slundberg/shap)
-    explainer = shap.TreeExplainer(xg_reg)
+    explainer = shap.TreeExplainer(xg_reg, feature_dependence='independent')
     shap_values = explainer.shap_values(X)
     weights_from_xgb = shap_values.mean(axis=0)  # This is already sorted by pixel Type
 

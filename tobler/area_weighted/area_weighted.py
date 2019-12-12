@@ -214,9 +214,9 @@ def area_interpolate_binning(
     For an extensive variable, the estimate at target polygon j (default case) is:
 
     .. math::
-     v_j = \sum_i v_i w_{i,j}
+     v_j = \\sum_i v_i w_{i,j}
 
-     w_{i,j} = a_{i,j} / \sum_k a_{i,k}
+     w_{i,j} = a_{i,j} / \\sum_k a_{i,k}
 
     If the area of the source polygon is not exhausted by intersections with
     target polygons and there is reason to not allocate the complete value of
@@ -224,7 +224,7 @@ def area_interpolate_binning(
     following weights:
 
     .. math::
-     v_j = \sum_i v_i w_{i,j}
+     v_j = \\sum_i v_i w_{i,j}
 
      w_{i,j} = a_{i,j} / a_i
 
@@ -232,9 +232,9 @@ def area_interpolate_binning(
     For an intensive variable, the estimate at target polygon j is:
 
     .. math::
-     v_j = \sum_i v_i w_{i,j}
+     v_j = \\sum_i v_i w_{i,j}
 
-     w_{i,j} = a_{i,j} / \sum_k a_{k,j}
+     w_{i,j} = a_{i,j} / \\sum_k a_{k,j}
     """
 
     if _check_crs(source_df, target_df):
