@@ -1,7 +1,8 @@
 from ..area_weighted.vectorized_raster_interpolation import (
     calculate_interpolated_population_from_correspondence_table,
     return_weights_from_regression,
-    create_non_zero_population_by_pixels_locations, _check_presence_of_crs
+    create_non_zero_population_by_pixels_locations,
+    _check_presence_of_crs,
 )
 from ..data import fetch_quilt_path
 import rasterio
@@ -15,7 +16,8 @@ def linear_model(
     raster_codes=None,
     variable=None,
     formula=None,
-    force_crs_match=True
+    likelihood="poisson",
+    force_crs_match=True,
 ):
     """Interpolate data between two polygonal datasets using an auxiliary raster to as inut to a linear regression model.
 
@@ -36,6 +38,8 @@ def linear_model(
         name of the variable (column) to be modeled from the `source_df`
     formula : str, optional
         patsy-style model formula
+    likelihood : str, {'poisson', 'gaussian'} (default = "poisson")
+        the likelihood function used in the model
 
     Returns
     --------
@@ -48,7 +52,13 @@ def linear_model(
 
         # build weights from raster and vector data
         weights = return_weights_from_regression(
-            geodataframe=source_df, raster_path=raster, pop_string=variable, formula_string=formula, codes=raster_codes, force_crs_match=force_crs_match
+            geodataframe=source_df,
+            raster_path=raster,
+            pop_string=variable,
+            formula_string=formula,
+            codes=raster_codes,
+            force_crs_match=force_crs_match,
+            likelihood=likelihood,
         )
 
         # match vector population to pixel counts

@@ -96,7 +96,7 @@ def return_weights_from_regression(
     raster_path,
     pop_string,
     codes=[21, 22, 23, 24],
-    likelihood="Poisson",
+    likelihood="poisson",
     formula_string=None,
     n_pixels_option_values=256,
     force_crs_match=True,
@@ -140,13 +140,13 @@ def return_weights_from_regression(
     2) The pixel value, usually, ranges from 0 to 255. That is why the default of 'n_pixels_option_values' is 256.
     """
 
-    _check_presence_of_crs(geodataframe)r_path)
+    _check_presence_of_crs(geodataframe)
 
     if na_value in codes:
         raise ValueError("codes should not assume the na_value value.")
 
-    if not likelihood in ["Poisson", "Gaussian"]:
-        raise ValueError("likelihood must one of 'Poisson', 'Gaussian'")
+    if not likelihood in ["poisson", "gaussian"]:
+        raise ValueError("likelihood must one of 'poisson', 'gaussian'")
 
     profiled_df = fast_append_profile_in_gdf(
         geodataframe[["geometry", pop_string]], raster_path, force_crs_match
@@ -162,10 +162,10 @@ def return_weights_from_regression(
             pop_string + " ~ -1 + " + " + ".join(["Type_" + s for s in str_codes])
         )
 
-    if likelihood == "Poisson":
+    if likelihood == "poisson":
         results = smf.glm(formula_string, data=profiled_df, family=Poisson()).fit()
 
-    if likelihood == "Gaussian":
+    if likelihood == "gaussian":
         results = smf.ols(formula_string, data=profiled_df).fit()
 
     weights = np.zeros(n_pixels_option_values)
