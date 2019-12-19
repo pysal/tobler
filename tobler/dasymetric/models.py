@@ -18,6 +18,7 @@ def linear_model(
     formula=None,
     likelihood="poisson",
     force_crs_match=True,
+    **kwargs
 ):
     """Interpolate data between two polygonal datasets using an auxiliary raster to as inut to a linear regression model.
 
@@ -50,25 +51,26 @@ def linear_model(
     if not raster_codes:
         raster_codes = [21, 22, 23, 24]
 
-        # build weights from raster and vector data
-        weights = return_weights_from_regression(
-            geodataframe=source_df,
-            raster_path=raster,
-            pop_string=variable,
-            formula_string=formula,
-            codes=raster_codes,
-            force_crs_match=force_crs_match,
-            likelihood=likelihood,
-        )
+    # build weights from raster and vector data
+    weights = return_weights_from_regression(
+        geodataframe=source_df,
+        raster_path=raster,
+        pop_string=variable,
+        formula_string=formula,
+        codes=raster_codes,
+        force_crs_match=force_crs_match,
+        likelihood=likelihood,
+        **kwargs
+    )
 
-        # match vector population to pixel counts
-        correspondence_table = create_non_zero_population_by_pixels_locations(
-            geodataframe=source_df, raster=raster, pop_string=variable, weights=weights
-        )
+    # match vector population to pixel counts
+    correspondence_table = create_non_zero_population_by_pixels_locations(
+        geodataframe=source_df, raster=raster, pop_string=variable, weights=weights
+    )
 
-        # estimate the model
-        interpolated = calculate_interpolated_population_from_correspondence_table(
-            target_df, raster, correspondence_table, variable_name=variable
-        )
+    # estimate the model
+    interpolated = calculate_interpolated_population_from_correspondence_table(
+        target_df, raster, correspondence_table, variable_name=variable
+    )
 
     return interpolated
