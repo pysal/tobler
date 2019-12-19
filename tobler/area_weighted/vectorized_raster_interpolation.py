@@ -497,7 +497,7 @@ def calculate_interpolated_polygon_population_from_correspondence_table(
 
 
 def calculate_interpolated_population_from_correspondence_table(
-    geodataframe, raster, corresp_table, force_crs_match=True
+    geodataframe, raster, corresp_table, variable_name=None, force_crs_match=True
 ):
 
     """Function that returns the interpolated population of an entire geopandas
@@ -523,7 +523,7 @@ def calculate_interpolated_population_from_correspondence_table(
 
     _check_presence_of_crs(geodataframe)
 
-    final_geodataframe = geodataframe.copy()
+    final_geodataframe = geodataframe.copy()[['geometry']]
     pop_final = np.empty(len(geodataframe))
     raster = fetch_quilt_path(raster)
     with rasterio.open(raster) as raster:
@@ -536,11 +536,11 @@ def calculate_interpolated_population_from_correspondence_table(
                 polygon, raster, corresp_table, force_crs_match
             )
             pop_final[line_index] = pop_aux
-            
+         
             pbar.update(1)
 
         pbar.close()
-        final_geodataframe["interpolated_population"] = pop_final
+        final_geodataframe[variable_name] = pop_final
 
     return final_geodataframe
 

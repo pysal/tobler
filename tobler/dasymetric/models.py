@@ -68,7 +68,7 @@ def linear_model(
 
         # estimate the model
         interpolated = calculate_interpolated_population_from_correspondence_table(
-            target_df, raster, correspondence_table
+            target_df, raster, correspondence_table, variable_name=variable
         )
 
     return interpolated
