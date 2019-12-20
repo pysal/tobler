@@ -1,5 +1,6 @@
 """Model-based methods for areal interpolation."""
 
+import numpy as np
 import statsmodels.formula.api as smf
 from statsmodels.genmod.families import Gaussian, NegativeBinomial, Poisson
 
