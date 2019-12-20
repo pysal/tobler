@@ -11,9 +11,10 @@ from ..area_weighted.vectorized_raster_interpolation import (
     fast_append_profile_in_gdf,
     return_weights_from_regression,
 )
+from tobler.util import project_gdf
 
 
-def linear_model(
+def glm_pixel_adjusted(
     source_df=None,
     target_df=None,
     raster="nlcd_2011",
@@ -24,7 +25,11 @@ def linear_model(
     force_crs_match=True,
     **kwargs,
 ):
-    """Interpolate data between two polygonal datasets using an auxiliary raster to as inut to a linear regression model.
+    """Estimate interpolated values using raster data as input to a generalized linear model, then apply an adjustmnent factor based on pixel values.
+
+    Unlike the regular `glm` function, this version applies an experimental pixel-level adjustment
+    subsequent to fitting the model. This has the benefit of making sure local control totals are
+    respected, but can also induce unknown error. Use with caution.
 
     Parameters
     ----------
@@ -121,8 +126,6 @@ def glm(
     return model : bool
         whether to return the fitted model in addition to the interpolated geodataframe.
         If true, this will return (geodataframe, model)
-    **kwargs : dict
-        additional keyword arguments.
 
     Returns
     --------
@@ -149,18 +152,19 @@ def glm(
             + "~ -1 +"
             + "+".join(["np.log1p(" + code + ")" for code in raster_codes])
         )
+    source_df["area"] = project_gdf(source_df.copy()).area
 
     profiled_df = fast_append_profile_in_gdf(
-        source_df[["geometry", variable]], raster, force_crs_match
+        source_df[["geometry", variable, "area"]], raster, force_crs_match
     )
 
     results = smf.glm(formula, data=profiled_df, family=liks[likelihood]()).fit()
 
     out = target_df.copy()[["geometry"]]
-
     temp = fast_append_profile_in_gdf(out[["geometry"]], raster, force_crs_match)
+    temp["area"] = project_gdf(out.copy()).area
 
-    out[variable] = results.predict(temp[raster_codes].fillna(0))
+    out[variable] = results.predict(temp.drop(columns=["geometry"]).fillna(0))
 
     if return_model:
         return out, results
