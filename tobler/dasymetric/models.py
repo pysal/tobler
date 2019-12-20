@@ -156,7 +156,6 @@ def glm(
     # has already types appended on it).
 
     results = smf.glm(formula_string, data=profiled_df, family=liks[likelihood]()).fit()
-    print(results.summary())
 
     out = target_df.copy()[["geometry"]]
 
