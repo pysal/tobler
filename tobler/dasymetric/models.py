@@ -1,7 +1,5 @@
-import warnings
+"""Model-based methods for areal interpolation."""
 
-import numpy as np
-import rasterio
 import statsmodels.formula.api as smf
 from statsmodels.genmod.families import Gaussian, NegativeBinomial, Poisson
 
@@ -9,10 +7,9 @@ from ..area_weighted.vectorized_raster_interpolation import (
     _check_presence_of_crs,
     calculate_interpolated_population_from_correspondence_table,
     create_non_zero_population_by_pixels_locations,
-    return_weights_from_regression,
     fast_append_profile_in_gdf,
+    return_weights_from_regression,
 )
-from ..data import fetch_quilt_path
 
 
 def linear_model(
@@ -23,7 +20,6 @@ def linear_model(
     variable=None,
     formula=None,
     likelihood="poisson",
-    intercept=True,
     force_crs_match=True,
     **kwargs,
 ):
@@ -40,8 +36,8 @@ def linear_model(
         i.e. a coefficients refer to the relationship between pixel counts and population counts.
         Defaults to 2011 NLCD
     raster_codes : list, required (default =[21, 22, 23, 24])
-        list of inteegers that represent different types of raster cells. Defaults to [21, 22, 23, 24] which
-        are considered developed land types in the NLCD
+        list of integers that represent different types of raster cells.
+        Defaults to [21, 22, 23, 24] whichare considered developed land types in the NLCD
     variable : str, required
         name of the variable (column) to be modeled from the `source_df`
     formula : str, optional
@@ -52,11 +48,12 @@ def linear_model(
     Returns
     --------
     interpolated : geopandas.GeoDataFrame
-        a new geopandas dataframe with boundaries from `target_df` and modeled attribute data from the `source_df`
+        a new geopandas dataframe with boundaries from `target_df` and modeled attribute data
+        from the `source_df`
 
     """
     if not raster_codes:
-        raster_codes = [21, 22, 23, 24, 41, 42, 52, 81, 82, 90]
+        raster_codes = [21, 22, 23, 24]
 
     # build weights from raster and vector data
     weights = return_weights_from_regression(
@@ -67,7 +64,6 @@ def linear_model(
         codes=raster_codes,
         force_crs_match=force_crs_match,
         likelihood=likelihood,
-        intercept=intercept,
         **kwargs,
     )
 
@@ -94,9 +90,8 @@ def glm(
     likelihood="poisson",
     force_crs_match=True,
     return_model=False,
-    **kwargs,
 ):
-    """Estimate the values of a polygonal variable using raster data as input to a regression model.
+    """Estimate interpolated values using raster data as input to a generalized linear model.
 
     Parameters
     ----------
@@ -108,14 +103,17 @@ def glm(
         path to raster file that will be used to input data to the regression model.
         i.e. a coefficients refer to the relationship between pixel counts and population counts.
         Defaults to 2011 NLCD
-    raster_codes : list, required (default =[21, 22, 23, 24])
-        list of inteegers that represent different types of raster cells. Defaults to [21, 22, 23, 24] which
-        are considered developed land types in the NLCD
+    raster_codes : list, required (default =[21, 22, 23, 24, 41, 42, 52])
+        list of integers that represent different types of raster cells. If no formula is given,
+        the model will be fit from a linear combination of the logged count of each cell type
+        listed here. Defaults to [21, 22, 23, 24, 41, 42, 52] which
+        are informative land type cells from the NLCD
     variable : str, required
         name of the variable (column) to be modeled from the `source_df`
     formula : str, optional
-        patsy-style model formula
-    likelihood : str, {'poisson', 'gaussian'} (default = "poisson")
+        patsy-style model formula that specifies the model. Raster codes should be prefixed with
+        "Type_", e.g. `"n_total_pop ~ -1 + np.log1p(Type_21) + np.log1p(Type_22)`
+    likelihood : str, {'poisson', 'gaussian', 'neg_binomial'} (default = "poisson")
         the likelihood function used in the model
     force_crs_match : bool
         whether to coerce geodataframe and raster to the same CRS
@@ -128,8 +126,9 @@ def glm(
     Returns
     --------
     interpolated : geopandas.GeoDataFrame
-        a new geopandas dataframe with boundaries from `target_df` and modeled attribute data from the `source_df`.
-        If `return_model` is true, the function will also return the fitted regression model for further diagnostics
+        a new geopandas dataframe with boundaries from `target_df` and modeled attribute
+        data from the `source_df`. If `return_model` is true, the function will also return
+        the fitted regression model for further diagnostics
 
 
     """
@@ -140,11 +139,11 @@ def glm(
         raise ValueError(f"likelihood must one of {liks.keys()}")
 
     if not raster_codes:
-        raster_codes = [21, 22, 23, 24, 41, 42, 52, 71, 81, 82, 90]
+        raster_codes = [21, 22, 23, 24, 41, 42, 52]
     raster_codes = ["Type_" + str(i) for i in raster_codes]
 
     if not formula:
-        formula_string = (
+        formula = (
             variable
             + "~ -1 +"
             + "+".join(["np.log1p(" + code + ")" for code in raster_codes])
@@ -152,16 +151,15 @@ def glm(
 
     profiled_df = fast_append_profile_in_gdf(
         source_df[["geometry", variable]], raster, force_crs_match
-    )  # Use only two columns to build the weights (this avoids error, if the original dataset
-    # has already types appended on it).
+    )
 
-    results = smf.glm(formula_string, data=profiled_df, family=liks[likelihood]()).fit()
+    results = smf.glm(formula, data=profiled_df, family=liks[likelihood]()).fit()
 
     out = target_df.copy()[["geometry"]]
 
-    out = fast_append_profile_in_gdf(out[["geometry"]], raster, force_crs_match)
+    temp = fast_append_profile_in_gdf(out[["geometry"]], raster, force_crs_match)
 
-    out[variable] = results.predict(out[raster_codes].fillna(0))
+    out[variable] = results.predict(temp[raster_codes].fillna(0))
 
     if return_model:
         return out, results
