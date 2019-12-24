@@ -5,7 +5,7 @@ rasterio
 scipy
 statsmodels
 rasterstats
-libpysal
+libpysal >=4.2.0
 coverage
 coveralls
 matplotlib
