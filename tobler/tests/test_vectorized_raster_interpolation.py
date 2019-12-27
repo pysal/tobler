@@ -20,7 +20,7 @@ class VectorizedRasterInterpolation_Tester(unittest.TestCase):
         local_raster_path = fetch_quilt_path("nlcd_2011")
         nlcd_raster = rasterio.open(local_raster_path)
         _ = libpysal.examples.load_example('Sacramento2')
-        s_map = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
+        s_map = gpd.read_file(libpysal.examples.get_path("SacramentoMSA2.shp"))
         df = s_map[["geometry", "TOT_POP"]]
         df.crs = {"init": "epsg:4326"}
 
