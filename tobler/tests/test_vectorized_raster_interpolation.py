@@ -15,12 +15,14 @@ import xgboost as xgb
 import shap
 
 
+_ = libpysal.examples.load_example('Sacramento1')
+s_map = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
+nlcd_raster = 'nlcd_2011'
+
 class VectorizedRasterInterpolation_Tester(unittest.TestCase):
     def test_VectorizedRasterInterpolation(self):
         local_raster_path = fetch_quilt_path("nlcd_2011")
         nlcd_raster = rasterio.open(local_raster_path)
-
-        s_map = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
         df = s_map[["geometry", "TOT_POP"]]
         df.crs = {"init": "epsg:4326"}
 
@@ -38,7 +40,7 @@ class VectorizedRasterInterpolation_Tester(unittest.TestCase):
         weights = return_weights_from_regression(df, local_raster_path, "TOT_POP")
 
         correspondence_table = create_non_zero_population_by_pixels_locations(
-            df, nlcd_raster, "TOT_POP", weights
+            df, 'nlcd_2011', "TOT_POP", weights
         )
 
         boundary = gpd.GeoSeries(cascaded_union(df.geometry)).buffer(
@@ -80,7 +82,7 @@ class VectorizedRasterInterpolation_Tester(unittest.TestCase):
         res_union.crs = df.crs
 
         interpolated = calculate_interpolated_population_from_correspondence_table(
-            res_union, nlcd_raster, correspondence_table
+            res_union, 'nlcd_2011', correspondence_table
         )
 
         x = np.array(interpolated["interpolated_population"])
@@ -133,7 +135,6 @@ class VectorizedRasterInterpolation_Tester(unittest.TestCase):
         local_raster_path = fetch_quilt_path("nlcd_2011")
         nlcd_raster = rasterio.open(local_raster_path)
 
-        s_map = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
         df = s_map[["geometry", "TOT_POP"]]
         df.crs = {"init": "epsg:4326"}
 
@@ -151,7 +152,7 @@ class VectorizedRasterInterpolation_Tester(unittest.TestCase):
         weights = return_weights_from_xgboost(df, local_raster_path, "TOT_POP")
 
         correspondence_table = create_non_zero_population_by_pixels_locations(
-            df, nlcd_raster, "TOT_POP", weights
+            df, 'nlcd_2011', "TOT_POP", weights
         )
 
         boundary = gpd.GeoSeries(cascaded_union(df.geometry)).buffer(
@@ -193,7 +194,7 @@ class VectorizedRasterInterpolation_Tester(unittest.TestCase):
         res_union.crs = df.crs
 
         interpolated = calculate_interpolated_population_from_correspondence_table(
-            res_union, nlcd_raster, correspondence_table
+            res_union, 'nlcd_2011', correspondence_table
         )
 
         x = np.array(interpolated["interpolated_population"])
@@ -270,7 +271,7 @@ class VectorizedRasterInterpolation_Tester(unittest.TestCase):
         )
 
         correspondence_table = create_non_zero_population_by_pixels_locations(
-            df, nlcd_raster, "TOT_POP", weights
+            df, "nlcd_2011", "TOT_POP", weights
         )
 
         boundary = gpd.GeoSeries(cascaded_union(df.geometry)).buffer(
@@ -312,7 +313,7 @@ class VectorizedRasterInterpolation_Tester(unittest.TestCase):
         res_union.crs = df.crs
 
         interpolated = calculate_interpolated_population_from_correspondence_table(
-            res_union, nlcd_raster, correspondence_table
+            res_union, "nlcd_2011", correspondence_table
         )
 
         x = np.array(interpolated["interpolated_population"])
