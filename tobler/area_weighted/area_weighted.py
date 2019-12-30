@@ -295,7 +295,7 @@ def area_interpolate_binning(
         dfs.append(intensive)
 
     df = pd.concat(dfs, axis=0)
-    df['geometry'] = target_df['geometry']
+    df["geometry"] = target_df["geometry"]
     df = gpd.GeoDataFrame(df)
     return df
 
@@ -416,7 +416,7 @@ def area_interpolate(
         dfs.append(intensive)
 
     df = pd.concat(dfs, axis=0)
-    df['geometry'] = target_df['geometry']
+    df["geometry"] = target_df["geometry"]
     df = gpd.GeoDataFrame(df)
     return df
 
