@@ -50,8 +50,9 @@ def fetch_quilt_path(path):
             )
             try:
                 full_path = quilt3.Package.browse(
-                    f"rasters/nlcd/{path}.tif", "s3://quilt-cgs"
+                    "rasters/nlcd", "s3://quilt-cgs"
                 )
+                full_path = full_path[f"{path}.tif"]()
 
             except Timeout:
                 warn(
