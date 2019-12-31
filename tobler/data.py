@@ -41,7 +41,10 @@ def fetch_quilt_path(path):
             from quilt3.data.rasters import nlcd
 
             full_path = unquote(nlcd[path + ".tif"].get())
-            full_path = urlparse(full_path).path
+        except:
+            full_path = quilt3.Package.browse("rasters/nlcd", "s3://quilt-cgs")
+            full_path = full_path[f"{path}.tif"]()
+
         except ImportError:
             warn(
                 "Unable to locate local raster data. If you would like to use "
@@ -49,9 +52,7 @@ def fetch_quilt_path(path):
                 "store it locally using the `data.store_rasters()` function"
             )
             try:
-                full_path = quilt3.Package.browse(
-                    "rasters/nlcd", "s3://quilt-cgs"
-                )
+
                 full_path = full_path[f"{path}.tif"]()
 
             except Timeout:
