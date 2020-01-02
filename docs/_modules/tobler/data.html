@@ -112,6 +112,8 @@
       
   <h1>Source code for tobler.data</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">unquote</span><span class="p">,</span> <span class="n">urlparse</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
+<span class="kn">from</span> <span class="nn">requests.exceptions</span> <span class="kn">import</span> <span class="n">Timeout</span>
 
 <span class="kn">import</span> <span class="nn">quilt3</span>
 
@@ -153,12 +155,12 @@
 
             <span class="n">full_path</span> <span class="o">=</span> <span class="n">unquote</span><span class="p">(</span><span class="n">nlcd</span><span class="p">[</span><span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;.tif&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
             <span class="n">full_path</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="n">full_path</span><span class="p">)</span><span class="o">.</span><span class="n">path</span>
+
         <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span>
+            <span class="n">warn</span><span class="p">(</span>
                 <span class="s2">&quot;Unable to locate local raster data. If you would like to use &quot;</span>
                 <span class="s2">&quot;raster data from the National Land Cover Database, you can &quot;</span>
-                <span class="s2">&quot;store it locally using the `data.store_rasters()` function&quot;</span>
-            <span class="p">)</span>
+                <span class="s2">&quot;store it locally using the `data.store_rasters()` function&quot;</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">path</span>

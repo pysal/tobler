@@ -121,6 +121,7 @@
 <span class="kn">from</span> <span class="nn">.vectorized_raster_interpolation</span> <span class="kn">import</span> <span class="n">fast_append_profile_in_gdf</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">dok_matrix</span><span class="p">,</span> <span class="n">diags</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="kn">from</span> <span class="nn">tobler.util.util</span> <span class="kn">import</span> <span class="n">_check_crs</span><span class="p">,</span> <span class="n">_nan_check</span><span class="p">,</span> <span class="n">_check_presence_of_crs</span>
 
@@ -292,8 +293,8 @@
 <span class="k">def</span> <span class="nf">area_interpolate_binning</span><span class="p">(</span>
     <span class="n">source_df</span><span class="p">,</span>
     <span class="n">target_df</span><span class="p">,</span>
-    <span class="n">extensive_variables</span><span class="o">=</span><span class="p">[],</span>
-    <span class="n">intensive_variables</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">extensive_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">intensive_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">table</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">allocate_total</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
@@ -317,9 +318,9 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    estimates : tuple (2)</span>
-<span class="sd">              (extensive variable array, intensive variables array)</span>
-<span class="sd">              Each is of shape n,v where n is number of target units and v is the number of variables for each variable type.</span>
+<span class="sd">    estimates : geopandas.GeoDataFrame</span>
+<span class="sd">         new geodaraframe with interpolated variables as columns and target_df geometry</span>
+<span class="sd">         as output geometry</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -368,6 +369,7 @@
     <span class="n">den</span> <span class="o">=</span> <span class="n">diags</span><span class="p">([</span><span class="n">den</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="n">weights</span> <span class="o">=</span> <span class="n">den</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>  <span class="c1"># row standardize table</span>
 
+    <span class="n">dfs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">extensive</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="n">extensive_variables</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">extensive_variables</span><span class="p">:</span>
@@ -377,6 +379,8 @@
             <span class="n">extensive</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">estimates</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
 
     <span class="n">extensive</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">extensive</span><span class="p">)</span>
+    <span class="n">extensive</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">extensive</span><span class="p">)</span>
+    <span class="n">extensive</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">extensive</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">extensive_variables</span><span class="p">)</span>
 
     <span class="n">area</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
     <span class="n">den</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">area</span> <span class="o">+</span> <span class="p">(</span><span class="n">area</span> <span class="o">==</span> <span class="mi">0</span><span class="p">))</span>
@@ -396,14 +400,24 @@
             <span class="n">intensive</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">estimates</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
 
     <span class="n">intensive</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">intensive</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">extensive</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">intensive</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">intensive</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">intensive</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">intensive_variables</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">extensive_variables</span><span class="p">:</span>
+        <span class="n">dfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">extensive</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">intensive_variables</span><span class="p">:</span>
+        <span class="n">dfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">intensive</span><span class="p">)</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">dfs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">target_df</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span>
 
 
 <div class="viewcode-block" id="area_interpolate"><a class="viewcode-back" href="../../../generated/tobler.area_weighted.area_interpolate.html#tobler.area_weighted.area_interpolate">[docs]</a><span class="k">def</span> <span class="nf">area_interpolate</span><span class="p">(</span>
     <span class="n">source_df</span><span class="p">,</span>
     <span class="n">target_df</span><span class="p">,</span>
-    <span class="n">extensive_variables</span><span class="o">=</span><span class="p">[],</span>
-    <span class="n">intensive_variables</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">extensive_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">intensive_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">tables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">allocate_total</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
@@ -432,8 +446,9 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    estimates : tuple (2)</span>
-<span class="sd">        (extensive variable array, intensive variables array)</span>
+<span class="sd">    estimates : geopandas.GeoDataFrame</span>
+<span class="sd">        new geodaraframe with interpolated variables as columns and target_df geometry</span>
+<span class="sd">        as output geometry</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -482,6 +497,7 @@
     <span class="n">den</span> <span class="o">=</span> <span class="n">den</span> <span class="o">+</span> <span class="p">(</span><span class="n">den</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
     <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">den</span><span class="p">),</span> <span class="n">SU</span><span class="p">)</span>
 
+    <span class="n">dfs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">extensive</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="n">extensive_variables</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">extensive_variables</span><span class="p">:</span>
@@ -491,6 +507,7 @@
             <span class="n">estimates</span> <span class="o">=</span> <span class="n">estimates</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
             <span class="n">extensive</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">estimates</span><span class="p">)</span>
     <span class="n">extensive</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">extensive</span><span class="p">)</span>
+    <span class="n">extensive</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">extensive</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">extensive_variables</span><span class="p">)</span>
 
     <span class="n">ST</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">SU</span><span class="p">,</span> <span class="n">UT</span><span class="p">)</span>
     <span class="n">area</span> <span class="o">=</span> <span class="n">ST</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -504,8 +521,17 @@
             <span class="n">est</span> <span class="o">=</span> <span class="p">(</span><span class="n">vals</span> <span class="o">*</span> <span class="n">weights</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
             <span class="n">intensive</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">est</span><span class="p">)</span>
     <span class="n">intensive</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">intensive</span><span class="p">)</span>
+    <span class="n">intensive</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">intensive</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">intensive_variables</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="p">(</span><span class="n">extensive</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">intensive</span><span class="o">.</span><span class="n">T</span><span class="p">)</span></div>
+    <span class="k">if</span> <span class="n">extensive_variables</span><span class="p">:</span>
+        <span class="n">dfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">extensive</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">intensive_variables</span><span class="p">:</span>
+        <span class="n">dfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">intensive</span><span class="p">)</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">dfs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">target_df</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span></div>
 
 
 <div class="viewcode-block" id="area_tables_raster"><a class="viewcode-back" href="../../../generated/tobler.area_weighted.area_tables_raster.html#tobler.area_weighted.area_tables_raster">[docs]</a><span class="k">def</span> <span class="nf">area_tables_raster</span><span class="p">(</span>
