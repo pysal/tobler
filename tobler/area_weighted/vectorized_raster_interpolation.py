@@ -22,7 +22,7 @@ from tqdm.auto import tqdm
 from tobler.util.util import _check_presence_of_crs
 
 import statsmodels.formula.api as smf
-from statsmodels.genmod.families import Poisson, Gaussian
+from statsmodels.genmod.families import Poisson, Gaussian, NegativeBinomial
 from ..data import fetch_quilt_path
 
 __all__ = [
@@ -377,7 +377,6 @@ def create_non_zero_population_by_pixels_locations(
             "The polygon is not being reprojected. The clipping might be being performing on unmatching polygon to the raster."
         )
 
-        
     else:
         with rasterio.open(fetch_quilt_path(raster)) as raster:
             with warnings.catch_warnings():
@@ -386,8 +385,11 @@ def create_non_zero_population_by_pixels_locations(
             result_pops_array = np.array([])
             result_lons_array = np.array([])
             result_lats_array = np.array([])
-            
-            pbar = tqdm(total=len(geodataframe_projected), desc="Estimating population per pixel")
+
+            pbar = tqdm(
+                total=len(geodataframe_projected),
+                desc="Estimating population per pixel",
+            )
 
             for line_index in range(len(geodataframe_projected)):
                 polygon_projected = geodataframe_projected.iloc[[line_index]]
@@ -497,7 +499,7 @@ def calculate_interpolated_polygon_population_from_correspondence_table(
 
 
 def calculate_interpolated_population_from_correspondence_table(
-    geodataframe, raster, corresp_table, force_crs_match=True
+    geodataframe, raster, corresp_table, variable_name=None, force_crs_match=True
 ):
 
     """Function that returns the interpolated population of an entire geopandas
@@ -523,7 +525,7 @@ def calculate_interpolated_population_from_correspondence_table(
 
     _check_presence_of_crs(geodataframe)
 
-    final_geodataframe = geodataframe.copy()
+    final_geodataframe = geodataframe.copy()[["geometry"]]
     pop_final = np.empty(len(geodataframe))
     raster = fetch_quilt_path(raster)
     with rasterio.open(raster) as raster:
@@ -536,11 +538,11 @@ def calculate_interpolated_population_from_correspondence_table(
                 polygon, raster, corresp_table, force_crs_match
             )
             pop_final[line_index] = pop_aux
-            
+
             pbar.update(1)
 
         pbar.close()
-        final_geodataframe["interpolated_population"] = pop_final
+        final_geodataframe[variable_name] = pop_final
 
     return final_geodataframe
 
@@ -573,7 +575,7 @@ def subset_gdf_polygons_from_raster(geodataframe, raster, force_crs_match=True):
 
     # has_intersection is a boolean vector: True if the polygon has some overlay with raster, False otherwise
     has_intersection = []
-    
+
     pbar = tqdm(total=len(reprojected_gdf), desc="Subsetting polygons")
     for i in list(range(len(reprojected_gdf))):
         pbar.update(1)
