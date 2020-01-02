@@ -119,7 +119,7 @@
 <div class="viewcode-block" id="masked_area_interpolate"><a class="viewcode-back" href="../../../generated/tobler.dasymetric.masked_area_interpolate.html#tobler.dasymetric.masked_area_interpolate">[docs]</a><span class="k">def</span> <span class="nf">masked_area_interpolate</span><span class="p">(</span>
     <span class="n">source_df</span><span class="p">,</span>
     <span class="n">target_df</span><span class="p">,</span>
-    <span class="n">raster_path</span><span class="o">=</span><span class="s2">&quot;nlcd_2011&quot;</span><span class="p">,</span>
+    <span class="n">raster</span><span class="o">=</span><span class="s2">&quot;nlcd_2011&quot;</span><span class="p">,</span>
     <span class="n">codes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">force_crs_match</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">extensive_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -135,7 +135,7 @@
 <span class="sd">        source data to be converted to another geometric representation.</span>
 <span class="sd">    target_df : geopandas.GeoDataFrame</span>
 <span class="sd">        target geometries that will form the new representation of the input data</span>
-<span class="sd">    raster_path : str</span>
+<span class="sd">    raster : str</span>
 <span class="sd">        path to raster file that contains ancillary data. </span>
 <span class="sd">        alternatively a user can pass `ncld_2001` or `nlcd_2011` to use built-in data from the</span>
 <span class="sd">        National Land Cover Database</span>
@@ -161,17 +161,19 @@
 <span class="sd">        variables as the columns</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">codes</span><span class="p">:</span>
+        <span class="n">codes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">24</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">raster</span><span class="p">:</span>
+        <span class="n">raster</span> <span class="o">=</span> <span class="s1">&#39;nlcd_2011&#39;</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">tables</span><span class="p">:</span>
         <span class="n">tables</span> <span class="o">=</span> <span class="n">area_tables_raster</span><span class="p">(</span>
             <span class="n">source_df</span><span class="p">,</span>
             <span class="n">target_df</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
-            <span class="n">raster_path</span><span class="o">=</span><span class="n">raster_path</span><span class="p">,</span>
+            <span class="n">raster_path</span><span class="o">=</span><span class="n">raster</span><span class="p">,</span>
             <span class="n">codes</span><span class="o">=</span><span class="n">codes</span><span class="p">,</span>
             <span class="n">force_crs_match</span><span class="o">=</span><span class="n">force_crs_match</span><span class="p">,</span>
         <span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">codes</span><span class="p">:</span>
-        <span class="n">codes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">24</span><span class="p">]</span>
 
     <span class="c1"># In area_interpolate, the resulting variable has same length as target_df</span>
     <span class="n">interpolation</span> <span class="o">=</span> <span class="n">_slow_area_interpolate</span><span class="p">(</span>

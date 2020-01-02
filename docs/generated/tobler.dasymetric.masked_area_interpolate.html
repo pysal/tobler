@@ -16,7 +16,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="tobler.data.store_rasters" href="tobler.data.store_rasters.html" />
-    <link rel="prev" title="tobler.dasymetric.linear_model" href="tobler.dasymetric.linear_model.html" />
+    <link rel="prev" title="tobler.dasymetric.glm_pixel_adjusted" href="tobler.dasymetric.glm_pixel_adjusted.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -119,16 +119,16 @@
 <h1>tobler.dasymetric.masked_area_interpolate<a class="headerlink" href="#tobler-dasymetric-masked-area-interpolate" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="tobler.dasymetric.masked_area_interpolate">
-<code class="sig-prename descclassname">tobler.dasymetric.</code><code class="sig-name descname">masked_area_interpolate</code><span class="sig-paren">(</span><em class="sig-param">source_df</em>, <em class="sig-param">target_df</em>, <em class="sig-param">raster_path='nlcd_2011'</em>, <em class="sig-param">codes=None</em>, <em class="sig-param">force_crs_match=True</em>, <em class="sig-param">extensive_variables=None</em>, <em class="sig-param">intensive_variables=None</em>, <em class="sig-param">allocate_total=True</em>, <em class="sig-param">tables=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tobler/dasymetric/masked_area_interpolate.html#masked_area_interpolate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tobler.dasymetric.masked_area_interpolate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">tobler.dasymetric.</code><code class="sig-name descname">masked_area_interpolate</code><span class="sig-paren">(</span><em class="sig-param">source_df</em>, <em class="sig-param">target_df</em>, <em class="sig-param">raster='nlcd_2011'</em>, <em class="sig-param">codes=None</em>, <em class="sig-param">force_crs_match=True</em>, <em class="sig-param">extensive_variables=None</em>, <em class="sig-param">intensive_variables=None</em>, <em class="sig-param">allocate_total=True</em>, <em class="sig-param">tables=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tobler/dasymetric/masked_area_interpolate.html#masked_area_interpolate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tobler.dasymetric.masked_area_interpolate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interpolate data between two polygonal datasets using an auxiliary raster to mask out uninhabited land.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt><strong>source_df</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.6.1+27.g1a0376c)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></span></dt><dd><p>source data to be converted to another geometric representation.</p>
+<dt><strong>source_df</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.6.1+30.g0da3a7d)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></span></dt><dd><p>source data to be converted to another geometric representation.</p>
 </dd>
-<dt><strong>target_df</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.6.1+27.g1a0376c)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></span></dt><dd><p>target geometries that will form the new representation of the input data</p>
+<dt><strong>target_df</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.6.1+30.g0da3a7d)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></span></dt><dd><p>target geometries that will form the new representation of the input data</p>
 </dd>
-<dt><strong>raster_path</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>path to raster file that contains ancillary data. 
+<dt><strong>raster</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>path to raster file that contains ancillary data. 
 alternatively a user can pass <cite>ncld_2001</cite> or <cite>nlcd_2011</cite> to use built-in data from the
 National Land Cover Database</p>
 </dd>
@@ -150,7 +150,7 @@ codes from the NLCD data</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.6.1+27.g1a0376c)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></dt><dd><p>GeoDataFrame with geometries matching the target_df and extensive and intensive 
+<dt><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.6.1+30.g0da3a7d)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></dt><dd><p>GeoDataFrame with geometries matching the target_df and extensive and intensive 
 variables as the columns</p>
 </dd>
 </dl>

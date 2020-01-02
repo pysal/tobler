@@ -34,7 +34,8 @@ variables being assigned to the target
 .. autosummary::
    :toctree: generated/
 
-   linear_model
+   glm
+   glm_pixel_adjusted
    masked_area_interpolate
    
 

@@ -1,0 +1,6 @@
+tobler.dasymetric.glm
+=====================
+
+.. currentmodule:: tobler.dasymetric
+
+.. autofunction:: glm

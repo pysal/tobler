@@ -1,0 +1,6 @@
+tobler.dasymetric.glm\_pixel\_adjusted
+======================================
+
+.. currentmodule:: tobler.dasymetric
+
+.. autofunction:: glm_pixel_adjusted
