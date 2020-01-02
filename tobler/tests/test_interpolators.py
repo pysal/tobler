@@ -32,7 +32,7 @@ def test_masked_area_interpolate():
         source_df=sac2,
         target_df=sac1,
         extensive_variables=["POP2001"],
-        raster_path=local_raster,
+        raster=local_raster,
     )
     assert_almost_equal(masked.POP2001.sum(), 1894018, decimal=0)
 
