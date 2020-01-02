@@ -6,7 +6,7 @@ from ..area_weighted.vectorized_raster_interpolation import *
 def masked_area_interpolate(
     source_df,
     target_df,
-    raster_path="nlcd_2011",
+    raster="nlcd_2011",
     codes=None,
     force_crs_match=True,
     extensive_variables=None,
@@ -22,7 +22,7 @@ def masked_area_interpolate(
         source data to be converted to another geometric representation.
     target_df : geopandas.GeoDataFrame
         target geometries that will form the new representation of the input data
-    raster_path : str
+    raster : str
         path to raster file that contains ancillary data. 
         alternatively a user can pass `ncld_2001` or `nlcd_2011` to use built-in data from the
         National Land Cover Database
@@ -50,14 +50,14 @@ def masked_area_interpolate(
     """
     if not codes:
         codes = [21, 22, 23, 24]
-    if not raster_path:
-        raster_path = 'nlcd_2011'
+    if not raster:
+        raster = 'nlcd_2011'
 
     if not tables:
         tables = area_tables_raster(
             source_df,
             target_df.copy(),
-            raster_path=raster_path,
+            raster_path=raster,
             codes=codes,
             force_crs_match=force_crs_match,
         )

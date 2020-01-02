@@ -43,7 +43,7 @@ def test_glm_pixel_adjusted():
         target_df=sac1,
         variable="POP2001",
         ReLU=False,
-        raster_path=local_raster,
+        raster=local_raster,
     )
     assert_almost_equal(adjusted.POP2001.sum(), 4054516, decimal=0)
 
@@ -51,6 +51,6 @@ def test_glm_pixel_adjusted():
 def test_glm_poisson():
 
     glm_poisson = glm(
-        source_df=sac2, target_df=sac1, variable="POP2001", raster_path=local_raster
+        source_df=sac2, target_df=sac1, variable="POP2001", raster=local_raster
     )
     assert glm_poisson.POP2001.sum() > 1469000
