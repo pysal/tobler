@@ -70,7 +70,8 @@ def glm_pixel_adjusted(
         codes=raster_codes,
         force_crs_match=force_crs_match,
         likelihood=likelihood,
-        **kwargs,
+        na_value=255,
+        ReLU=False,
     )
 
     # match vector population to pixel counts
