@@ -9,7 +9,7 @@ from tobler.dasymetric import glm, glm_pixel_adjusted, masked_area_interpolate
 from tobler.area_weighted import area_interpolate
 
 
-local_raster = os.getcwd() + "/nlcd_2011.tif"
+local_raster = os.path.join(os.getcwd(), "nlcd_2011.tif")    # portability
 
 
 def datasets():
