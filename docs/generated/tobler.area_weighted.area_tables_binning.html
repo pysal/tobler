@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>tobler.area_weighted.area_tables_binning &#8212; tobler v0.1.0 Manual</title>
+    <title>tobler.area_weighted.area_tables_binning &#8212; tobler v0.2.0 Manual</title>
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css" />
@@ -13,6 +13,10 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="tobler.area_weighted.area_tables_raster" href="tobler.area_weighted.area_tables_raster.html" />
@@ -21,10 +25,6 @@
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
-<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
-<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
-<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
-<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
 
   </head><body>
 
@@ -39,7 +39,7 @@
         </button>
         <a class="navbar-brand" href="../index.html">
           tobler</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.1.0</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.2.0</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -61,8 +61,8 @@
       aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-released-version">Installing released version</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-development-version">Installing development version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-a-released-version">Installing a released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-a-development-from-source">Installing a development from source</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
@@ -113,7 +113,7 @@
 
 <div class="container">
   <div class="row">
-    <div class="body col-md-12 content" role="main">
+    <div class="col-md-12 content">
       
   <div class="section" id="tobler-area-weighted-area-tables-binning">
 <h1>tobler.area_weighted.area_tables_binning<a class="headerlink" href="#tobler-area-weighted-area-tables-binning" title="Permalink to this headline">¶</a></h1>
@@ -124,7 +124,7 @@
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt><strong>source_df</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.6.1+30.g0da3a7d)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></span></dt><dd><p>GeoDataFrame containing input data and polygons</p>
+<dt><strong>source_df</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.6.1+33.gadd5fe9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></span></dt><dd><p>GeoDataFrame containing input data and polygons</p>
 </dd>
 <dt><strong>target_df</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFramee</span></code></span></dt><dd><p>GeoDataFrame defining the output geometries</p>
 </dd>
@@ -160,7 +160,7 @@
     </p>
     <p>
         &copy; Copyright 2018, pysal developers.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.<br/>
     </p>
   </div>
 </footer>

@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Installation &#8212; tobler v0.1.0 Manual</title>
+    <title>Installation &#8212; tobler v0.2.0 Manual</title>
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/pysal-styles.css" />
@@ -13,6 +13,10 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="API reference" href="api.html" />
@@ -21,10 +25,6 @@
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
-<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
-<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
-<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
-<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
 
   </head><body>
 
@@ -39,7 +39,7 @@
         </button>
         <a class="navbar-brand" href="index.html">
           tobler</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.1.0</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.2.0</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -61,8 +61,8 @@
       aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#installing-released-version">Installing released version</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#installing-development-version">Installing development version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-a-released-version">Installing a released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-a-development-from-source">Installing a development from source</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a><ul>
@@ -86,8 +86,8 @@
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
 <li><a class="reference internal" href="#">Installation</a><ul>
-<li><a class="reference internal" href="#installing-released-version">Installing released version</a></li>
-<li><a class="reference internal" href="#installing-development-version">Installing development version</a></li>
+<li><a class="reference internal" href="#installing-a-released-version">Installing a released version</a></li>
+<li><a class="reference internal" href="#installing-a-development-from-source">Installing a development from source</a></li>
 </ul>
 </li>
 </ul>
@@ -117,22 +117,29 @@
 
 <div class="container">
   <div class="row">
-    <div class="body col-md-12 content" role="main">
+    <div class="col-md-12 content">
       
   <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<p>tobler supports python <a class="reference external" href="https://docs.python.org/3.5/">3.5</a> and <a class="reference external" href="https://docs.python.org/3.6/">3.6</a> only. Please make sure that you are
-operating in a python 3 environment.</p>
-<div class="section" id="installing-released-version">
-<h2>Installing released version<a class="headerlink" href="#installing-released-version" title="Permalink to this headline">¶</a></h2>
-<p>You can install tobler with <code class="code python docutils literal notranslate"><span class="name"><span class="pre">pip</span></span> <span class="name"><span class="pre">install</span></span> <span class="name"><span class="pre">tobler</span></span></code></p>
+<p>tobler supports Python <a class="reference external" href="https://docs.python.org/3.6/">3.6</a> and <a class="reference external" href="https://docs.python.org/3.7/">3.7</a> only. Please make sure that you are
+operating in a Python 3 environment.</p>
+<div class="section" id="installing-a-released-version">
+<h2>Installing a released version<a class="headerlink" href="#installing-a-released-version" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">tobler</span></code> is available on both conda and pip, and can be installed with either</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda install -c conda-forge tobler
+</pre></div>
 </div>
-<div class="section" id="installing-development-version">
-<h2>Installing development version<a class="headerlink" href="#installing-development-version" title="Permalink to this headline">¶</a></h2>
-<p>The recommended method for installing tobler is with <a class="reference external" href="https://www.anaconda.com/download/">anaconda</a>. To get started with the development version, clone this repository or download it manually then <cite>cd</cite> into the directory and run the following commands:</p>
-<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span>$ conda env create -f environment.yml
-$ source activate tobler
-$ python setup.py develop
+<p>or</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install tobler
+</pre></div>
+</div>
+</div>
+<div class="section" id="installing-a-development-from-source">
+<h2>Installing a development from source<a class="headerlink" href="#installing-a-development-from-source" title="Permalink to this headline">¶</a></h2>
+<p>For working with a development version, we recommend <a class="reference external" href="https://www.anaconda.com/download/">anaconda</a>. To get started, clone this repository or download it manually then <code class="docutils literal notranslate"><span class="pre">cd</span></code> into the directory and run the following commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda env create -f environment.yml
+<span class="nb">source</span> activate tobler
+python setup.py develop
 </pre></div>
 </div>
 <p>You can  also <a class="reference external" href="https://help.github.com/articles/fork-a-repo/">fork</a> the <a class="reference external" href="https://github.com/pysal/tobler">pysal/tobler</a> repo and create a local clone of
@@ -162,7 +169,7 @@ contribute to the tobler development.</p>
     </p>
     <p>
         &copy; Copyright 2018, pysal developers.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.<br/>
     </p>
   </div>
 </footer>
