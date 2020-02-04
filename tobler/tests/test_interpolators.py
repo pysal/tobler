@@ -41,7 +41,7 @@ def test_masked_area_interpolate():
         source_df=sac2,
         target_df=sac1,
         extensive_variables=["POP2001"],
-        raster=local_raster,
+        raster='nlcd_2011',
     )
     assert_almost_equal(masked.POP2001.sum(), 1894018, decimal=0)
 
@@ -53,7 +53,7 @@ def test_glm_pixel_adjusted():
         target_df=sac1,
         variable="POP2001",
         ReLU=False,
-        raster=local_raster,
+        raster='nlcd_2011',
     )
     assert_almost_equal(adjusted.POP2001.sum(), 4054516, decimal=0)
 
@@ -61,6 +61,6 @@ def test_glm_pixel_adjusted():
 def test_glm_poisson():
     sac1, sac2 = datasets()
     glm_poisson = glm(
-        source_df=sac2, target_df=sac1, variable="POP2001", raster=local_raster
+        source_df=sac2, target_df=sac1, variable="POP2001", raster='nlcd_2011'
     )
     assert glm_poisson.POP2001.sum() > 1469000
