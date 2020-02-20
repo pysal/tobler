@@ -4,6 +4,7 @@ Useful functions for spatial interpolation methods of tobler
 
 import numpy as np
 import math
+from pyproj import CRS
 
 
 def _check_crs(source_df, target_df):

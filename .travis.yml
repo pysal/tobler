@@ -32,7 +32,6 @@ install:
 
 script:
   - if [[ $TRAVIS_JOB_NAME == python-* ]]; then
-      python -c "from tobler.data import store_rasters; store_rasters()"; 
       travis_wait 45 pytest --cov tobler ;
     fi
 
