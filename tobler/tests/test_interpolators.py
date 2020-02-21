@@ -5,8 +5,9 @@ import quilt3
 import os
 from libpysal.examples import load_example
 from numpy.testing import assert_almost_equal
-from tobler.dasymetric import glm, glm_pixel_adjusted, masked_area_interpolate
+from tobler.dasymetric import masked_area_interpolate
 from tobler.area_weighted import area_interpolate
+from tobler.model import glm, glm_pixel_adjusted
 
 
 local_raster = os.path.join(os.getcwd(), "nlcd_2011.tif")    # portability
