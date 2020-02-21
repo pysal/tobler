@@ -41,7 +41,7 @@ def fetch_quilt_path(path):
             from quilt3.data.rasters import nlcd
 
         except ImportError:
-            warn(
+            raise(
                 "Unable to locate local raster data. You can store NLCD rasters locally using "
                 "the `data.store_rasters()` function (python kernel restart required"
             )
