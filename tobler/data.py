@@ -40,14 +40,18 @@ def fetch_quilt_path(path):
         try:
             from quilt3.data.rasters import nlcd
 
-            full_path = unquote(nlcd[path + ".tif"].get())
-            full_path = urlparse(full_path).path
-
         except ImportError:
-            warn(
-                "Unable to locate local raster data. If you would like to use "
-                "raster data from the National Land Cover Database, you can "
-                "store it locally using the `data.store_rasters()` function")
+            raise(
+                "Unable to locate local raster data. You can store NLCD rasters locally using "
+                "the `data.store_rasters()` function (python kernel restart required"
+            )
+
+        full_path = unquote(nlcd[path + ".tif"].get())
+        parts = urlparse(full_path)
+        if parts.hostname:
+            full_path = parts.scheme + "://" + parts.hostname + parts.path
+        else:
+            full_path = parts.scheme + "://" + parts.path
 
     else:
         return path
