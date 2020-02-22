@@ -34,10 +34,21 @@ variables being assigned to the target
 .. autosummary::
    :toctree: generated/
 
+   masked_area_interpolate
+
+
+Model
+---------
+Model based approaches use additional spatial data, such as a land cover raster, to estimate the relationships between population
+and the auxiliary data. It then uses that model to predict population levels at different scales
+
+.. currentmodule:: tobler.model
+
+.. autosummary::
+   :toctree: generated/
+
    glm
    glm_pixel_adjusted
-   masked_area_interpolate
-   
 
 Data
 -----------------------
