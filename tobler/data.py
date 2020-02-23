@@ -5,7 +5,7 @@ from requests.exceptions import Timeout
 import quilt3
 
 
-def store_rasters():
+def store_rasters(dest=None):
     """Save raster data to the local quilt package storage.
 
     Returns
@@ -15,11 +15,11 @@ def store_rasters():
         for use in interpolation functions from the `harmonize` module.
 
     """
-    quilt3.Package.install("rasters/nlcd", "s3://quilt-cgs")
+    quilt3.Package.install("rasters/nlcd", "s3://quilt-cgs", dest=dest)
 
 
 def fetch_quilt_path(path):
-    """utility for getting the path to a raster stored with quilt.
+    """Get the path to a raster stored with quilt.
 
     Parameters
     ----------
@@ -35,13 +35,12 @@ def fetch_quilt_path(path):
         otherwise return the original path untouched
 
     """
-
     if path in ["nlcd_2011", "nlcd_2001"]:
         try:
             from quilt3.data.rasters import nlcd
 
         except ImportError:
-            raise(
+            raise IOError(
                 "Unable to locate local raster data. You can store NLCD rasters locally using "
                 "the `data.store_rasters()` function (python kernel restart required"
             )
