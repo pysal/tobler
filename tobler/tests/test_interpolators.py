@@ -12,7 +12,7 @@ from tobler.model import glm, glm_pixel_adjusted
 
 def datasets():
 
-    if not os.path.exists(local_raster):
+    if not os.path.exists("nlcd_2011.tif"):
         p = quilt3.Package.browse("rasters/nlcd", "s3://quilt-cgs")
         p["nlcd_2011.tif"].fetch()
 
