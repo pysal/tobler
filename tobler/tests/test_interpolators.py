@@ -13,7 +13,7 @@ from tobler.model import glm, glm_pixel_adjusted
 def datasets():
 
     if not os.path.exists("nlcd_2011.tif"):
-        p = quilt3.Package.browse("rasters/nlcd", "s3://quilt-cgs")
+        p = quilt3.Package.browse("rasters/nlcd", "s3://spatial-ucr")
         p["nlcd_2011.tif"].fetch()
 
     sac1 = load_example("Sacramento1")

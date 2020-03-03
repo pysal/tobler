@@ -15,7 +15,7 @@ def store_rasters(dest=None):
         for use in interpolation functions from the `harmonize` module.
 
     """
-    quilt3.Package.install("rasters/nlcd", "s3://quilt-cgs", dest=dest)
+    quilt3.Package.install("rasters/nlcd", "s3://spatial-ucr", dest=dest)
 
 
 def fetch_quilt_path(path):
