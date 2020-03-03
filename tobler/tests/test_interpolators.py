@@ -16,13 +16,13 @@ def datasets():
         p = quilt3.Package.browse("rasters/nlcd", "s3://quilt-cgs")
         p["nlcd_2011.tif"].fetch()
 
-        sac1 = load_example("Sacramento1")
-        sac2 = load_example("Sacramento2")
+    sac1 = load_example("Sacramento1")
+    sac2 = load_example("Sacramento2")
 
-        sac1 = geopandas.read_file(sac1.get_path("sacramentot2.shp"))
-        sac2 = geopandas.read_file(sac2.get_path("SacramentoMSA2.shp"))
+    sac1 = geopandas.read_file(sac1.get_path("sacramentot2.shp"))
+    sac2 = geopandas.read_file(sac2.get_path("SacramentoMSA2.shp"))
 
-        return sac1, sac2
+    return sac1, sac2
 
 
 def test_area_interpolate():
