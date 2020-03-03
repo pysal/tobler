@@ -50,7 +50,7 @@ def fetch_quilt_path(path):
         if parts.hostname:
             full_path = parts.scheme + "://" + parts.hostname + parts.path
         else:
-            full_path = parts.scheme + "://" + parts.path
+            full_path = parts.path
 
     else:
         return path
