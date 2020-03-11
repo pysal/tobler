@@ -15,6 +15,6 @@ dependencies:
   - scikit-learn
   - scipy
   - libpysal
-  - quilt3 =3.1.8
+  - quilt3 >=3.1.11
   - tqdm
   - pip
