@@ -23,9 +23,7 @@ def masked_area_interpolate(
     target_df : geopandas.GeoDataFrame
         target geometries that will form the new representation of the input data
     raster : str
-        path to raster file that contains ancillary data. 
-        alternatively a user can pass `ncld_2001` or `nlcd_2011` to use built-in data from the
-        National Land Cover Database
+        path to raster file that contains ancillary data
     codes : list of ints
         list of pixel values that should be considered part of the mask (the default is None).
         If no codes are passed, this defaults to  [21, 22, 23, 24] which are the developed land use
@@ -44,14 +42,14 @@ def masked_area_interpolate(
     Returns
     -------
     geopandas.GeoDataFrame
-        GeoDataFrame with geometries matching the target_df and extensive and intensive 
+        GeoDataFrame with geometries matching the target_df and extensive and intensive
         variables as the columns
 
     """
     if not codes:
         codes = [21, 22, 23, 24]
     if not raster:
-        raster = 'nlcd_2011'
+        raise IOError('You must pass the path to a raster that can be read with rasterio')
 
     if not tables:
         tables = area_tables_raster(

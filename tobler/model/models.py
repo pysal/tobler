@@ -17,7 +17,7 @@ from tobler.util import project_gdf
 def glm_pixel_adjusted(
     source_df=None,
     target_df=None,
-    raster="nlcd_2011",
+    raster=None,
     raster_codes=None,
     variable=None,
     formula=None,
@@ -37,10 +37,9 @@ def glm_pixel_adjusted(
         geodataframe containing source original data to be represented by another geometry
     target_df : geopandas.GeoDataFrame, required
         geodataframe containing target boundaries that will be used to represent the source data
-    raster : str, required (default="nlcd_2011")
+    raster : str, required
         path to raster file that will be used to input data to the regression model.
         i.e. a coefficients refer to the relationship between pixel counts and population counts.
-        Defaults to 2011 NLCD
     raster_codes : list, required (default =[21, 22, 23, 24])
         list of integers that represent different types of raster cells.
         Defaults to [21, 22, 23, 24] whichare considered developed land types in the NLCD
@@ -60,6 +59,8 @@ def glm_pixel_adjusted(
     """
     if not raster_codes:
         raster_codes = [21, 22, 23, 24]
+    if not raster:
+        raise IOError('You must provide the path to a raster that can be read with rasterio')
 
     # build weights from raster and vector data
     weights = return_weights_from_regression(
