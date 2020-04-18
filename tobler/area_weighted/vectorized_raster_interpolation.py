@@ -23,7 +23,6 @@ from tobler.util.util import _check_presence_of_crs
 
 import statsmodels.formula.api as smf
 from statsmodels.genmod.families import Poisson, Gaussian, NegativeBinomial
-from ..data import fetch_quilt_path
 
 __all__ = [
     "getFeatures",
@@ -70,7 +69,6 @@ def fast_append_profile_in_gdf(geodataframe, raster_path, force_crs_match=True):
     """
 
     _check_presence_of_crs(geodataframe)
-    raster_path = fetch_quilt_path(raster_path)
     if force_crs_match:
         with rasterio.open(raster_path) as raster:
             # raster =
@@ -237,7 +235,6 @@ def return_weights_from_xgboost(
     2) The pixel value, usually, ranges from 0 to 255. That is why the default of 'n_pixels_option_values' is 256.
     3) The returning weights represent the average of the Shapley's values from each feature.
     """
-    raster_path = fetch_quilt_path(raster_path)
     try:
         import xgboost as xgb
         import shap
@@ -378,7 +375,7 @@ def create_non_zero_population_by_pixels_locations(
         )
 
     else:
-        with rasterio.open(fetch_quilt_path(raster)) as raster:
+        with rasterio.open(raster) as raster:
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
                 geodataframe_projected = geodataframe.to_crs(crs=raster.crs.data)
@@ -527,7 +524,6 @@ def calculate_interpolated_population_from_correspondence_table(
 
     final_geodataframe = geodataframe.copy()[["geometry"]]
     pop_final = np.empty(len(geodataframe))
-    raster = fetch_quilt_path(raster)
     with rasterio.open(raster) as raster:
 
         pbar = tqdm(total=len(geodataframe), desc="Estimating target polygon values")
