@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>tobler.model.models &#8212; tobler v0.2.2 Manual</title>
+    <title>tobler.model.models &#8212; tobler v0.3.0 Manual</title>
     <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/pysal-styles.css" />
@@ -37,7 +37,7 @@
         </button>
         <a class="navbar-brand" href="../../../index.html">
           tobler</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.2.2</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.3.0</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -131,7 +131,7 @@
 <div class="viewcode-block" id="glm_pixel_adjusted"><a class="viewcode-back" href="../../../generated/tobler.model.glm_pixel_adjusted.html#tobler.model.glm_pixel_adjusted">[docs]</a><span class="k">def</span> <span class="nf">glm_pixel_adjusted</span><span class="p">(</span>
     <span class="n">source_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">target_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">raster</span><span class="o">=</span><span class="s2">&quot;nlcd_2011&quot;</span><span class="p">,</span>
+    <span class="n">raster</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">raster_codes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">variable</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">formula</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -151,10 +151,9 @@
 <span class="sd">        geodataframe containing source original data to be represented by another geometry</span>
 <span class="sd">    target_df : geopandas.GeoDataFrame, required</span>
 <span class="sd">        geodataframe containing target boundaries that will be used to represent the source data</span>
-<span class="sd">    raster : str, required (default=&quot;nlcd_2011&quot;)</span>
+<span class="sd">    raster : str, required</span>
 <span class="sd">        path to raster file that will be used to input data to the regression model.</span>
 <span class="sd">        i.e. a coefficients refer to the relationship between pixel counts and population counts.</span>
-<span class="sd">        Defaults to 2011 NLCD</span>
 <span class="sd">    raster_codes : list, required (default =[21, 22, 23, 24])</span>
 <span class="sd">        list of integers that represent different types of raster cells.</span>
 <span class="sd">        Defaults to [21, 22, 23, 24] whichare considered developed land types in the NLCD</span>
@@ -174,6 +173,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">raster_codes</span><span class="p">:</span>
         <span class="n">raster_codes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">24</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">raster</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;You must provide the path to a raster that can be read with rasterio&#39;</span><span class="p">)</span>
 
     <span class="c1"># build weights from raster and vector data</span>
     <span class="n">weights</span> <span class="o">=</span> <span class="n">return_weights_from_regression</span><span class="p">(</span>
