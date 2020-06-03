@@ -5,7 +5,7 @@ channels:
 dependencies:
   - jupyterlab
   - numpy
-  - geopandas
+  - geopandas >=0.7
   - pandas
   - numpy
   - rasterio
