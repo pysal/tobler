@@ -415,8 +415,8 @@ def area_interpolate(
     if intensive_variables:
         dfs.append(intensive)
 
-    df = pd.concat(dfs, axis=0)
-    df["geometry"] = target_df["geometry"]
+    df = pd.concat(dfs, axis=1)
+    df["geometry"] = target_df["geometry"].reset_index(drop=True)
     df = gpd.GeoDataFrame(df)
     return df
 
