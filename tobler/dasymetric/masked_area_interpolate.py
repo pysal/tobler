@@ -1,4 +1,4 @@
-from ..area_weighted import _slow_area_interpolate, area_tables_raster
+from ..area_weighted import _slow_area_interpolate, area_tables_raster, area_tables_binning
 
 from ..area_weighted.vectorized_raster_interpolation import *
 
@@ -61,13 +61,14 @@ def masked_area_interpolate(
         )
 
     # In area_interpolate, the resulting variable has same length as target_df
-    interpolation = _slow_area_interpolate(
+    interpolation = area_tables_binning(
         source_df,
         target_df.copy(),
         extensive_variables=extensive_variables,
         intensive_variables=intensive_variables,
         allocate_total=allocate_total,
-        tables=tables,
+        raster_path=raster,
+        codes=codes
     )
 
     return interpolation

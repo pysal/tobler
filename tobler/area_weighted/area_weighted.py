@@ -13,15 +13,17 @@ import pandas as pd
 from tobler.util.util import _check_crs, _nan_check, _check_presence_of_crs
 
 
-def area_tables_binning(source_df, target_df):
+def area_tables_binning(source_df, target_df, raster_path=None, codes=None, **kwargs):
     """Construct area allocation and source-target correspondence tables using a spatial indexing approach
 
     Parameters
     ----------
     source_df : geopandas.GeoDataFrame
         GeoDataFrame containing input data and polygons
-    target_df : geopandas.GeoDataFramee
+    target_df : geopandas.GeoDataFrame
         GeoDataFrame defining the output geometries
+    raster_path: str (optional)
+        path to raster file to be used as a dasymetric mask
 
     Returns
     -------
@@ -111,12 +113,17 @@ def area_tables_binning(source_df, target_df):
         for col in idCols:
             colNeighbors = colNeighbors.union(columns2[col])
         neighbors = rowNeighbors.intersection(colNeighbors)
+        if raster_path:
+            SU = area_tables_raster(source_df, target_df, raster_path, codes)[0]
         for neighbor in neighbors:
             if df1.geometry.iloc[polyId].intersects(df2.geometry.iloc[neighbor]):
-                intersection = df1.geometry.iloc[polyId].intersection(
-                    df2.geometry.iloc[neighbor]
-                )
-                table[polyId, neighbor] = intersection.area
+                if raster_path:
+                    table[polyId, neighbor] = SU[polyId]
+                else:
+                    intersection = df1.geometry.iloc[polyId].intersection(
+                        df2.geometry.iloc[neighbor]
+                    )
+                    table[polyId, neighbor] = intersection.area
 
     return table
 
@@ -429,9 +436,9 @@ def area_tables_raster(
 
     Parameters
     ----------
-    source_df : geopandas.GeoDataFrame 
+    source_df : geopandas.GeoDataFrame
         geeodataframe with geometry column of polygon type
-    target_df : geopandas.GeoDataFrame 
+    target_df : geopandas.GeoDataFrame
         geodataframe with geometry column of polygon type
     raster_path : str
         the path to the associated raster image.
