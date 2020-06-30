@@ -17,7 +17,7 @@ dependencies:
   - libpysal
   - tqdm
   - quilt3
-  - coveralls
+  - codecov
   - pytest
   - pytest-mpl
   - pytest-cov
