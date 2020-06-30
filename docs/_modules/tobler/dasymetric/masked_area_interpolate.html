@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>tobler.dasymetric.masked_area_interpolate &#8212; tobler v0.2.2 Manual</title>
+    <title>tobler.dasymetric.masked_area_interpolate &#8212; tobler v0.3.0 Manual</title>
     <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/pysal-styles.css" />
@@ -37,7 +37,7 @@
         </button>
         <a class="navbar-brand" href="../../../index.html">
           tobler</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.2.2</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.3.0</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -137,9 +137,7 @@
 <span class="sd">    target_df : geopandas.GeoDataFrame</span>
 <span class="sd">        target geometries that will form the new representation of the input data</span>
 <span class="sd">    raster : str</span>
-<span class="sd">        path to raster file that contains ancillary data. </span>
-<span class="sd">        alternatively a user can pass `ncld_2001` or `nlcd_2011` to use built-in data from the</span>
-<span class="sd">        National Land Cover Database</span>
+<span class="sd">        path to raster file that contains ancillary data</span>
 <span class="sd">    codes : list of ints</span>
 <span class="sd">        list of pixel values that should be considered part of the mask (the default is None).</span>
 <span class="sd">        If no codes are passed, this defaults to  [21, 22, 23, 24] which are the developed land use</span>
@@ -158,14 +156,14 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    geopandas.GeoDataFrame</span>
-<span class="sd">        GeoDataFrame with geometries matching the target_df and extensive and intensive </span>
+<span class="sd">        GeoDataFrame with geometries matching the target_df and extensive and intensive</span>
 <span class="sd">        variables as the columns</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">codes</span><span class="p">:</span>
         <span class="n">codes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">24</span><span class="p">]</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">raster</span><span class="p">:</span>
-        <span class="n">raster</span> <span class="o">=</span> <span class="s1">&#39;nlcd_2011&#39;</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;You must pass the path to a raster that can be read with rasterio&#39;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">tables</span><span class="p">:</span>
         <span class="n">tables</span> <span class="o">=</span> <span class="n">area_tables_raster</span><span class="p">(</span>
