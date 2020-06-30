@@ -1,0 +1,19 @@
+name: tobler
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.7
+  - jupyterlab
+  - numpy
+  - geopandas
+  - pandas
+  - numpy
+  - rasterio
+  - rasterstats
+  - statsmodels
+  - scikit-learn
+  - scipy
+  - libpysal
+  - tqdm
+  - pip
