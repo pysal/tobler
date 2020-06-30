@@ -1,7 +1,6 @@
-name: tobler
+name: test
 channels:
   - conda-forge
-  - defaults
 dependencies:
   - python=3.8
   - jupyterlab
@@ -16,4 +15,10 @@ dependencies:
   - scipy
   - libpysal
   - tqdm
+  - codecov
+  - quilt3
+  - pytest
+  - pytest-mpl
+  - pytest-cov
+  - twine
   - pip
