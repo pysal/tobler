@@ -1,7 +1,6 @@
 name: tobler
 channels:
   - conda-forge
-  - defaults
 dependencies:
   - jupyterlab
   - numpy
