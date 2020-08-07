@@ -23,12 +23,11 @@ def datasets():
         if not os.path.exists("nlcd_2011.tif"):
             p = quilt3.Package.browse("rasters/nlcd", "s3://spatial-ucr")
             p["nlcd_2011.tif"].fetch()
-
-        sac1 = load_example("Sacramento1")
-        sac2 = load_example("Sacramento2")
-
+        sac1 = load_example('Sacramento1')
+        sac2 = load_example('Sacramento2')
         sac1 = geopandas.read_file(sac1.get_path("sacramentot2.shp"))
         sac2 = geopandas.read_file(sac2.get_path("SacramentoMSA2.shp"))
+        sac1['pct_poverty'] = sac1.POV_POP/sac1.POV_TOT
 
         return sac1, sac2
     else:
@@ -38,21 +37,25 @@ def datasets():
 def test_area_interpolate():
     sac1, sac2 = datasets()
     area = area_interpolate(
-        source_df=sac2, target_df=sac1, extensive_variables=["POP2001"]
+        source_df=sac1, target_df=sac2, extensive_variables=["TOT_POP"], intensive_variables=["pct_poverty"]
     )
-    assert_almost_equal(area.POP2001.sum(), 1894018, decimal=0)
+    assert_almost_equal(area.TOT_POP.sum(), 1796856, decimal=0)
+    assert_almost_equal(area.pct_poverty.sum(), 2140, decimal=0)
+    
 
 
 @pytest.mark.skipif(QUILTMISSING, reason="quilt3 not available.")
 def test_masked_area_interpolate():
     sac1, sac2 = datasets()
     masked = masked_area_interpolate(
-        source_df=sac2,
-        target_df=sac1,
-        extensive_variables=["POP2001"],
+        source_df=sac1,
+        target_df=sac2,
+        extensive_variables=["TOT_POP"],
+        intensive_variables=['pct_poverty'],
         raster="nlcd_2011.tif",
     )
-    assert masked.POP2001.sum() > 1500000
+    assert masked.TOT_POP.sum() > 1500000
+    assert masked.pct_poverty.sum() > 2000
 
 
 @pytest.mark.skipif(QUILTMISSING, reason="quilt3 not available.")

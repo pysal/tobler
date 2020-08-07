@@ -10,7 +10,7 @@ import warnings
 from scipy.sparse import dok_matrix, diags
 import pandas as pd
 
-from tobler.util.util import _check_crs, _nan_check, _check_presence_of_crs
+from tobler.util.util import _check_crs, _nan_check, _inf_check, _check_presence_of_crs
 
 
 def area_tables_binning(source_df, target_df):
@@ -33,8 +33,8 @@ def area_tables_binning(source_df, target_df):
     else:
         return None
 
-    df1 = source_df
-    df2 = target_df
+    df1 = source_df.copy()
+    df2 = target_df.copy()
 
     l1, b1, r1, t1 = df1.total_bounds
     l2, b2, r2, t2 = df2.total_bounds
@@ -152,6 +152,8 @@ def area_tables(source_df, target_df):
         pass
     else:
         return None
+    source_df = source_df.copy()
+    source_df = source_df.copy()
 
     n_s = source_df.shape[0]
     n_t = target_df.shape[0]
@@ -237,6 +239,8 @@ def area_interpolate_binning(
 
      w_{i,j} = a_{i,j} / \\sum_k a_{k,j}
     """
+    source_df = source_df.copy()
+    target_df = target_df.copy()
 
     if _check_crs(source_df, target_df):
         pass
@@ -261,6 +265,7 @@ def area_interpolate_binning(
     if extensive_variables:
         for variable in extensive_variables:
             vals = _nan_check(source_df, variable)
+            vals = _inf_check(source_df, variable)
             estimates = diags([vals], [0]).dot(weights)
             estimates = estimates.sum(axis=0)
             extensive.append(estimates.tolist()[0])
@@ -280,6 +285,7 @@ def area_interpolate_binning(
     if intensive_variables:
         for variable in intensive_variables:
             vals = _nan_check(source_df, variable)
+            vals = _inf_check(source_df, variable)
             n = vals.shape[0]
             vals = vals.reshape((n,))
             estimates = diags([vals], [0])
@@ -294,9 +300,9 @@ def area_interpolate_binning(
     if intensive_variables:
         dfs.append(intensive)
 
-    df = pd.concat(dfs, axis=0)
+    df = pd.concat(dfs, axis=1)
     df["geometry"] = target_df["geometry"]
-    df = gpd.GeoDataFrame(df)
+    df = gpd.GeoDataFrame(df.replace(np.inf, np.nan))
     return df
 
 
@@ -369,6 +375,9 @@ def area_interpolate(
     w_{i,j} = a_{i,j} / \sum_k a_{k,j}
 
     """
+    source_df = source_df.copy()
+    target_df = target_df.copy()
+
     if _check_crs(source_df, target_df):
         pass
     else:
@@ -389,6 +398,7 @@ def area_interpolate(
     if extensive_variables:
         for variable in extensive_variables:
             vals = _nan_check(source_df, variable)
+            vals = _inf_check(source_df, variable)
             estimates = np.dot(np.diag(vals), weights)
             estimates = np.dot(estimates, UT)
             estimates = estimates.sum(axis=0)
@@ -404,6 +414,7 @@ def area_interpolate(
     if intensive_variables:
         for variable in intensive_variables:
             vals = _nan_check(source_df, variable)
+            vals = _inf_check(source_df, variable)
             vals.shape = (len(vals), 1)
             est = (vals * weights).sum(axis=0)
             intensive.append(est)
@@ -417,7 +428,7 @@ def area_interpolate(
 
     df = pd.concat(dfs, axis=1)
     df["geometry"] = target_df["geometry"].reset_index(drop=True)
-    df = gpd.GeoDataFrame(df)
+    df = gpd.GeoDataFrame(df.replace(np.inf, np.nan))
     return df
 
 
@@ -467,7 +478,8 @@ def area_tables_raster(
         pass
     else:
         return None
-
+    source_df = source_df.copy()
+    target_df = target_df.copy()
     n_s = source_df.shape[0]
     n_t = target_df.shape[0]
     _left = np.arange(n_s)
