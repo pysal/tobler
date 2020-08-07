@@ -10,7 +10,7 @@ import warnings
 from scipy.sparse import dok_matrix, diags
 import pandas as pd
 
-from tobler.util.util import _check_crs, _nan_check, _check_presence_of_crs
+from tobler.util.util import _check_crs, _nan_check, _inf_check, _check_presence_of_crs
 
 
 def area_tables_binning(source_df, target_df):
@@ -265,6 +265,7 @@ def area_interpolate_binning(
     if extensive_variables:
         for variable in extensive_variables:
             vals = _nan_check(source_df, variable)
+            vals = _inf_check(source_df, variable)
             estimates = diags([vals], [0]).dot(weights)
             estimates = estimates.sum(axis=0)
             extensive.append(estimates.tolist()[0])
@@ -284,6 +285,7 @@ def area_interpolate_binning(
     if intensive_variables:
         for variable in intensive_variables:
             vals = _nan_check(source_df, variable)
+            vals = _inf_check(source_df, variable)
             n = vals.shape[0]
             vals = vals.reshape((n,))
             estimates = diags([vals], [0])
@@ -300,7 +302,7 @@ def area_interpolate_binning(
 
     df = pd.concat(dfs, axis=1)
     df["geometry"] = target_df["geometry"]
-    df = gpd.GeoDataFrame(df)
+    df = gpd.GeoDataFrame(df.replace(np.inf, np.nan))
     return df
 
 
@@ -396,6 +398,7 @@ def area_interpolate(
     if extensive_variables:
         for variable in extensive_variables:
             vals = _nan_check(source_df, variable)
+            vals = _inf_check(source_df, variable)
             estimates = np.dot(np.diag(vals), weights)
             estimates = np.dot(estimates, UT)
             estimates = estimates.sum(axis=0)
@@ -411,6 +414,7 @@ def area_interpolate(
     if intensive_variables:
         for variable in intensive_variables:
             vals = _nan_check(source_df, variable)
+            vals = _inf_check(source_df, variable)
             vals.shape = (len(vals), 1)
             est = (vals * weights).sum(axis=0)
             intensive.append(est)
@@ -424,7 +428,7 @@ def area_interpolate(
 
     df = pd.concat(dfs, axis=1)
     df["geometry"] = target_df["geometry"].reset_index(drop=True)
-    df = gpd.GeoDataFrame(df)
+    df = gpd.GeoDataFrame(df.replace(np.inf, np.nan))
     return df
 
 

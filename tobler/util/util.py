@@ -4,6 +4,7 @@ Useful functions for spatial interpolation methods of tobler
 
 import numpy as np
 import math
+from warnings import warn
 from pyproj import CRS
 
 
@@ -21,10 +22,23 @@ def _nan_check(df, column):
     Warn and replace nan with 0.0.
     """
     values = df[column].values
-    if np.any(np.isnan(values)):
+    if np.any(np.isnan(values)) or np.any(np.isinf(values)):
         wherenan = np.isnan(values)
         values[wherenan] = 0.0
-        print("nan values in variable: {var}, replacing with 0.0".format(var=column))
+        warn(f"nan values in variable: {column}, replacing with 0")
+    return values
+
+
+def _inf_check(df, column):
+    """Check if variable has nan values.
+
+    Warn and replace inf with 0.0.
+    """
+    values = df[column].values
+    if np.any(np.isinf(values)):
+        wherenan = np.isinf(values)
+        values[wherenan] = 0.0
+        warn(f"inf values in variable: {column}, replacing with 0")
     return values
 
 
@@ -32,7 +46,7 @@ def _check_presence_of_crs(geoinput):
     """check if there is crs in the polygon/geodataframe"""
     if geoinput.crs is None:
         raise KeyError(
-            "The polygon/geodataframe does not have a Coordinate Reference System (CRS). This must be set before using this function."
+            "Geodataframe must have a CRS set before using this function."
         )
 
 
