@@ -23,7 +23,8 @@ def datasets():
         if not os.path.exists("nlcd_2011.tif"):
             p = quilt3.Package.browse("rasters/nlcd", "s3://spatial-ucr")
             p["nlcd_2011.tif"].fetch()
-
+        sac1 = load_example('Sacramento1')
+        sac2 = load_example('Sacramento2')
         sac1 = geopandas.read_file(sac1.get_path("sacramentot2.shp"))
         sac2 = geopandas.read_file(sac2.get_path("SacramentoMSA2.shp"))
         sac1['pct_poverty'] = sac1.POV_POP/sac1.POV_TOT
