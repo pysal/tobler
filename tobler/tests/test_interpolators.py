@@ -32,16 +32,16 @@ def test_area_interpolate():
     area = area_interpolate(
         source_df=sac1, target_df=sac2, extensive_variables=["TOT_POP"], intensive_variables=["pct_poverty"]
     )
-    assert_almost_equal(area.POP2001.sum(), 1796856, decimal=0)
-    assert_almost_equal(area.pct_poverty.sum(), 1867, decimal=0)
+    assert_almost_equal(area.TOT_POP.sum(), 1796856, decimal=0)
+    assert_almost_equal(area.pct_poverty.sum(), 2140, decimal=0)
     
 
 
 def test_masked_area_interpolate():
     sac1, sac2 = datasets()
     masked = masked_area_interpolate(
-        source_df=sac2,
-        target_df=sac1,
+        source_df=sac1,
+        target_df=sac2,
         extensive_variables=["TOT_POP"],
         intensive_variables=['pct_poverty'],
         raster="nlcd_2011.tif",
