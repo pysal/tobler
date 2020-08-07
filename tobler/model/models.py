@@ -3,7 +3,7 @@
 import numpy as np
 import statsmodels.formula.api as smf
 from statsmodels.genmod.families import Gaussian, NegativeBinomial, Poisson
-
+from warnings import warn
 from ..area_weighted.vectorized_raster_interpolation import (
     _check_presence_of_crs,
     calculate_interpolated_population_from_correspondence_table,
@@ -138,6 +138,8 @@ def glm(
 
 
     """
+    source_df = source_df.copy()
+    target_df = target_df.copy()
     _check_presence_of_crs(source_df)
     liks = {"poisson": Poisson, "gaussian": Gaussian, "neg_binomial": NegativeBinomial}
 
@@ -154,7 +156,11 @@ def glm(
             + "~ -1 +"
             + "+".join(["np.log1p(" + code + ")" for code in raster_codes])
         )
-    source_df["area"] = project_gdf(source_df.copy()).area
+    if source_df.crs.is_geographic:
+        source_df["area"] = project_gdf(source_df.copy()).area
+        warn("Geograpic CRS detected. Calculating area using auto UTM reprojection")
+    else:
+        source_df['area'] = source_df.area
 
     profiled_df = fast_append_profile_in_gdf(
         source_df[["geometry", variable, "area"]], raster, force_crs_match
@@ -164,8 +170,12 @@ def glm(
 
     out = target_df.copy()[["geometry"]]
     temp = fast_append_profile_in_gdf(out[["geometry"]], raster, force_crs_match)
-    temp["area"] = project_gdf(out.copy()).area
-
+    temp.crs = target_df.crs
+    if temp.crs.is_geographic:
+        temp["area"] = project_gdf(temp.copy()).area
+    else:
+        temp['area'] = temp.area
+    
     out[variable] = results.predict(temp.drop(columns=["geometry"]).fillna(0))
 
     if return_model:
