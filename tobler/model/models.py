@@ -157,7 +157,7 @@ def glm(
             + "+".join(["np.log1p(" + code + ")" for code in raster_codes])
         )
     if source_df.crs.is_geographic:
-        source_df["area"] = project_gdf(source_df.copy()).area
+        source_df["area"] = project_gdf(source_df).area
         warn("Geograpic CRS detected. Calculating area using auto UTM reprojection")
     else:
         source_df['area'] = source_df.area
@@ -168,13 +168,9 @@ def glm(
 
     results = smf.glm(formula, data=profiled_df, family=liks[likelihood]()).fit()
 
-    out = target_df.copy()[["geometry"]]
+    out = target_df[["geometry"]]
     temp = fast_append_profile_in_gdf(out[["geometry"]], raster, force_crs_match)
-    temp.crs = target_df.crs
-    if temp.crs.is_geographic:
-        temp["area"] = project_gdf(temp.copy()).area
-    else:
-        temp['area'] = temp.area
+    temp['area'] = temp.area
     
     out[variable] = results.predict(temp.drop(columns=["geometry"]).fillna(0))
 
