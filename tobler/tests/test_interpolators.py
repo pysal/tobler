@@ -1,32 +1,38 @@
 """test interpolation functions."""
+import sys
 import pandas as pd
 import geopandas
-import quilt3
+try:
+    import quilt3
+    QUILTMISSING = False
+except ImportError:
+    QUILTMISSING = True
+
 import os
 from libpysal.examples import load_example
 from numpy.testing import assert_almost_equal
 from tobler.dasymetric import masked_area_interpolate
 from tobler.area_weighted import area_interpolate
 from tobler.model import glm, glm_pixel_adjusted
+import pytest
 
 
 def datasets():
+    if not QUILTMISSING:
 
-    if not os.path.exists("nlcd_2011.tif"):
-        p = quilt3.Package.browse("rasters/nlcd", "s3://spatial-ucr")
-        p["nlcd_2011.tif"].fetch()
+        if not os.path.exists("nlcd_2011.tif"):
+            p = quilt3.Package.browse("rasters/nlcd", "s3://spatial-ucr")
+            p["nlcd_2011.tif"].fetch()
 
-    sac1 = load_example("Sacramento1")
-    sac2 = load_example("Sacramento2")
+        sac1 = geopandas.read_file(sac1.get_path("sacramentot2.shp"))
+        sac2 = geopandas.read_file(sac2.get_path("SacramentoMSA2.shp"))
+        sac1['pct_poverty'] = sac1.POV_POP/sac1.POV_TOT
 
-    sac1 = geopandas.read_file(sac1.get_path("sacramentot2.shp"))
-    sac2 = geopandas.read_file(sac2.get_path("SacramentoMSA2.shp"))
-    
-    sac1['pct_poverty'] = sac1.POV_POP/sac1.POV_TOT
+        return sac1, sac2
+    else:
+        pass
 
-    return sac1, sac2
-
-
+@pytest.mark.skipif(QUILTMISSING, reason="quilt3 not available.")
 def test_area_interpolate():
     sac1, sac2 = datasets()
     area = area_interpolate(
@@ -37,6 +43,7 @@ def test_area_interpolate():
     
 
 
+@pytest.mark.skipif(QUILTMISSING, reason="quilt3 not available.")
 def test_masked_area_interpolate():
     sac1, sac2 = datasets()
     masked = masked_area_interpolate(
@@ -50,6 +57,7 @@ def test_masked_area_interpolate():
     assert masked.pct_poverty.sum() > 2000
 
 
+@pytest.mark.skipif(QUILTMISSING, reason="quilt3 not available.")
 def test_glm_pixel_adjusted():
     sac1, sac2 = datasets()
     adjusted = glm_pixel_adjusted(
@@ -62,6 +70,7 @@ def test_glm_pixel_adjusted():
     assert_almost_equal(adjusted.POP2001.sum(), 4054516, decimal=0)
 
 
+@pytest.mark.skipif(QUILTMISSING, reason="quilt3 not available.")
 def test_glm_poisson():
     sac1, sac2 = datasets()
     glm_poisson = glm(
