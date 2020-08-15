@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>tobler.area_weighted.area_tables_binning &#8212; tobler v0.3.1 Manual</title>
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -12,7 +13,9 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="tobler.area_weighted.area_tables_raster" href="tobler.area_weighted.area_tables_raster.html" />
@@ -21,9 +24,9 @@
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
-<script type="text/javascript" src="../_static/js/jquery-1.12.4.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
 <script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
-<script type="text/javascript" src="../_static/bootstrap-3.4.1/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
 <script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
 
   </head><body>
@@ -46,6 +49,7 @@
           <ul class="nav navbar-nav">
             
                 <li><a href="../installation.html">Installation</a></li>
+                <li><a href="../tutorial.html">Tutorial</a></li>
                 <li><a href="../api.html">API</a></li>
                 <li><a href="../references.html">References</a></li>
             
@@ -63,6 +67,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-a-released-version">Installing a released version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-a-development-from-source">Installing a development from source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a><ul class="simple">
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
@@ -118,14 +125,14 @@
       
   <div class="section" id="tobler-area-weighted-area-tables-binning">
 <h1>tobler.area_weighted.area_tables_binning<a class="headerlink" href="#tobler-area-weighted-area-tables-binning" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
+<dl class="py function">
 <dt id="tobler.area_weighted.area_tables_binning">
-<code class="sig-prename descclassname">tobler.area_weighted.</code><code class="sig-name descname">area_tables_binning</code><span class="sig-paren">(</span><em class="sig-param">source_df</em>, <em class="sig-param">target_df</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tobler/area_weighted/area_weighted.html#area_tables_binning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tobler.area_weighted.area_tables_binning" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">tobler.area_weighted.</code><code class="sig-name descname">area_tables_binning</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source_df</span></em>, <em class="sig-param"><span class="n">target_df</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tobler/area_weighted/area_weighted.html#area_tables_binning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tobler.area_weighted.area_tables_binning" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct area allocation and source-target correspondence tables using a spatial indexing approach</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt><strong>source_df</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.8.0+4.gb0381e1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></span></dt><dd><p>GeoDataFrame containing input data and polygons</p>
+<dt><strong>source_df</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.8.0+20.gb366d89)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></span></dt><dd><p>GeoDataFrame containing input data and polygons</p>
 </dd>
 <dt><strong>target_df</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFramee</span></code></span></dt><dd><p>GeoDataFrame defining the output geometries</p>
 </dd>
@@ -133,7 +140,7 @@
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl>
-<dt><strong>tables</strong><span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.dok_matrix.html#scipy.sparse.dok_matrix" title="(in SciPy v1.5.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.sparse.dok_matrix</span></code></a></span></dt><dd></dd>
+<dt><strong>tables</strong><span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.dok_matrix.html#scipy.sparse.dok_matrix" title="(in SciPy v1.5.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.sparse.dok_matrix</span></code></a></span></dt><dd></dd>
 </dl>
 </dd>
 </dl>
@@ -161,7 +168,7 @@
     </p>
     <p>
         &copy; Copyright 2018, pysal developers.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.3.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
     </p>
   </div>
 </footer>

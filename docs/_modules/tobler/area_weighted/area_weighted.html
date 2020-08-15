@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>tobler.area_weighted.area_weighted &#8212; tobler v0.3.1 Manual</title>
     <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -12,16 +13,18 @@
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
-<script type="text/javascript" src="../../../_static/js/jquery-1.12.4.min.js "></script>
+<script type="text/javascript" src="../../../_static/js/jquery-1.11.0.min.js "></script>
 <script type="text/javascript" src="../../../_static/js/jquery-fix.js "></script>
-<script type="text/javascript" src="../../../_static/bootstrap-3.4.1/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
 <script type="text/javascript" src="../../../_static/bootstrap-sphinx.js "></script>
 
   </head><body>
@@ -44,6 +47,7 @@
           <ul class="nav navbar-nav">
             
                 <li><a href="../../../installation.html">Installation</a></li>
+                <li><a href="../../../tutorial.html">Tutorial</a></li>
                 <li><a href="../../../api.html">API</a></li>
                 <li><a href="../../../references.html">References</a></li>
             
@@ -61,6 +65,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../installation.html#installing-a-released-version">Installing a released version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../installation.html#installing-a-development-from-source">Installing a development from source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../notebooks/01_interpolation_methods_overview.html">Overview of <code class="docutils literal notranslate"><span class="pre">tobler</span></code>s Interpolation Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../notebooks/02_areal_interpolation_example.html">Areal interpolation: Tracts to Voting Precincts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../notebooks/03_areal_interpolation_details.html">Example: Two GeoDataFrames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../notebooks/03_areal_interpolation_details.html#Area-Table">Area Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../notebooks/03_areal_interpolation_details.html#Non-exhuastive-case">Non-exhuastive case</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a><ul>
@@ -124,7 +136,7 @@
 <span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">dok_matrix</span><span class="p">,</span> <span class="n">diags</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
-<span class="kn">from</span> <span class="nn">tobler.util.util</span> <span class="kn">import</span> <span class="n">_check_crs</span><span class="p">,</span> <span class="n">_nan_check</span><span class="p">,</span> <span class="n">_check_presence_of_crs</span>
+<span class="kn">from</span> <span class="nn">tobler.util.util</span> <span class="kn">import</span> <span class="n">_check_crs</span><span class="p">,</span> <span class="n">_nan_check</span><span class="p">,</span> <span class="n">_inf_check</span><span class="p">,</span> <span class="n">_check_presence_of_crs</span>
 
 
 <div class="viewcode-block" id="area_tables_binning"><a class="viewcode-back" href="../../../generated/tobler.area_weighted.area_tables_binning.html#tobler.area_weighted.area_tables_binning">[docs]</a><span class="k">def</span> <span class="nf">area_tables_binning</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">target_df</span><span class="p">):</span>
@@ -147,8 +159,8 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="n">df1</span> <span class="o">=</span> <span class="n">source_df</span>
-    <span class="n">df2</span> <span class="o">=</span> <span class="n">target_df</span>
+    <span class="n">df1</span> <span class="o">=</span> <span class="n">source_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">df2</span> <span class="o">=</span> <span class="n">target_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="n">l1</span><span class="p">,</span> <span class="n">b1</span><span class="p">,</span> <span class="n">r1</span><span class="p">,</span> <span class="n">t1</span> <span class="o">=</span> <span class="n">df1</span><span class="o">.</span><span class="n">total_bounds</span>
     <span class="n">l2</span><span class="p">,</span> <span class="n">b2</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">t2</span> <span class="o">=</span> <span class="n">df2</span><span class="o">.</span><span class="n">total_bounds</span>
@@ -266,6 +278,8 @@
         <span class="k">pass</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">source_df</span> <span class="o">=</span> <span class="n">source_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">source_df</span> <span class="o">=</span> <span class="n">source_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="n">n_s</span> <span class="o">=</span> <span class="n">source_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">n_t</span> <span class="o">=</span> <span class="n">target_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -351,6 +365,8 @@
 
 <span class="sd">     w_{i,j} = a_{i,j} / \\sum_k a_{k,j}</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">source_df</span> <span class="o">=</span> <span class="n">source_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">target_df</span> <span class="o">=</span> <span class="n">target_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">_check_crs</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">target_df</span><span class="p">):</span>
         <span class="k">pass</span>
@@ -375,6 +391,7 @@
     <span class="k">if</span> <span class="n">extensive_variables</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">extensive_variables</span><span class="p">:</span>
             <span class="n">vals</span> <span class="o">=</span> <span class="n">_nan_check</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">variable</span><span class="p">)</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">_inf_check</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">variable</span><span class="p">)</span>
             <span class="n">estimates</span> <span class="o">=</span> <span class="n">diags</span><span class="p">([</span><span class="n">vals</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
             <span class="n">estimates</span> <span class="o">=</span> <span class="n">estimates</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
             <span class="n">extensive</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">estimates</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
@@ -394,6 +411,7 @@
     <span class="k">if</span> <span class="n">intensive_variables</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">intensive_variables</span><span class="p">:</span>
             <span class="n">vals</span> <span class="o">=</span> <span class="n">_nan_check</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">variable</span><span class="p">)</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">_inf_check</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">variable</span><span class="p">)</span>
             <span class="n">n</span> <span class="o">=</span> <span class="n">vals</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">vals</span> <span class="o">=</span> <span class="n">vals</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n</span><span class="p">,))</span>
             <span class="n">estimates</span> <span class="o">=</span> <span class="n">diags</span><span class="p">([</span><span class="n">vals</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -408,9 +426,9 @@
     <span class="k">if</span> <span class="n">intensive_variables</span><span class="p">:</span>
         <span class="n">dfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">intensive</span><span class="p">)</span>
 
-    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">dfs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">target_df</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">dfs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">target_df</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">df</span>
 
 
@@ -483,6 +501,9 @@
 <span class="sd">    w_{i,j} = a_{i,j} / \sum_k a_{k,j}</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">source_df</span> <span class="o">=</span> <span class="n">source_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">target_df</span> <span class="o">=</span> <span class="n">target_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
     <span class="k">if</span> <span class="n">_check_crs</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">target_df</span><span class="p">):</span>
         <span class="k">pass</span>
     <span class="k">else</span><span class="p">:</span>
@@ -503,6 +524,7 @@
     <span class="k">if</span> <span class="n">extensive_variables</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">extensive_variables</span><span class="p">:</span>
             <span class="n">vals</span> <span class="o">=</span> <span class="n">_nan_check</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">variable</span><span class="p">)</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">_inf_check</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">variable</span><span class="p">)</span>
             <span class="n">estimates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">vals</span><span class="p">),</span> <span class="n">weights</span><span class="p">)</span>
             <span class="n">estimates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">estimates</span><span class="p">,</span> <span class="n">UT</span><span class="p">)</span>
             <span class="n">estimates</span> <span class="o">=</span> <span class="n">estimates</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -518,6 +540,7 @@
     <span class="k">if</span> <span class="n">intensive_variables</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">intensive_variables</span><span class="p">:</span>
             <span class="n">vals</span> <span class="o">=</span> <span class="n">_nan_check</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">variable</span><span class="p">)</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">_inf_check</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">variable</span><span class="p">)</span>
             <span class="n">vals</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">vals</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">est</span> <span class="o">=</span> <span class="p">(</span><span class="n">vals</span> <span class="o">*</span> <span class="n">weights</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
             <span class="n">intensive</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">est</span><span class="p">)</span>
@@ -531,7 +554,7 @@
 
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">dfs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">df</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">target_df</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">df</span></div>
 
 
@@ -581,7 +604,8 @@
         <span class="k">pass</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
-
+    <span class="n">source_df</span> <span class="o">=</span> <span class="n">source_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">target_df</span> <span class="o">=</span> <span class="n">target_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">n_s</span> <span class="o">=</span> <span class="n">source_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">n_t</span> <span class="o">=</span> <span class="n">target_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">_left</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_s</span><span class="p">)</span>
@@ -643,7 +667,7 @@
     </p>
     <p>
         &copy; Copyright 2018, pysal developers.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.3.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
     </p>
   </div>
 </footer>
