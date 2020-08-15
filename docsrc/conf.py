@@ -45,7 +45,7 @@ extensions = [  #'sphinx_gallery.gen_gallery',
     # 'recommonmark',
     #'sphinx.ext.napoleon',
     "matplotlib.sphinxext.plot_directive",
-]
+    "nbsphinx"]
 
 
 # sphinx_gallery_conf = {
@@ -163,6 +163,7 @@ html_theme_options = {
     "navbar_links": [
         # ("Gallery", "auto_examples/index"),
         ("Installation", "installation"),
+        ("Tutorial", "tutorial"),
         ("API", "api"),
         ("References", "references"),
     ],
