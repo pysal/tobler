@@ -1,1 +1,1 @@
-from .models import glm_pixel_adjusted, glm
+from .glm import glm_pixel_adjusted, glm

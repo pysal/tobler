@@ -19,14 +19,14 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="tobler.area_weighted.area_interpolate" href="generated/tobler.area_weighted.area_interpolate.html" />
-    <link rel="prev" title="Tobler Tutorial" href="tutorial.html" />
+    <link rel="prev" title="Example: Two GeoDataFrames" href="notebooks/03_areal_interpolation_details.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
-<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-1.12.4.min.js "></script>
 <script type="text/javascript" src="_static/js/jquery-fix.js "></script>
-<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.4.1/js/bootstrap.min.js "></script>
 <script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
 
   </head><body>
@@ -69,14 +69,18 @@
 <li class="toctree-l2"><a class="reference internal" href="installation.html#installing-a-development-from-source">Installing a development from source</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul class="simple">
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/01_interpolation_methods_overview.html">Overview of <code class="docutils literal notranslate"><span class="pre">tobler</span></code>s Interpolation Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/02_areal_interpolation_example.html">Areal interpolation: Tracts to Voting Precincts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/03_areal_interpolation_details.html">Example: Two GeoDataFrames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/03_areal_interpolation_details.html#Area-Table">Area Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/03_areal_interpolation_details.html#Non-exhuastive-case">Non-exhuastive case</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#area-weighted">Area Weighted</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dasymetric">Dasymetric</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#model">Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#data">Data</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
@@ -97,7 +101,6 @@
 <li><a class="reference internal" href="#area-weighted">Area Weighted</a></li>
 <li><a class="reference internal" href="#dasymetric">Dasymetric</a></li>
 <li><a class="reference internal" href="#model">Model</a></li>
-<li><a class="reference internal" href="#data">Data</a></li>
 </ul>
 </li>
 </ul>
@@ -144,15 +147,6 @@ variables being assigned to the target</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/tobler.area_weighted.area_interpolate.html#tobler.area_weighted.area_interpolate" title="tobler.area_weighted.area_interpolate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">area_interpolate</span></code></a>(source_df, target_df[, …])</p></td>
 <td><p>Area interpolation for extensive and intensive variables.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/tobler.area_weighted.area_tables.html#tobler.area_weighted.area_tables" title="tobler.area_weighted.area_tables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">area_tables</span></code></a>(source_df, target_df)</p></td>
-<td><p>Construct area allocation and source-target correspondence tables.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/tobler.area_weighted.area_tables_binning.html#tobler.area_weighted.area_tables_binning" title="tobler.area_weighted.area_tables_binning"><code class="xref py py-obj docutils literal notranslate"><span class="pre">area_tables_binning</span></code></a>(source_df, target_df)</p></td>
-<td><p>Construct area allocation and source-target correspondence tables using a spatial indexing approach</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/tobler.area_weighted.area_tables_raster.html#tobler.area_weighted.area_tables_raster" title="tobler.area_weighted.area_tables_raster"><code class="xref py py-obj docutils literal notranslate"><span class="pre">area_tables_raster</span></code></a>(source_df, target_df, …)</p></td>
-<td><p>Construct area allocation and source-target correspondence tables according to a raster ‘populated’ areas</p></td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -188,17 +182,6 @@ and the auxiliary data. It then uses that model to predict population levels at 
 <tr class="row-even"><td><p><a class="reference internal" href="generated/tobler.model.glm_pixel_adjusted.html#tobler.model.glm_pixel_adjusted" title="tobler.model.glm_pixel_adjusted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">glm_pixel_adjusted</span></code></a>([source_df, target_df, …])</p></td>
 <td><p>Estimate interpolated values using raster data as input to a generalized linear model, then apply an adjustmnent factor based on pixel values.</p></td>
 </tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="data">
-<h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
 </tbody>
 </table>
 </div>

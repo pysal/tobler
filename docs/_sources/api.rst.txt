@@ -18,9 +18,6 @@ variables being assigned to the target
    :toctree: generated/
 
     area_interpolate
-    area_tables
-    area_tables_binning
-    area_tables_raster
 
 
 Dasymetric
@@ -50,12 +47,3 @@ and the auxiliary data. It then uses that model to predict population levels at 
    glm
    glm_pixel_adjusted
 
-Data
------------------------
-
-.. currentmodule:: tobler.data
-
-.. autosummary::
-   :toctree: generated/
-
-    store_rasters
