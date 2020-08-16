@@ -1,4 +1,4 @@
-tobler.area\_weighted.area\_tables
+﻿tobler.area\_weighted.area\_tables
 ==================================
 
 .. currentmodule:: tobler.area_weighted

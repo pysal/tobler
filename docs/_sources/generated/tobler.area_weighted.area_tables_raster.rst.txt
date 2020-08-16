@@ -1,4 +1,4 @@
-tobler.area\_weighted.area\_tables\_raster
+﻿tobler.area\_weighted.area\_tables\_raster
 ==========================================
 
 .. currentmodule:: tobler.area_weighted

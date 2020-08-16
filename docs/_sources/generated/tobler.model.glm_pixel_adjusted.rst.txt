@@ -1,4 +1,4 @@
-tobler.model.glm\_pixel\_adjusted
+﻿tobler.model.glm\_pixel\_adjusted
 =================================
 
 .. currentmodule:: tobler.model

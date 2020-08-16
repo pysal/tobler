@@ -16,5 +16,6 @@ Tobler
    :caption: Contents:
 
    Installation <installation>
+   Tutorial <tutorial>
    API <api>
    References <references>
