@@ -1,6 +1,0 @@
-﻿tobler.area\_weighted.area\_tables\_raster
-==========================================
-
-.. currentmodule:: tobler.area_weighted
-
-.. autofunction:: area_tables_raster
