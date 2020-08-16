@@ -5,7 +5,7 @@ Area Weighted Interpolation
 
 import numpy as np
 import geopandas as gpd
-from .vectorized_raster_interpolation import fast_append_profile_in_gdf
+from ._vectorized_raster_interpolation import _fast_append_profile_in_gdf
 import warnings
 from scipy.sparse import dok_matrix, diags
 import pandas as pd
@@ -13,7 +13,7 @@ import pandas as pd
 from tobler.util.util import _check_crs, _nan_check, _inf_check, _check_presence_of_crs
 
 
-def area_tables_binning(source_df, target_df):
+def _area_tables_binning(source_df, target_df):
     """Construct area allocation and source-target correspondence tables using a spatial indexing approach
 
     Parameters
@@ -121,7 +121,7 @@ def area_tables_binning(source_df, target_df):
     return table
 
 
-def area_tables(source_df, target_df):
+def _area_tables(source_df, target_df):
     """
     Construct area allocation and source-target correspondence tables.
 
@@ -179,7 +179,7 @@ def area_tables(source_df, target_df):
     return SU, UT
 
 
-def area_interpolate_binning(
+def _area_interpolate_binning(
     source_df,
     target_df,
     extensive_variables=None,
@@ -248,7 +248,7 @@ def area_interpolate_binning(
         return None
 
     if table is None:
-        table = area_tables_binning(source_df, target_df)
+        table = _area_tables_binning(source_df, target_df)
 
     den = source_df["geometry"].area.values
     if allocate_total:
@@ -306,7 +306,7 @@ def area_interpolate_binning(
     return df
 
 
-def area_interpolate(
+def _area_interpolate(
     source_df,
     target_df,
     extensive_variables=None,
@@ -384,7 +384,7 @@ def area_interpolate(
         return None
 
     if tables is None:
-        SU, UT = area_tables(source_df, target_df)
+        SU, UT = _area_tables(source_df, target_df)
     else:
         SU, UT = tables
     den = source_df["geometry"].area.values
@@ -432,7 +432,7 @@ def area_interpolate(
     return df
 
 
-def area_tables_raster(
+def _area_tables_raster(
     source_df, target_df, raster_path, codes=[21, 22, 23, 24], force_crs_match=True
 ):
     """
@@ -496,7 +496,7 @@ def area_tables_raster(
     res_union_pre.crs = source_df.crs
 
     # The 'append_profile_in_gdf' function is present in nlcd.py script
-    res_union = fast_append_profile_in_gdf(
+    res_union = _fast_append_profile_in_gdf(
         res_union_pre, raster_path, force_crs_match=force_crs_match
     )
 

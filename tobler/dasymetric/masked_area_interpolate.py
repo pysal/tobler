@@ -1,6 +1,6 @@
-from ..area_weighted import _slow_area_interpolate, area_tables_raster
+from ..area_weighted import _slow_area_interpolate, _area_tables_raster
 
-from ..area_weighted.vectorized_raster_interpolation import *
+from ..area_weighted._vectorized_raster_interpolation import *
 
 
 def masked_area_interpolate(
@@ -52,7 +52,7 @@ def masked_area_interpolate(
         raise IOError('You must pass the path to a raster that can be read with rasterio')
 
     if not tables:
-        tables = area_tables_raster(
+        tables = _area_tables_raster(
             source_df,
             target_df.copy(),
             raster_path=raster,

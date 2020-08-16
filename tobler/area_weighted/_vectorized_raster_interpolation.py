@@ -26,13 +26,13 @@ from statsmodels.genmod.families import Poisson, Gaussian, NegativeBinomial
 
 __all__ = [
     "getFeatures",
-    "fast_append_profile_in_gdf",
-    "return_weights_from_regression",
-    "return_weights_from_xgboost",
+    "_fast_append_profile_in_gdf",
+    "_return_weights_from_regression",
+    "_return_weights_from_xgboost",
     "create_lon_lat",
-    "create_non_zero_population_by_pixels_locations",
-    "calculate_interpolated_polygon_population_from_correspondence_table",
-    "calculate_interpolated_population_from_correspondence_table",
+    "_create_non_zero_population_by_pixels_locations",
+    "_calculate_interpolated_polygon_population_from_correspondence_table",
+    "_calculate_interpolated_population_from_correspondence_table",
 ]
 
 
@@ -49,7 +49,7 @@ def getFeatures(gdf):
     return [json.loads(gdf.to_json())["features"][0]["geometry"]]
 
 
-def fast_append_profile_in_gdf(geodataframe, raster_path, force_crs_match=True):
+def _fast_append_profile_in_gdf(geodataframe, raster_path, force_crs_match=True):
 
     """Function that appends the columns of the profile in a geopandas
     according to a given raster taking advantage of rasterstats.
@@ -89,7 +89,7 @@ def fast_append_profile_in_gdf(geodataframe, raster_path, force_crs_match=True):
     return zonal_ppt_gdf
 
 
-def return_weights_from_regression(
+def _return_weights_from_regression(
     geodataframe,
     raster_path,
     pop_string,
@@ -146,7 +146,7 @@ def return_weights_from_regression(
     if not likelihood in ["poisson", "gaussian"]:
         raise ValueError("likelihood must one of 'poisson', 'gaussian'")
 
-    profiled_df = fast_append_profile_in_gdf(
+    profiled_df = _fast_append_profile_in_gdf(
         geodataframe[["geometry", pop_string]], raster_path, force_crs_match
     )  # Use only two columns to build the weights (this avoids error, if the original dataset has already types appended on it).
 
@@ -175,7 +175,7 @@ def return_weights_from_regression(
     return weights
 
 
-def return_weights_from_xgboost(
+def _return_weights_from_xgboost(
     geodataframe,
     raster_path,
     pop_string,
@@ -246,7 +246,7 @@ def return_weights_from_xgboost(
     if na_value in codes:
         raise ValueError("codes should not assume the na_value value.")
 
-    profiled_df = fast_append_profile_in_gdf(
+    profiled_df = _fast_append_profile_in_gdf(
         geodataframe[["geometry", pop_string]], raster_path, force_crs_match
     )  # Use only two columns to build the weights (this avoids error, if the original dataset has already types appended on it).
 
@@ -347,7 +347,7 @@ def create_lon_lat(out_img, out_transform):
     return lons, lats
 
 
-def create_non_zero_population_by_pixels_locations(
+def _create_non_zero_population_by_pixels_locations(
     geodataframe, raster, pop_string, weights=None, force_crs_match=True
 ):
 
@@ -434,7 +434,7 @@ def create_non_zero_population_by_pixels_locations(
     return corresp
 
 
-def calculate_interpolated_polygon_population_from_correspondence_table(
+def _calculate_interpolated_polygon_population_from_correspondence_table(
     polygon, raster, corresp_table, force_crs_match=True, na_value=255
 ):
 
@@ -495,7 +495,7 @@ def calculate_interpolated_polygon_population_from_correspondence_table(
     return pop
 
 
-def calculate_interpolated_population_from_correspondence_table(
+def _calculate_interpolated_population_from_correspondence_table(
     geodataframe, raster, corresp_table, variable_name=None, force_crs_match=True
 ):
 
@@ -530,7 +530,7 @@ def calculate_interpolated_population_from_correspondence_table(
 
         for line_index in range(len(geodataframe)):
             polygon = geodataframe.iloc[[line_index]]
-            pop_aux = calculate_interpolated_polygon_population_from_correspondence_table(
+            pop_aux = _calculate_interpolated_polygon_population_from_correspondence_table(
                 polygon, raster, corresp_table, force_crs_match
             )
             pop_final[line_index] = pop_aux

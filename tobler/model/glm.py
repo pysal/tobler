@@ -4,12 +4,12 @@ import numpy as np
 import statsmodels.formula.api as smf
 from statsmodels.genmod.families import Gaussian, NegativeBinomial, Poisson
 from warnings import warn
-from ..area_weighted.vectorized_raster_interpolation import (
+from ..area_weighted._vectorized_raster_interpolation import (
     _check_presence_of_crs,
-    calculate_interpolated_population_from_correspondence_table,
-    create_non_zero_population_by_pixels_locations,
-    fast_append_profile_in_gdf,
-    return_weights_from_regression,
+    _calculate_interpolated_population_from_correspondence_table,
+    _create_non_zero_population_by_pixels_locations,
+    _fast_append_profile_in_gdf,
+    _return_weights_from_regression,
 )
 from tobler.util import project_gdf
 
@@ -63,7 +63,7 @@ def glm_pixel_adjusted(
         raise IOError('You must provide the path to a raster that can be read with rasterio')
 
     # build weights from raster and vector data
-    weights = return_weights_from_regression(
+    weights = _return_weights_from_regression(
         geodataframe=source_df,
         raster_path=raster,
         pop_string=variable,
@@ -76,12 +76,12 @@ def glm_pixel_adjusted(
     )
 
     # match vector population to pixel counts
-    correspondence_table = create_non_zero_population_by_pixels_locations(
+    correspondence_table = _create_non_zero_population_by_pixels_locations(
         geodataframe=source_df, raster=raster, pop_string=variable, weights=weights
     )
 
     # estimate the model
-    interpolated = calculate_interpolated_population_from_correspondence_table(
+    interpolated = _calculate_interpolated_population_from_correspondence_table(
         target_df, raster, correspondence_table, variable_name=variable
     )
 
@@ -162,14 +162,14 @@ def glm(
     else:
         source_df['area'] = source_df.area
 
-    profiled_df = fast_append_profile_in_gdf(
+    profiled_df = _fast_append_profile_in_gdf(
         source_df[["geometry", variable, "area"]], raster, force_crs_match
     )
 
     results = smf.glm(formula, data=profiled_df, family=liks[likelihood]()).fit()
 
     out = target_df[["geometry"]]
-    temp = fast_append_profile_in_gdf(out[["geometry"]], raster, force_crs_match)
+    temp = _fast_append_profile_in_gdf(out[["geometry"]], raster, force_crs_match)
     temp['area'] = temp.area
     
     out[variable] = results.predict(temp.drop(columns=["geometry"]).fillna(0))
