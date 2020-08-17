@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>tobler.model.glm_pixel_adjusted &#8212; tobler v0.3.1 Manual</title>
+    <title>tobler.model.glm_pixel_adjusted &#8212; tobler v0.4.0 Manual</title>
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css" />
@@ -42,7 +42,7 @@
         </button>
         <a class="navbar-brand" href="../index.html">
           tobler</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.3.1</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.4.0</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -131,7 +131,7 @@
 <h1>tobler.model.glm_pixel_adjusted<a class="headerlink" href="#tobler-model-glm-pixel-adjusted" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt id="tobler.model.glm_pixel_adjusted">
-<code class="sig-prename descclassname">tobler.model.</code><code class="sig-name descname">glm_pixel_adjusted</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source_df</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">target_df</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">raster</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">raster_codes</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">variable</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">formula</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">likelihood</span><span class="o">=</span><span class="default_value">'poisson'</span></em>, <em class="sig-param"><span class="n">force_crs_match</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tobler/model/models.html#glm_pixel_adjusted"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tobler.model.glm_pixel_adjusted" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">tobler.model.</code><code class="sig-name descname">glm_pixel_adjusted</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source_df</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">target_df</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">raster</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">raster_codes</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">variable</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">formula</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">likelihood</span><span class="o">=</span><span class="default_value">'poisson'</span></em>, <em class="sig-param"><span class="n">force_crs_match</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tobler/model/glm.html#glm_pixel_adjusted"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tobler.model.glm_pixel_adjusted" title="Permalink to this definition">¶</a></dt>
 <dd><p>Estimate interpolated values using raster data as input to a generalized linear model, then apply an adjustmnent factor based on pixel values.</p>
 <p>Unlike the regular <cite>glm</cite> function, this version applies an experimental pixel-level adjustment
 subsequent to fitting the model. This has the benefit of making sure local control totals are
@@ -188,7 +188,7 @@ from the <cite>source_df</cite></p>
       
     </p>
     <p>
-        &copy; Copyright 2018, pysal developers.<br/>
+        &copy; Copyright 2018-, pysal developers.<br/>
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
     </p>
   </div>

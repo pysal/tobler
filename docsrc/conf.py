@@ -69,7 +69,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "tobler"
-copyright = "2018, pysal developers"
+copyright = "2018-, pysal developers"
 author = "pysal developers"
 
 # The version info for the project you're documenting, acts as replacement for
