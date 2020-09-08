@@ -22,4 +22,3 @@ dependencies:
   - pytest-cov
   - twine
   - pip
-  - pygraphviz
