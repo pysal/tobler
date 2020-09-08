@@ -17,6 +17,7 @@ dependencies:
   - tqdm
   - codecov
   - pytest
+  - quilt3
   - pytest-mpl
   - pytest-cov
   - twine
