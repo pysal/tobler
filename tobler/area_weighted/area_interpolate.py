@@ -270,9 +270,9 @@ def _area_interpolate_binning(
             estimates = estimates.sum(axis=0)
             extensive.append(estimates.tolist()[0])
 
-    extensive = np.asarray(extensive)
-    extensive = np.array(extensive)
-    extensive = pd.DataFrame(extensive.T, columns=extensive_variables)
+        extensive = np.asarray(extensive)
+        extensive = np.array(extensive)
+        extensive = pd.DataFrame(extensive.T, columns=extensive_variables)
 
     area = np.asarray(table.sum(axis=0))
     den = 1.0 / (area + (area == 0))
@@ -292,8 +292,8 @@ def _area_interpolate_binning(
             estimates = estimates.dot(weights).sum(axis=0)
             intensive.append(estimates.tolist()[0])
 
-    intensive = np.asarray(intensive)
-    intensive = pd.DataFrame(intensive.T, columns=intensive_variables)
+        intensive = np.asarray(intensive)
+        intensive = pd.DataFrame(intensive.T, columns=intensive_variables)
 
     if extensive_variables:
         dfs.append(extensive)
