@@ -35,8 +35,6 @@
          run: conda config --show-sources
        - shell: bash -l {0}
          run: conda config --show
-       - shell: bash -l {0}
-         run: pip install -e . --no-deps --force-reinstall
        - name: Pytest
          shell: bash -l {0}
          run: |
