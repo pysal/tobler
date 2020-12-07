@@ -10,8 +10,8 @@ import warnings
 from scipy.sparse import dok_matrix, diags
 import pandas as pd
 
-from tobler.util.util import _check_crs, _nan_check, _inf_check, _check_presence_of_crs
-
+from tobler.util.util import (_check_crs, _nan_check, _inf_check,
+                              _check_presence_of_crs)
 
 def _area_tables_binning(source_df, target_df):
     """Construct area allocation and source-target correspondence tables using a spatial indexing approach
@@ -101,6 +101,7 @@ def _area_tables_binning(source_df, target_df):
             poly2Row2[i].add(j)
 
     table = dok_matrix((n1, n2), dtype=np.float32)
+
     for polyId in range(n1):
         idRows = poly2Row1[polyId]
         idCols = poly2Column1[polyId]
@@ -440,9 +441,9 @@ def _area_tables_raster(
 
     Parameters
     ----------
-    source_df : geopandas.GeoDataFrame 
+    source_df : geopandas.GeoDataFrame
         geeodataframe with geometry column of polygon type
-    target_df : geopandas.GeoDataFrame 
+    target_df : geopandas.GeoDataFrame
         geodataframe with geometry column of polygon type
     raster_path : str
         the path to the associated raster image.
