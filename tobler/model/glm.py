@@ -163,16 +163,16 @@ def glm(
         source_df['area'] = source_df.area
 
     profiled_df = _fast_append_profile_in_gdf(
-        source_df[["geometry", variable, "area"]], raster, force_crs_match
+        source_df[[source_df.geometry.name, variable, "area"]], raster, force_crs_match
     )
 
     results = smf.glm(formula, data=profiled_df, family=liks[likelihood]()).fit()
 
-    out = target_df[["geometry"]]
-    temp = _fast_append_profile_in_gdf(out[["geometry"]], raster, force_crs_match)
+    out = target_df[[target_df.geometry.name]]
+    temp = _fast_append_profile_in_gdf(out[[out.geometry.name]], raster, force_crs_match)
     temp['area'] = temp.area
     
-    out[variable] = results.predict(temp.drop(columns=["geometry"]).fillna(0))
+    out[variable] = results.predict(temp.drop(columns=[temp.geometry.name]).fillna(0))
 
     if return_model:
         return out, results
