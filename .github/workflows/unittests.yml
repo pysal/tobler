@@ -20,7 +20,7 @@
          experimental: [false]
      steps:
        - uses: actions/checkout@v2
-       - uses: goanpeca/setup-miniconda@v1
+       - uses: conda-incubator/setup-miniconda@v2
          with:
             miniconda-version: 'latest'
             auto-update-conda: true
@@ -35,12 +35,9 @@
          run: conda config --show-sources
        - shell: bash -l {0}
          run: conda config --show
-       - shell: bash -l {0}
-         run: pip install -e . --no-deps --force-reinstall
        - name: Pytest
          shell: bash -l {0}
-         run: |
-           pytest -v tobler --cov=tobler --cov-report=xml
+         run: py.test -v tobler --cov=tobler --cov-report=xml
        - name: codecov (${{ matrix.os }}, ${{ matrix.environment-file }})
          uses: codecov/codecov-action@v1
          with:
