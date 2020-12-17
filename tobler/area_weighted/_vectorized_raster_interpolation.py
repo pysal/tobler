@@ -46,7 +46,7 @@ def getFeatures(gdf):
     This function was obtained at https://automating-gis-processes.github.io/CSC18/lessons/L6/clipping-raster.html.
     """
 
-    return [json.loads(gdf.to_json())["features"][0]["geometry"]]
+    return [json.loads(gdf.to_json())["features"][0][gdf.geometry.name]]
 
 
 def _fast_append_profile_in_gdf(geodataframe, raster_path, force_crs_match=True):
@@ -147,7 +147,7 @@ def _return_weights_from_regression(
         raise ValueError("likelihood must one of 'poisson', 'gaussian'")
 
     profiled_df = _fast_append_profile_in_gdf(
-        geodataframe[["geometry", pop_string]], raster_path, force_crs_match
+        geodataframe[[geodataframe.geometry.name, pop_string]], raster_path, force_crs_match
     )  # Use only two columns to build the weights (this avoids error, if the original dataset has already types appended on it).
 
     # If the list is unsorted, the codes will be sorted to guarantee that the position of the weights will match
@@ -247,7 +247,7 @@ def _return_weights_from_xgboost(
         raise ValueError("codes should not assume the na_value value.")
 
     profiled_df = _fast_append_profile_in_gdf(
-        geodataframe[["geometry", pop_string]], raster_path, force_crs_match
+        geodataframe[[geodataframe.geometry.name, pop_string]], raster_path, force_crs_match
     )  # Use only two columns to build the weights (this avoids error, if the original dataset has already types appended on it).
 
     # If the list is unsorted, the codes will be sorted to guarantee that the position of the weights will match
@@ -522,7 +522,7 @@ def _calculate_interpolated_population_from_correspondence_table(
 
     _check_presence_of_crs(geodataframe)
 
-    final_geodataframe = geodataframe.copy()[["geometry"]]
+    final_geodataframe = geodataframe.copy()[[geodataframe.geometry.name]]
     pop_final = np.empty(len(geodataframe))
     with rasterio.open(raster) as raster:
 
@@ -584,6 +584,6 @@ def subset_gdf_polygons_from_raster(geodataframe, raster, force_crs_match=True):
     pbar.close()
 
     overlayed_subset_gdf = reprojected_gdf.iloc[has_intersection]
-    overlayed_subset_gdf = overlayed_subset_gdf.set_geometry("geometry")
+    overlayed_subset_gdf = overlayed_subset_gdf.set_geometry(overlayed_subset_gdf.geometry.name)
 
     return overlayed_subset_gdf

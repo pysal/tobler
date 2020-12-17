@@ -2,7 +2,7 @@ name: test
 channels:
   - conda-forge
 dependencies:
-  - python=3.6
+  - python=3.9
   - jupyterlab
   - numpy
   - geopandas
@@ -15,9 +15,9 @@ dependencies:
   - scipy
   - libpysal
   - tqdm
-  - quilt3
   - codecov
   - pytest
+  - quilt3
   - pytest-mpl
   - pytest-cov
   - twine

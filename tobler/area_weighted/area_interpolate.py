@@ -173,7 +173,7 @@ def _area_tables(source_df, target_df):
         if not np.isnan(row["_left"]) and not np.isnan(row["_right"]):
             s_id = int(row["_left"])
             t_id = int(row["_right"])
-            SU[s_id, index] = row["geometry"].area
+            SU[s_id, index] = row[row.geometry.name].area
             UT[index, t_id] = 1
     source_df.drop(["_left"], axis=1, inplace=True)
     target_df.drop(["_right"], axis=1, inplace=True)
@@ -251,7 +251,7 @@ def _area_interpolate_binning(
     if table is None:
         table = _area_tables_binning(source_df, target_df)
 
-    den = source_df["geometry"].area.values
+    den = source_df[source_df.geometry.name].area.values
     if allocate_total:
         den = np.asarray(table.sum(axis=1))
     den = den + (den == 0)
@@ -302,7 +302,7 @@ def _area_interpolate_binning(
         dfs.append(intensive)
 
     df = pd.concat(dfs, axis=1)
-    df["geometry"] = target_df["geometry"].reset_index(drop=True)
+    df["geometry"] = target_df[target_df.geometry.name].reset_index(drop=True)
     df = gpd.GeoDataFrame(df.replace(np.inf, np.nan))
     return df
 
@@ -388,7 +388,7 @@ def _area_interpolate(
         SU, UT = _area_tables(source_df, target_df)
     else:
         SU, UT = tables
-    den = source_df["geometry"].area.values
+    den = source_df[source_df.geometry.name].area.values
     if allocate_total:
         den = SU.sum(axis=1)
     den = den + (den == 0)
@@ -404,8 +404,8 @@ def _area_interpolate(
             estimates = np.dot(estimates, UT)
             estimates = estimates.sum(axis=0)
             extensive.append(estimates)
-    extensive = np.array(extensive)
-    extensive = pd.DataFrame(extensive.T, columns=extensive_variables)
+        extensive = np.array(extensive)
+        extensive = pd.DataFrame(extensive.T, columns=extensive_variables)
 
     ST = np.dot(SU, UT)
     area = ST.sum(axis=0)
@@ -419,8 +419,8 @@ def _area_interpolate(
             vals.shape = (len(vals), 1)
             est = (vals * weights).sum(axis=0)
             intensive.append(est)
-    intensive = np.array(intensive)
-    intensive = pd.DataFrame(intensive.T, columns=intensive_variables)
+        intensive = np.array(intensive)
+        intensive = pd.DataFrame(intensive.T, columns=intensive_variables)
 
     if extensive_variables:
         dfs.append(extensive)
@@ -428,7 +428,7 @@ def _area_interpolate(
         dfs.append(intensive)
 
     df = pd.concat(dfs, axis=1)
-    df["geometry"] = target_df["geometry"].reset_index(drop=True)
+    df["geometry"] = target_df[target_df.geometry.name].reset_index(drop=True)
     df = gpd.GeoDataFrame(df.replace(np.inf, np.nan))
     return df
 
