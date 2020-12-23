@@ -15,6 +15,9 @@ from tobler.util.util import _check_crs, _nan_check, _inf_check, _check_presence
 
 def _area_tables_binning(source_df, target_df, spatial_index):
     """Construct area allocation and source-target correspondence tables using a spatial indexing approach
+    ...
+
+    NOTE: this currently relies on pygeos.STRTree
 
     Parameters
     ----------
@@ -22,6 +25,14 @@ def _area_tables_binning(source_df, target_df, spatial_index):
         GeoDataFrame containing input data and polygons
     target_df : geopandas.GeoDataFramee
         GeoDataFrame defining the output geometries
+    spatial_index : str
+        Spatial index to use to build the allocation of area from source to
+        target tables. It currently support the following values:
+            - "source": build the spatial index on `source_df`
+            - "target": build the spatial index on `target_df`
+            - "auto": attempts to guess the most efficient alternative.
+              Currently, this option uses the largest table to build the
+              index, and performs a `bulk_query` on the shorter table.
 
     Returns
     -------
@@ -140,15 +151,27 @@ def _area_interpolate_binning(
     source_df : geopandas.GeoDataFrame
     target_df : geopandas.GeoDataFrame
     extensive_variables : list
-        columns in dataframes for extensive variables
+        [Optional. Default=None] Columns in dataframes for extensive variables
     intensive_variables : list
-        columns in dataframes for intensive variables
+        [Optional. Default=None] Columns in dataframes for intensive variables
     table : scipy.sparse.dok_matrix
+        [Optional. Default=None] Area allocation source-target correspondence
+        table. If not provided, it will be built from `source_df` and
+        `target_df` using `tobler.area_interpolate._area_tables_binning`
     allocate_total : boolean
-        True if total value of source area should be allocated.
-        False if denominator is area of i. Note that the two cases
-        would be identical when the area of the source polygon is
-        exhausted by intersections. See Notes for more details.
+        [Optional. Default=True] True if total value of source area should be
+        allocated. False if denominator is area of i. Note that the two cases
+        would be identical when the area of the source polygon is exhausted by
+        intersections. See Notes for more details.
+    spatial_index : str
+        [Optional. Default="auto"] Spatial index to use to build the
+        allocation of area from source to target tables. It currently support
+        the following values:
+            - "source": build the spatial index on `source_df`
+            - "target": build the spatial index on `target_df`
+            - "auto": attempts to guess the most efficient alternative.
+              Currently, this option uses the largest table to build the
+              index, and performs a `bulk_query` on the shorter table.
 
     Returns
     -------
