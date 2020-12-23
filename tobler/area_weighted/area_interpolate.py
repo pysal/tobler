@@ -17,7 +17,7 @@ def _area_tables_binning(source_df, target_df, spatial_index):
     """Construct area allocation and source-target correspondence tables using a spatial indexing approach
     ...
 
-    NOTE: this currently relies on pygeos.STRTree
+    NOTE: this currently relies on Geopandas' spatial index machinery
 
     Parameters
     ----------
