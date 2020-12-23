@@ -80,3 +80,8 @@ def test_area_tables_binning():
 
     assert (auto != source).sum() == 0
     assert (auto != target).sum() == 0
+
+    assert auto.sum() == pytest.approx(1.3879647)
+    assert auto.mean() == pytest.approx(2.7552649e-05)
+
+    assert (auto[5][0].toarray() > 0).sum() == 7
