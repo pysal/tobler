@@ -7,11 +7,11 @@ import numpy as np
 import geopandas as gpd
 from ._vectorized_raster_interpolation import _fast_append_profile_in_gdf
 import warnings
-from scipy.sparse import dok_matrix, diags
+from scipy.sparse import dok_matrix, diags, coo_matrix
 import pandas as pd
 
-from tobler.util.util import (_check_crs, _nan_check, _inf_check,
-                              _check_presence_of_crs)
+from tobler.util.util import _check_crs, _nan_check, _inf_check, _check_presence_of_crs
+
 
 def _area_tables_binning(source_df, target_df):
     """Construct area allocation and source-target correspondence tables using a spatial indexing approach
@@ -36,88 +36,15 @@ def _area_tables_binning(source_df, target_df):
     df1 = source_df.copy()
     df2 = target_df.copy()
 
-    l1, b1, r1, t1 = df1.total_bounds
-    l2, b2, r2, t2 = df2.total_bounds
-    total_bounds = [min(l1, l2), min(b1, b2), max(r1, r2), max(t1, t2)]
-    n1, k1 = df1.shape
-    n2, k2 = df2.shape
-    numPoly = n1 + n2
-    DELTA = 0.000001
+    ids_tgt, ids_src = df1.sindex.query_bulk(df2.geometry, predicate="intersects")
+    areas = df1.geometry.values[ids_src].intersection(df2.geometry.values[ids_tgt]).area
 
-    # constants for bucket sizes
-    BUCK_SM = 8
-    BUCK_LG = 80
-    SHP_SMALL = 1000
-
-    shapebox = total_bounds
-    # bucket size
-    if numPoly < SHP_SMALL:
-        bucketmin = numPoly // BUCK_SM + 2
-    else:
-        bucketmin = numPoly // BUCK_LG + 2
-        # print 'bucketmin: ', bucketmin
-    # bucket length
-    lengthx = ((shapebox[2] + DELTA) - shapebox[0]) / bucketmin
-    lengthy = ((shapebox[3] + DELTA) - shapebox[1]) / bucketmin
-
-    # initialize buckets
-    columns1 = [set() for i in range(bucketmin)]
-    rows1 = [set() for i in range(bucketmin)]
-    columns2 = [set() for i in range(bucketmin)]
-    rows2 = [set() for i in range(bucketmin)]
-
-    minbox = shapebox[:2] * 2  # minx,miny,minx,miny
-    binWidth = [lengthx, lengthy] * 2  # lenx,leny,lenx,leny
-    bbcache = {}
-    poly2Column1 = [set() for i in range(n1)]
-    poly2Row1 = [set() for i in range(n1)]
-    poly2Column2 = [set() for i in range(n2)]
-    poly2Row2 = [set() for i in range(n2)]
-
-    for i in range(n1):
-        shpObj = df1.geometry.iloc[i]
-        bbcache[i] = shpObj.bounds
-        projBBox = [
-            int((shpObj.bounds[:][j] - minbox[j]) / binWidth[j]) for j in range(4)
-        ]
-        for j in range(projBBox[0], projBBox[2] + 1):
-            columns1[j].add(i)
-            poly2Column1[i].add(j)
-        for j in range(projBBox[1], projBBox[3] + 1):
-            rows1[j].add(i)
-            poly2Row1[i].add(j)
-
-    for i in range(n2):
-        shpObj = df2.geometry.iloc[i]
-        bbcache[i] = shpObj.bounds
-        projBBox = [
-            int((shpObj.bounds[:][j] - minbox[j]) / binWidth[j]) for j in range(4)
-        ]
-        for j in range(projBBox[0], projBBox[2] + 1):
-            columns2[j].add(i)
-            poly2Column2[i].add(j)
-        for j in range(projBBox[1], projBBox[3] + 1):
-            rows2[j].add(i)
-            poly2Row2[i].add(j)
-
-    table = dok_matrix((n1, n2), dtype=np.float32)
-
-    for polyId in range(n1):
-        idRows = poly2Row1[polyId]
-        idCols = poly2Column1[polyId]
-        rowNeighbors = set()
-        colNeighbors = set()
-        for row in idRows:
-            rowNeighbors = rowNeighbors.union(rows2[row])
-        for col in idCols:
-            colNeighbors = colNeighbors.union(columns2[col])
-        neighbors = rowNeighbors.intersection(colNeighbors)
-        for neighbor in neighbors:
-            if df1.geometry.iloc[polyId].intersects(df2.geometry.iloc[neighbor]):
-                intersection = df1.geometry.iloc[polyId].intersection(
-                    df2.geometry.iloc[neighbor]
-                )
-                table[polyId, neighbor] = intersection.area
+    table = coo_matrix(
+        (areas, (ids_src, ids_tgt),),
+        shape=(df1.shape[0], df2.shape[0]),
+        dtype=np.float32,
+    )
+    table = table.todok()
 
     return table
 
