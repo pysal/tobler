@@ -13,7 +13,7 @@ import pandas as pd
 from tobler.util.util import _check_crs, _nan_check, _inf_check, _check_presence_of_crs
 
 
-def _area_tables_binning(source_df, target_df):
+def _area_tables_binning(source_df, target_df, spatial_index):
     """Construct area allocation and source-target correspondence tables using a spatial indexing approach
 
     Parameters
@@ -36,7 +36,22 @@ def _area_tables_binning(source_df, target_df):
     df1 = source_df.copy()
     df2 = target_df.copy()
 
-    ids_tgt, ids_src = df1.sindex.query_bulk(df2.geometry, predicate="intersects")
+    # it is generally more performant to use the longer df as spatial index
+    if spatial_index == "auto":
+        if df1.shape[0] > df2.shape[0]:
+            spatial_index = "source"
+        else:
+            spatial_index = "target"
+
+    if spatial_index == "source":
+        ids_tgt, ids_src = df1.sindex.query_bulk(df2.geometry, predicate="intersects")
+    elif spatial_index == "target":
+        ids_src, ids_tgt = df2.sindex.query_bulk(df1.geometry, predicate="intersects")
+    else:
+        raise ValueError(
+            f"'{spatial_index}' is not a valid option. Use 'auto', 'source' or 'target'."
+        )
+
     areas = df1.geometry.values[ids_src].intersection(df2.geometry.values[ids_tgt]).area
 
     table = coo_matrix(
@@ -44,6 +59,7 @@ def _area_tables_binning(source_df, target_df):
         shape=(df1.shape[0], df2.shape[0]),
         dtype=np.float32,
     )
+
     table = table.todok()
 
     return table
@@ -114,6 +130,7 @@ def _area_interpolate_binning(
     intensive_variables=None,
     table=None,
     allocate_total=True,
+    spatial_index="auto",
 ):
     """
     Area interpolation for extensive and intensive variables.
@@ -176,7 +193,7 @@ def _area_interpolate_binning(
         return None
 
     if table is None:
-        table = _area_tables_binning(source_df, target_df)
+        table = _area_tables_binning(source_df, target_df, spatial_index)
 
     den = source_df[source_df.geometry.name].area.values
     if allocate_total:
