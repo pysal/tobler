@@ -12,6 +12,51 @@ import pandas as pd
 
 from tobler.util.util import _check_crs, _nan_check, _inf_check, _check_presence_of_crs
 
+def _chunk_df(df_polys, tgt_polys, n_jobs):
+    chunk_size = np.int64(df_polys.shape[0] / n_jobs) + 1
+    for i in range(n_jobs):
+        start = i * chunk_size
+        yield df_polys.iloc[start:start+chunk_size], tgt_polys
+
+def _area_tables_binning_parallel(source_df, target_df, n_jobs=-1):
+    from joblib import Parallel, delayed, parallel_backend
+    if _check_crs(source_df, target_df):
+        pass
+    else:
+        return None
+
+    df1 = source_df.copy()
+    df2 = target_df.copy()
+
+    # Chunk the largest, ship the smallest in full
+
+    # Pick largest for STRTree, query_bulk the smallest
+
+    # Make sure to remap ids to global ones
+
+    """ --- Multi-core logic from numba_binning PR ---
+
+    chunks_to_intersects = _chunk_polys(pairs_to_intersect, df1, df2, n_jobs)
+    with parallel_backend("loky", inner_max_num_threads=1):
+        worker_out = Parallel(n_jobs=n_jobs)(
+            delayed(pygeos.intersects)(*chunk_pair)
+            for chunk_pair in chunks_to_intersects
+        )
+    do_intersect = np.concatenate(worker_out)
+    # Intersections + areas
+    chunks_to_intersection = _chunk_polys(
+        pairs_to_intersect[do_intersect],
+        df1,
+        df2,
+        n_jobs
+    )
+    with parallel_backend("loky", inner_max_num_threads=1):
+        worker_out = Parallel(n_jobs=n_jobs)(
+            delayed(_intersect_area_on_chunk)(*chunk_pair)
+            for chunk_pair in chunks_to_intersection
+        )
+    areas = np.concatenate(worker_out)
+    """
 
 def _area_tables_binning(source_df, target_df, spatial_index):
     """Construct area allocation and source-target correspondence tables using a spatial indexing approach
