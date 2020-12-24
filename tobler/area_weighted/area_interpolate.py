@@ -9,14 +9,37 @@ from ._vectorized_raster_interpolation import _fast_append_profile_in_gdf
 import warnings
 from scipy.sparse import dok_matrix, diags, coo_matrix
 import pandas as pd
+import os
 
 from tobler.util.util import _check_crs, _nan_check, _inf_check, _check_presence_of_crs
 
-def _chunk_df(df_polys, tgt_polys, n_jobs):
-    chunk_size = np.int64(df_polys.shape[0] / n_jobs) + 1
+def _chunk_dfs(geoms_to_chunk, geoms_full, n_jobs):
+    chunk_size = np.int64(geoms_to_chunk.shape[0] / n_jobs) + 1
     for i in range(n_jobs):
         start = i * chunk_size
-        yield df_polys.iloc[start:start+chunk_size], tgt_polys
+        yield geoms_to_chunk.iloc[start:start+chunk_size], geoms_full
+
+def _index_n_query(geoms1, geoms2):
+    # Pick largest for STRTree, query_bulk the smallest
+    if geoms1.shape[0] > geoms2.shape[0]:
+        large = geoms1
+        small = geoms2
+    else:
+        large = geoms2
+        small = geoms1
+    # Build tree + query
+    qry_polyIDs, tree_polyIDs = large.sindex.query_bulk(
+            small,
+            predicate="intersects"
+    )
+    # Remap IDs to global
+    large_global_ids = large.iloc[tree_polyIDs].index.values
+    small_global_ids = small.iloc[qry_polyIDs].index.values
+    # Return always global IDs for geoms1, geoms2
+    if geoms1.shape[0] > geoms2.shape[0]:
+        return np.array([large_global_ids, small_global_ids]).T
+    else:
+        return np.array([small_global_ids, large_global_ids]).T
 
 def _area_tables_binning_parallel(source_df, target_df, n_jobs=-1):
     from joblib import Parallel, delayed, parallel_backend
@@ -24,25 +47,36 @@ def _area_tables_binning_parallel(source_df, target_df, n_jobs=-1):
         pass
     else:
         return None
+    if n_jobs == -1:
+        n_jobs = os.cpu_count()
 
     df1 = source_df.copy()
     df2 = target_df.copy()
 
     # Chunk the largest, ship the smallest in full
+    if df1.shape[0] > df2.shape[1]:
+        to_chunk = df1
+        df_full = df2
+    else:
+        to_chunk = df2
+        df_full = df1
 
-    # Pick largest for STRTree, query_bulk the smallest
+    # Spatial index query
+    to_workers = _chunk_dfs(to_chunk.geometry, df_full.geometry, n_jobs)
 
-    # Make sure to remap ids to global ones
-
-    """ --- Multi-core logic from numba_binning PR ---
-
-    chunks_to_intersects = _chunk_polys(pairs_to_intersect, df1, df2, n_jobs)
     with parallel_backend("loky", inner_max_num_threads=1):
         worker_out = Parallel(n_jobs=n_jobs)(
-            delayed(pygeos.intersects)(*chunk_pair)
+            delayed(_index_n_query)(*chunk_pair)
             for chunk_pair in chunks_to_intersects
         )
-    do_intersect = np.concatenate(worker_out)
+    ids_src, ids_tgt = np.vstack(worker_out)
+
+    # Intersection + area calculation
+
+
+    """ --- Multi-core logic from numba_binning PR ---
+    """
+
     # Intersections + areas
     chunks_to_intersection = _chunk_polys(
         pairs_to_intersect[do_intersect],
@@ -56,7 +90,6 @@ def _area_tables_binning_parallel(source_df, target_df, n_jobs=-1):
             for chunk_pair in chunks_to_intersection
         )
     areas = np.concatenate(worker_out)
-    """
 
 def _area_tables_binning(source_df, target_df, spatial_index):
     """Construct area allocation and source-target correspondence tables using a spatial indexing approach
