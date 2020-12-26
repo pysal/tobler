@@ -148,10 +148,10 @@ def hexify(source, resolution=6, clip=False):
             "You can install it with `conda install h3` or "
             "`pip install h3`"
         )
-    orig_crs = source.crs.to_string()
+    orig_crs = source.crs
 
-    if not source.crs.name == "WGS 84":
-        source = source.copy().to_crs(4326)
+    if not source.crs.is_geographic:
+        source = source.to_crs(4326)
 
     hexids = pandas.Series(
         list(
