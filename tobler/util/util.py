@@ -175,7 +175,7 @@ def hexify(source, resolution=6, clip=False):
     if clip:
         hexs = geopandas.clip(hexs, source)
 
-    if source.crs.to_string() != orig_crs:
+    if not hexs.crs.equals(orig_crs):
         hexs = hexs.to_crs(orig_crs)
 
     return hexs
