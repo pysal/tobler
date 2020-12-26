@@ -106,7 +106,7 @@ def project_gdf(gdf, to_crs=None, to_latlong=False):
 
     # calculate the centroid of the union of all the geometries in the
     # GeoDataFrame
-    avg_longitude = gdf["geometry"].unary_union.centroid.x
+    avg_longitude = gdf.geometry.unary_union.centroid.x
 
     # calculate the UTM zone from this avg longitude and define the UTM
     # CRS to project
@@ -121,24 +121,28 @@ def project_gdf(gdf, to_crs=None, to_latlong=False):
     return projected_gdf
 
 
-def hexify(source, resolution=6, clip=False):
+def h3fy(source, resolution=6, clip=False, return_geoms=True):
     """Generate a hexgrid geodataframe that covers the face of a source geodataframe.
 
     Parameters
     ----------
     source : geopandas.GeoDataFrame
         GeoDataFrame to transform into a hexagonal grid
-    resolution : int, optional
-        resolution of output h3 hexgrid. 
+    resolution : int, optional (default is 6)
+        resolution of output h3 hexgrid.
         See <https://h3geo.org/docs/core-library/restable> for more information
     clip : bool, optional
         if True, hexagons are clipped to the precise boundary of the source gdf. Otherwise,
         heaxgons along the boundary will be left intact.
+    return_geoms: bool, optional (default is True)
+        whether to generate hexagon geometries as a geodataframe or simply return
+        hex ids as a pandas.Series
 
     Returns
     -------
-    geopandas.GeoDataFrame
-        a GeoDataFrame whose rows comprise a hexagonal h3 grid. 
+    pandas.Series or geopandas.GeoDataFrame
+        if `return_geoms` is True, a geopandas.GeoDataFrame whose rows comprise a hexagonal h3 grid (indexed on h3 hex id).
+        if `return_geoms` is False, a pandas.Series of h3 hexagon ids
     """
     try:
         from h3 import h3
@@ -163,6 +167,8 @@ def hexify(source, resolution=6, clip=False):
         ),
         name="hex_id",
     )
+    if not return_geoms:
+        return hexids
 
     polys = hexids.apply(
         lambda hex_id: Polygon(h3.h3_to_geo_boundary(hex_id, geo_json=True)),
