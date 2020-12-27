@@ -7,3 +7,4 @@ __version__ = "0.5.4"
 from . import area_weighted
 from . import dasymetric
 from . import model
+from . import util
