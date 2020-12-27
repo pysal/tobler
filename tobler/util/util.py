@@ -145,7 +145,7 @@ def h3fy(source, resolution=6, clip=False, return_geoms=True):
         if `return_geoms` is False, a pandas.Series of h3 hexagon ids
     """
     try:
-        from h3 import h3
+        import h3
     except ImportError:
         raise ImportError(
             "This function requires the `h3` library. "
