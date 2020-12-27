@@ -3,7 +3,7 @@
 import geopandas
 from libpysal.examples import load_example
 from tobler.util import h3fy
-
+from numpy.testing import assert_almost_equal
 sac1 = load_example("Sacramento1")
 sac1 = geopandas.read_file(sac1.get_path("sacramentot2.shp"))
 
@@ -25,4 +25,4 @@ def test_h3fy_diff_crs():
 
 def test_h3fy_clip():
     sac_hex = h3fy(sac1, clip=True)
-    assert sac_hex.to_crs(32710).unary_union.area == 13131736346.537416
+    assert_almost_equal(sac_hex.to_crs(32710).unary_union.area, 13131736346.537416, decimal=4)
