@@ -149,7 +149,7 @@ def h3fy(source, resolution=6, clip=False, return_geoms=True):
     except ImportError:
         raise ImportError(
             "This function requires the `h3` library. "
-            "You can install it with `conda install h3` or "
+            "You can install it with `conda install h3-py` or "
             "`pip install h3`"
         )
     orig_crs = source.crs
