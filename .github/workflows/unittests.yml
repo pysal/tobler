@@ -33,6 +33,7 @@
          with:
             miniconda-version: 'latest'
             mamba-version: '*'
+            channels: conda-forge
             channel-priority: true
             auto-update-conda: false
             auto-activate-base: false
