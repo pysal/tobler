@@ -37,10 +37,8 @@
          run: conda config --show
        - shell: bash -l {0}
          run: pip install -e . --no-deps --force-reinstall
-       - uses: actions/checkout@v1
-       - uses: ammaraskar/sphinx-action@master
-         with:
-           docs-folder: "docs/"
+       - shell: bash -l {0}
+         run: cd docs; make html
        - name: Commit documentation changes
          run: |
            git clone https://github.com/ammaraskar/sphinx-action-test.git --branch gh-pages --single-branch gh-pages
