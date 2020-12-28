@@ -29,4 +29,3 @@ dependencies:
   - sphinx_bootstrap_theme
   - numpydoc
   - nbsphinx
-  - urllib==1.26
