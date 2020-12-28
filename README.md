@@ -1,5 +1,5 @@
 <p align="center">
-<img src="docsrc/figs/tobler_long.png" height="200px">
+<img src="docs/figs/tobler_long.png" height="200px">
 </p>
 
 [![Build Status](https://travis-ci.com/pysal/tobler.svg?branch=master)](https://travis-ci.org/pysal/tobler)
