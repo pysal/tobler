@@ -4,15 +4,14 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>tobler.area_weighted.area_interpolate &#8212; tobler v0.4.0 Manual</title>
-    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <title>tobler.area_weighted.area_interpolate &#8212; tobler v0.5.4 Manual</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
@@ -42,7 +41,7 @@
         </button>
         <a class="navbar-brand" href="../index.html">
           tobler</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.4.0</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.5.4</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -81,6 +80,7 @@
 <li class="toctree-l2 current"><a class="reference internal" href="../api.html#area-weighted">Area Weighted</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api.html#dasymetric">Dasymetric</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api.html#model">Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#util">Util</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
@@ -131,28 +131,44 @@
 <h1>tobler.area_weighted.area_interpolate<a class="headerlink" href="#tobler-area-weighted-area-interpolate" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt id="tobler.area_weighted.area_interpolate">
-<code class="sig-prename descclassname">tobler.area_weighted.</code><code class="sig-name descname">area_interpolate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source_df</span></em>, <em class="sig-param"><span class="n">target_df</span></em>, <em class="sig-param"><span class="n">extensive_variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">intensive_variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">table</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">allocate_total</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tobler.area_weighted.area_interpolate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">tobler.area_weighted.</code><code class="sig-name descname">area_interpolate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source_df</span></em>, <em class="sig-param"><span class="n">target_df</span></em>, <em class="sig-param"><span class="n">extensive_variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">intensive_variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">table</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">allocate_total</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">spatial_index</span><span class="o">=</span><span class="default_value">'auto'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tobler.area_weighted.area_interpolate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Area interpolation for extensive and intensive variables.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt><strong>source_df</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.8.0+20.gb366d89)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></span></dt><dd></dd>
-<dt><strong>target_df</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.8.0+20.gb366d89)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></span></dt><dd></dd>
-<dt><strong>extensive_variables</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a></span></dt><dd><p>columns in dataframes for extensive variables</p>
+<dt><strong>source_df</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0+untagged.50.g4a84f0b)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></span></dt><dd></dd>
+<dt><strong>target_df</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0+untagged.50.g4a84f0b)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></span></dt><dd></dd>
+<dt><strong>extensive_variables</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a></span></dt><dd><p>[Optional. Default=None] Columns in dataframes for extensive variables</p>
 </dd>
-<dt><strong>intensive_variables</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a></span></dt><dd><p>columns in dataframes for intensive variables</p>
+<dt><strong>intensive_variables</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a></span></dt><dd><p>[Optional. Default=None] Columns in dataframes for intensive variables</p>
 </dd>
-<dt><strong>table</strong><span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.dok_matrix.html#scipy.sparse.dok_matrix" title="(in SciPy v1.5.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.sparse.dok_matrix</span></code></a></span></dt><dd></dd>
-<dt><strong>allocate_total</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.8)"><span class="xref std std-ref">bool</span></a></span></dt><dd><p>True if total value of source area should be allocated.
-False if denominator is area of i. Note that the two cases
-would be identical when the area of the source polygon is
-exhausted by intersections. See Notes for more details.</p>
+<dt><strong>table</strong><span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.dok_matrix.html#scipy.sparse.dok_matrix" title="(in SciPy v1.5.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.sparse.dok_matrix</span></code></a></span></dt><dd><p>[Optional. Default=None] Area allocation source-target correspondence
+table. If not provided, it will be built from <cite>source_df</cite> and
+<cite>target_df</cite> using <cite>tobler.area_interpolate._area_tables_binning</cite></p>
+</dd>
+<dt><strong>allocate_total</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.9)"><span class="xref std std-ref">bool</span></a></span></dt><dd><p>[Optional. Default=True] True if total value of source area should be
+allocated. False if denominator is area of i. Note that the two cases
+would be identical when the area of the source polygon is exhausted by
+intersections. See Notes for more details.</p>
+</dd>
+<dt><strong>spatial_index</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>[Optional. Default=”auto”] Spatial index to use to build the
+allocation of area from source to target tables. It currently support
+the following values:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>“source”: build the spatial index on <cite>source_df</cite></p></li>
+<li><p>“target”: build the spatial index on <cite>target_df</cite></p></li>
+<li><p>“auto”: attempts to guess the most efficient alternative.
+Currently, this option uses the largest table to build the
+index, and performs a <cite>bulk_query</cite> on the shorter table.</p></li>
+</ul>
+</div></blockquote>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl>
-<dt><strong>estimates</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.8.0+20.gb366d89)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></span></dt><dd><p>new geodaraframe with interpolated variables as columns and target_df geometry
+<dt><strong>estimates</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0+untagged.50.g4a84f0b)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></span></dt><dd><p>new geodaraframe with interpolated variables as columns and target_df geometry
 as output geometry</p>
 </dd>
 </dl>
@@ -197,7 +213,7 @@ For an intensive variable, the estimate at target polygon j is:</p>
     </p>
     <p>
         &copy; Copyright 2018-, pysal developers.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.0.<br/>
     </p>
   </div>
 </footer>

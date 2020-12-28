@@ -4,15 +4,14 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>API reference &#8212; tobler v0.4.0 Manual</title>
-    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <title>API reference &#8212; tobler v0.5.4 Manual</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/pysal-styles.css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
@@ -42,7 +41,7 @@
         </button>
         <a class="navbar-brand" href="index.html">
           tobler</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.4.0</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.5.4</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -81,6 +80,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#area-weighted">Area Weighted</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dasymetric">Dasymetric</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#model">Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#util">Util</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
@@ -101,6 +101,7 @@
 <li><a class="reference internal" href="#area-weighted">Area Weighted</a></li>
 <li><a class="reference internal" href="#dasymetric">Dasymetric</a></li>
 <li><a class="reference internal" href="#model">Model</a></li>
+<li><a class="reference internal" href="#util">Util</a></li>
 </ul>
 </li>
 </ul>
@@ -185,6 +186,21 @@ and the auxiliary data. It then uses that model to predict population levels at 
 </tbody>
 </table>
 </div>
+<div class="section" id="util">
+<h2>Util<a class="headerlink" href="#util" title="Permalink to this headline">¶</a></h2>
+<p>Utility Functions</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/tobler.util.h3fy.html#tobler.util.h3fy" title="tobler.util.h3fy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">h3fy</span></code></a>(source[, resolution, clip, return_geoms])</p></td>
+<td><p>Generate a hexgrid geodataframe that covers the face of a source geodataframe.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 
 
@@ -207,7 +223,7 @@ and the auxiliary data. It then uses that model to predict population levels at 
     </p>
     <p>
         &copy; Copyright 2018-, pysal developers.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.0.<br/>
     </p>
   </div>
 </footer>
