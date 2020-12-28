@@ -31,4 +31,4 @@ dependencies:
   - sphinx_bootstrap_theme
   - numpydoc
   - nbsphinx
-  - perso==0.8
+  - parso==0.8
