@@ -22,3 +22,5 @@ dependencies:
   - pytest-cov
   - twine
   - pip
+  - pygeos
+  - h3-py

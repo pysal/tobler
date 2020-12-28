@@ -7,14 +7,17 @@ import numpy as np
 import geopandas as gpd
 from ._vectorized_raster_interpolation import _fast_append_profile_in_gdf
 import warnings
-from scipy.sparse import dok_matrix, diags
+from scipy.sparse import dok_matrix, diags, coo_matrix
 import pandas as pd
 
-from tobler.util.util import (_check_crs, _nan_check, _inf_check,
-                              _check_presence_of_crs)
+from tobler.util.util import _check_crs, _nan_check, _inf_check, _check_presence_of_crs
 
-def _area_tables_binning(source_df, target_df):
+
+def _area_tables_binning(source_df, target_df, spatial_index):
     """Construct area allocation and source-target correspondence tables using a spatial indexing approach
+    ...
+
+    NOTE: this currently relies on Geopandas' spatial index machinery
 
     Parameters
     ----------
@@ -22,6 +25,14 @@ def _area_tables_binning(source_df, target_df):
         GeoDataFrame containing input data and polygons
     target_df : geopandas.GeoDataFramee
         GeoDataFrame defining the output geometries
+    spatial_index : str
+        Spatial index to use to build the allocation of area from source to
+        target tables. It currently support the following values:
+            - "source": build the spatial index on `source_df`
+            - "target": build the spatial index on `target_df`
+            - "auto": attempts to guess the most efficient alternative.
+              Currently, this option uses the largest table to build the
+              index, and performs a `bulk_query` on the shorter table.
 
     Returns
     -------
@@ -36,88 +47,31 @@ def _area_tables_binning(source_df, target_df):
     df1 = source_df.copy()
     df2 = target_df.copy()
 
-    l1, b1, r1, t1 = df1.total_bounds
-    l2, b2, r2, t2 = df2.total_bounds
-    total_bounds = [min(l1, l2), min(b1, b2), max(r1, r2), max(t1, t2)]
-    n1, k1 = df1.shape
-    n2, k2 = df2.shape
-    numPoly = n1 + n2
-    DELTA = 0.000001
+    # it is generally more performant to use the longer df as spatial index
+    if spatial_index == "auto":
+        if df1.shape[0] > df2.shape[0]:
+            spatial_index = "source"
+        else:
+            spatial_index = "target"
 
-    # constants for bucket sizes
-    BUCK_SM = 8
-    BUCK_LG = 80
-    SHP_SMALL = 1000
-
-    shapebox = total_bounds
-    # bucket size
-    if numPoly < SHP_SMALL:
-        bucketmin = numPoly // BUCK_SM + 2
+    if spatial_index == "source":
+        ids_tgt, ids_src = df1.sindex.query_bulk(df2.geometry, predicate="intersects")
+    elif spatial_index == "target":
+        ids_src, ids_tgt = df2.sindex.query_bulk(df1.geometry, predicate="intersects")
     else:
-        bucketmin = numPoly // BUCK_LG + 2
-        # print 'bucketmin: ', bucketmin
-    # bucket length
-    lengthx = ((shapebox[2] + DELTA) - shapebox[0]) / bucketmin
-    lengthy = ((shapebox[3] + DELTA) - shapebox[1]) / bucketmin
+        raise ValueError(
+            f"'{spatial_index}' is not a valid option. Use 'auto', 'source' or 'target'."
+        )
 
-    # initialize buckets
-    columns1 = [set() for i in range(bucketmin)]
-    rows1 = [set() for i in range(bucketmin)]
-    columns2 = [set() for i in range(bucketmin)]
-    rows2 = [set() for i in range(bucketmin)]
+    areas = df1.geometry.values[ids_src].intersection(df2.geometry.values[ids_tgt]).area
 
-    minbox = shapebox[:2] * 2  # minx,miny,minx,miny
-    binWidth = [lengthx, lengthy] * 2  # lenx,leny,lenx,leny
-    bbcache = {}
-    poly2Column1 = [set() for i in range(n1)]
-    poly2Row1 = [set() for i in range(n1)]
-    poly2Column2 = [set() for i in range(n2)]
-    poly2Row2 = [set() for i in range(n2)]
+    table = coo_matrix(
+        (areas, (ids_src, ids_tgt),),
+        shape=(df1.shape[0], df2.shape[0]),
+        dtype=np.float32,
+    )
 
-    for i in range(n1):
-        shpObj = df1.geometry.iloc[i]
-        bbcache[i] = shpObj.bounds
-        projBBox = [
-            int((shpObj.bounds[:][j] - minbox[j]) / binWidth[j]) for j in range(4)
-        ]
-        for j in range(projBBox[0], projBBox[2] + 1):
-            columns1[j].add(i)
-            poly2Column1[i].add(j)
-        for j in range(projBBox[1], projBBox[3] + 1):
-            rows1[j].add(i)
-            poly2Row1[i].add(j)
-
-    for i in range(n2):
-        shpObj = df2.geometry.iloc[i]
-        bbcache[i] = shpObj.bounds
-        projBBox = [
-            int((shpObj.bounds[:][j] - minbox[j]) / binWidth[j]) for j in range(4)
-        ]
-        for j in range(projBBox[0], projBBox[2] + 1):
-            columns2[j].add(i)
-            poly2Column2[i].add(j)
-        for j in range(projBBox[1], projBBox[3] + 1):
-            rows2[j].add(i)
-            poly2Row2[i].add(j)
-
-    table = dok_matrix((n1, n2), dtype=np.float32)
-
-    for polyId in range(n1):
-        idRows = poly2Row1[polyId]
-        idCols = poly2Column1[polyId]
-        rowNeighbors = set()
-        colNeighbors = set()
-        for row in idRows:
-            rowNeighbors = rowNeighbors.union(rows2[row])
-        for col in idCols:
-            colNeighbors = colNeighbors.union(columns2[col])
-        neighbors = rowNeighbors.intersection(colNeighbors)
-        for neighbor in neighbors:
-            if df1.geometry.iloc[polyId].intersects(df2.geometry.iloc[neighbor]):
-                intersection = df1.geometry.iloc[polyId].intersection(
-                    df2.geometry.iloc[neighbor]
-                )
-                table[polyId, neighbor] = intersection.area
+    table = table.todok()
 
     return table
 
@@ -187,6 +141,7 @@ def _area_interpolate_binning(
     intensive_variables=None,
     table=None,
     allocate_total=True,
+    spatial_index="auto",
 ):
     """
     Area interpolation for extensive and intensive variables.
@@ -196,15 +151,27 @@ def _area_interpolate_binning(
     source_df : geopandas.GeoDataFrame
     target_df : geopandas.GeoDataFrame
     extensive_variables : list
-        columns in dataframes for extensive variables
+        [Optional. Default=None] Columns in dataframes for extensive variables
     intensive_variables : list
-        columns in dataframes for intensive variables
+        [Optional. Default=None] Columns in dataframes for intensive variables
     table : scipy.sparse.dok_matrix
+        [Optional. Default=None] Area allocation source-target correspondence
+        table. If not provided, it will be built from `source_df` and
+        `target_df` using `tobler.area_interpolate._area_tables_binning`
     allocate_total : boolean
-        True if total value of source area should be allocated.
-        False if denominator is area of i. Note that the two cases
-        would be identical when the area of the source polygon is
-        exhausted by intersections. See Notes for more details.
+        [Optional. Default=True] True if total value of source area should be
+        allocated. False if denominator is area of i. Note that the two cases
+        would be identical when the area of the source polygon is exhausted by
+        intersections. See Notes for more details.
+    spatial_index : str
+        [Optional. Default="auto"] Spatial index to use to build the
+        allocation of area from source to target tables. It currently support
+        the following values:
+            - "source": build the spatial index on `source_df`
+            - "target": build the spatial index on `target_df`
+            - "auto": attempts to guess the most efficient alternative.
+              Currently, this option uses the largest table to build the
+              index, and performs a `bulk_query` on the shorter table.
 
     Returns
     -------
@@ -249,7 +216,7 @@ def _area_interpolate_binning(
         return None
 
     if table is None:
-        table = _area_tables_binning(source_df, target_df)
+        table = _area_tables_binning(source_df, target_df, spatial_index)
 
     den = source_df[source_df.geometry.name].area.values
     if allocate_total:

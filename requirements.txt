@@ -7,3 +7,4 @@ statsmodels
 rasterstats
 libpysal
 tqdm
+pygeos
