@@ -1,0 +1,18 @@
+numpy
+pandas
+geopandas
+rasterio
+scipy
+statsmodels
+rasterstats
+libpysal >=4.2.0
+coverage
+coveralls
+matplotlib
+pytest
+pytest-mpl
+pytest-cov
+twine
+xgboost
+shap >=0.33
+quilt3 >=3.1.11
