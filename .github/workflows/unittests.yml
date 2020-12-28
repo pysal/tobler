@@ -33,17 +33,17 @@
          with:
             miniconda-version: 'latest'
             mamba-version: '*'
-            channels: conda-forge
             channel-priority: true
             auto-update-conda: false
             auto-activate-base: false
             environment-file: ${{ matrix.environment-file }}
             activate-environment: test
             use-only-tar-bz2: true
-       - run: mamba info --all
-       - run: mamba list
-       - run: mamba config --show-sources
-       - run: mamba config --show
+       - run: conda info --all
+       - run: conda list
+       - run: conda config --show-sources
+       - run: conda config --show
+       - run: pip install -e . --no-deps --force-reinstall	
        - name: Pytest
          run: py.test -v tobler --cov=tobler --cov-report=xml
        - name: codecov (${{ matrix.os }}, ${{ matrix.environment-file }})
