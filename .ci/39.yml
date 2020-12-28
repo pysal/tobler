@@ -3,11 +3,9 @@ channels:
   - conda-forge
 dependencies:
   - python=3.9
-  - jupyterlab
   - numpy
   - geopandas
   - pandas
-  - numpy
   - rasterio
   - rasterstats
   - statsmodels
@@ -31,4 +29,3 @@ dependencies:
   - sphinx_bootstrap_theme
   - numpydoc
   - nbsphinx
-  - parso==0.8
