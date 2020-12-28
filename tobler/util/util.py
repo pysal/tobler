@@ -131,7 +131,7 @@ def h3fy(source, resolution=6, clip=False, return_geoms=True):
     resolution : int, optional (default is 6)
         resolution of output h3 hexgrid.
         See <https://h3geo.org/docs/core-library/restable> for more information
-    clip : bool, optional
+    clip : bool, optional (default is False)
         if True, hexagons are clipped to the precise boundary of the source gdf. Otherwise,
         heaxgons along the boundary will be left intact.
     return_geoms: bool, optional (default is True)
