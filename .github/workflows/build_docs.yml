@@ -2,13 +2,10 @@
  on:
    push:
      branches:
-     - '*'
-   pull_request:
-     branches:
-     - '*'
-
+     - master
+     - main
  jobs:
-   unittests:
+   docs:
      name: CI (${{ matrix.os }}-${{ matrix.environment-file }})
      runs-on: ${{ matrix.os }}
      continue-on-error: ${{ matrix.experimental }}
