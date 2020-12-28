@@ -44,7 +44,6 @@
        - run: mamba list
        - run: mamba config --show-sources
        - run: mamba config --show
-       - run: pip install -e . --no-deps --force-reinstall
        - name: Pytest
          run: py.test -v tobler --cov=tobler --cov-report=xml
        - name: codecov (${{ matrix.os }}, ${{ matrix.environment-file }})
