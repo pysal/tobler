@@ -40,22 +40,19 @@ $ conda activate tobler
 $ python setup.py develop
 ```
 
-Contribute
-----------
+## Contribute
 
 PySAL-tobler is under active development and contributors are welcome.
 
 If you have any suggestion, feature request, or bug report, please open a new [issue](https://github.com/pysal/tobler/issues) on GitHub. To submit patches, please follow the PySAL development [guidelines](http://pysal.readthedocs.io/en/latest/developers/index.html) and open a [pull request](https://github.com/pysal/tobler). Once your changes get merged, you’ll automatically be added to the [Contributors List](https://github.com/pysal/tobler/graphs/contributors).
 
 
-License
--------
+## License
 
 The project is licensed under the [BSD license](https://github.com/pysal/tobler/blob/master/LICENSE.txt).
 
 
-Funding
--------
+## Funding
 
 <img src="docs/figs/nsf_logo.jpg" width="50"> 
 
