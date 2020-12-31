@@ -2,8 +2,10 @@
 import sys
 import pandas as pd
 import geopandas
+
 try:
     import quilt3
+
     QUILTMISSING = False
 except ImportError:
     QUILTMISSING = True
@@ -23,25 +25,28 @@ def datasets():
         if not os.path.exists("nlcd_2011.tif"):
             p = quilt3.Package.browse("rasters/nlcd", "s3://spatial-ucr")
             p["nlcd_2011.tif"].fetch()
-        sac1 = load_example('Sacramento1')
-        sac2 = load_example('Sacramento2')
+        sac1 = load_example("Sacramento1")
+        sac2 = load_example("Sacramento2")
         sac1 = geopandas.read_file(sac1.get_path("sacramentot2.shp"))
         sac2 = geopandas.read_file(sac2.get_path("SacramentoMSA2.shp"))
-        sac1['pct_poverty'] = sac1.POV_POP/sac1.POV_TOT
+        sac1["pct_poverty"] = sac1.POV_POP / sac1.POV_TOT
 
         return sac1, sac2
     else:
         pass
 
+
 @pytest.mark.skipif(QUILTMISSING, reason="quilt3 not available.")
 def test_area_interpolate():
     sac1, sac2 = datasets()
     area = area_interpolate(
-        source_df=sac1, target_df=sac2, extensive_variables=["TOT_POP"], intensive_variables=["pct_poverty"]
+        source_df=sac1,
+        target_df=sac2,
+        extensive_variables=["TOT_POP"],
+        intensive_variables=["pct_poverty"],
     )
     assert_almost_equal(area.TOT_POP.sum(), 1796856, decimal=0)
     assert_almost_equal(area.pct_poverty.sum(), 2140, decimal=0)
-
 
 
 @pytest.mark.skipif(QUILTMISSING, reason="quilt3 not available.")
@@ -51,7 +56,7 @@ def test_masked_area_interpolate():
         source_df=sac1,
         target_df=sac2,
         extensive_variables=["TOT_POP"],
-        intensive_variables=['pct_poverty'],
+        intensive_variables=["pct_poverty"],
         raster="nlcd_2011.tif",
     )
     assert masked.TOT_POP.sum() > 1500000
@@ -78,3 +83,17 @@ def test_glm_poisson():
         source_df=sac2, target_df=sac1, variable="POP2001", raster="nlcd_2011.tif"
     )
     assert glm_poisson.POP2001.sum() > 1469000
+
+
+# grid = gpd.points_from_xy(
+#     np.repeat(np.linspace(1, 10, 10), 10), np.tile(np.linspace(1, 10, 10), 10)
+# ).buffer(0.5, cap_style=3)
+# source = gpd.GeoDataFrame(
+#     {
+#         "floats": np.linspace(1, 10, 100),
+#         "ints": np.linspace(1, 100, 100, dtype="int"),
+#         "strings": np.array(["darribas", "is", "the", "king"] * 25),
+#     },
+#     geometry=grid,
+# )
+# target = gpd.GeoDataFrame(geometry=grid.translate(xoff=2.2, yoff=0.2))
