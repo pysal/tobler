@@ -83,17 +83,3 @@ def test_glm_poisson():
         source_df=sac2, target_df=sac1, variable="POP2001", raster="nlcd_2011.tif"
     )
     assert glm_poisson.POP2001.sum() > 1469000
-
-
-# grid = gpd.points_from_xy(
-#     np.repeat(np.linspace(1, 10, 10), 10), np.tile(np.linspace(1, 10, 10), 10)
-# ).buffer(0.5, cap_style=3)
-# source = gpd.GeoDataFrame(
-#     {
-#         "floats": np.linspace(1, 10, 100),
-#         "ints": np.linspace(1, 100, 100, dtype="int"),
-#         "strings": np.array(["darribas", "is", "the", "king"] * 25),
-#     },
-#     geometry=grid,
-# )
-# target = gpd.GeoDataFrame(geometry=grid.translate(xoff=2.2, yoff=0.2))

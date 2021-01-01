@@ -5,24 +5,34 @@ import warnings
 __author__ = "Martin Fleischmann <martin@martinfleischmann.net>"
 
 
-def area_max(source_df, target_df, variables):
+def area_join(source_df, target_df, variables):
     """
-    Join attributes from source based on the largest intersection. In case of a tie it picks the first one.
+    Join variables from source_df based on the largest intersection. In case of a tie it picks the first one.
 
     Parameters
     ----------
-    source_df : GeoDataFrame
+    source_df : geopandas.GeoDataFrame
         GeoDataFrame containing source values
-    target_df : GeoDataFrame
+    target_df : geopandas.GeoDataFrame
         GeoDataFrame containing source values
     variables : string or list-like
-        column(s) in dataframes for variable(s)
+        column(s) in source_df dataframe for variable(s) to be joined
 
     Returns
     -------
-    GeoDataFrame
+    joined : geopandas.GeoDataFrame
+         target_df GeoDataFrame with joined variables as additional columns
+
+
 
     """
+    if not pd.api.types.is_list_like(variables):
+        variables = [variables]
+
+    for v in variables:
+        if v in target_df.columns:
+            raise ValueError(f"Column '{v}' already present in target_df.")
+
     target_df = target_df.copy()
     target_ix, source_ix = source_df.sindex.query_bulk(
         target_df.geometry, predicate="intersects"
@@ -34,7 +44,7 @@ def area_max(source_df, target_df, variables):
     )
 
     main = []
-    for i in range(len(target_df)):
+    for i in range(len(target_df)):  # vectorise this loop?
         mask = target_ix == i
         if np.any(mask):
             main.append(source_ix[mask][np.argmax(areas[mask])])
@@ -43,9 +53,6 @@ def area_max(source_df, target_df, variables):
 
     main = np.array(main, dtype=float)
     mask = ~np.isnan(main)
-
-    if not pd.api.types.is_list_like(variables):
-        variables = [variables]
 
     for v in variables:
         arr = np.empty(len(main), dtype=object)
