@@ -9,7 +9,7 @@ API reference
 
 Area Weighted
 --------------
-Area weighted approaches use the area of overlap between the source and target geometries to weight the 
+Area weighted approaches use the area of overlap between the source and target geometries to weight the
 variables being assigned to the target
 
 .. currentmodule:: tobler.area_weighted
@@ -18,12 +18,13 @@ variables being assigned to the target
    :toctree: generated/
 
     area_interpolate
+    area_join
 
 
 Dasymetric
 -----------------------
 
-Dasymetric approaches use auxiliary data in addition to use the area of overlap between the source and target geometries to weight the 
+Dasymetric approaches use auxiliary data in addition to use the area of overlap between the source and target geometries to weight the
 variables being assigned to the target
 
 .. currentmodule:: tobler.dasymetric
