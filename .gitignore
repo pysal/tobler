@@ -93,3 +93,5 @@ ENV/
 # Pycharm
 .idea
 .vscode
+
+nlcd_2011.tif
