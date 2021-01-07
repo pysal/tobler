@@ -67,6 +67,7 @@ def test_area_interpolate_sindex_options():
         )
 
 
+@pytest.mark.xfail(reason="requires master of pygeos and geopandas")
 def test_area_interpolate_parallel():
     sac1, sac2 = datasets()
     area = area_interpolate(
