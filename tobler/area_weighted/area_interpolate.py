@@ -15,7 +15,7 @@ from tobler.util.util import _check_crs, _nan_check, _inf_check, _check_presence
 
 
 def _chunk_dfs(geoms_to_chunk, geoms_full, n_jobs):
-    chunk_size = np.int64(geoms_to_chunk.shape[0] / n_jobs) + 1
+    chunk_size = geoms_to_chunk.shape // n_jobs + 1
     for i in range(n_jobs):
         start = i * chunk_size
         yield geoms_to_chunk.iloc[start : start + chunk_size], geoms_full
