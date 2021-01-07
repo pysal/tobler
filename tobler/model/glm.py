@@ -60,7 +60,9 @@ def glm_pixel_adjusted(
     if not raster_codes:
         raster_codes = [21, 22, 23, 24]
     if not raster:
-        raise IOError('You must provide the path to a raster that can be read with rasterio')
+        raise IOError(
+            "You must provide the path to a raster that can be read with rasterio"
+        )
 
     # build weights from raster and vector data
     weights = _return_weights_from_regression(
@@ -160,7 +162,7 @@ def glm(
         source_df["area"] = project_gdf(source_df).area
         warn("Geograpic CRS detected. Calculating area using auto UTM reprojection")
     else:
-        source_df['area'] = source_df.area
+        source_df["area"] = source_df.area
 
     profiled_df = _fast_append_profile_in_gdf(
         source_df[[source_df.geometry.name, variable, "area"]], raster, force_crs_match
@@ -169,9 +171,11 @@ def glm(
     results = smf.glm(formula, data=profiled_df, family=liks[likelihood]()).fit()
 
     out = target_df[[target_df.geometry.name]]
-    temp = _fast_append_profile_in_gdf(out[[out.geometry.name]], raster, force_crs_match)
-    temp['area'] = temp.area
-    
+    temp = _fast_append_profile_in_gdf(
+        out[[out.geometry.name]], raster, force_crs_match
+    )
+    temp["area"] = temp.area
+
     out[variable] = results.predict(temp.drop(columns=[temp.geometry.name]).fillna(0))
 
     if return_model:

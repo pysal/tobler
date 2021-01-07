@@ -147,7 +147,9 @@ def _return_weights_from_regression(
         raise ValueError("likelihood must one of 'poisson', 'gaussian'")
 
     profiled_df = _fast_append_profile_in_gdf(
-        geodataframe[[geodataframe.geometry.name, pop_string]], raster_path, force_crs_match
+        geodataframe[[geodataframe.geometry.name, pop_string]],
+        raster_path,
+        force_crs_match,
     )  # Use only two columns to build the weights (this avoids error, if the original dataset has already types appended on it).
 
     # If the list is unsorted, the codes will be sorted to guarantee that the position of the weights will match
@@ -247,7 +249,9 @@ def _return_weights_from_xgboost(
         raise ValueError("codes should not assume the na_value value.")
 
     profiled_df = _fast_append_profile_in_gdf(
-        geodataframe[[geodataframe.geometry.name, pop_string]], raster_path, force_crs_match
+        geodataframe[[geodataframe.geometry.name, pop_string]],
+        raster_path,
+        force_crs_match,
     )  # Use only two columns to build the weights (this avoids error, if the original dataset has already types appended on it).
 
     # If the list is unsorted, the codes will be sorted to guarantee that the position of the weights will match
@@ -584,6 +588,8 @@ def subset_gdf_polygons_from_raster(geodataframe, raster, force_crs_match=True):
     pbar.close()
 
     overlayed_subset_gdf = reprojected_gdf.iloc[has_intersection]
-    overlayed_subset_gdf = overlayed_subset_gdf.set_geometry(overlayed_subset_gdf.geometry.name)
+    overlayed_subset_gdf = overlayed_subset_gdf.set_geometry(
+        overlayed_subset_gdf.geometry.name
+    )
 
     return overlayed_subset_gdf
