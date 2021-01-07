@@ -16,3 +16,5 @@ dependencies:
   - tqdm
   - pip
   - pygeos
+  - mapclassify 
+  - descartes
