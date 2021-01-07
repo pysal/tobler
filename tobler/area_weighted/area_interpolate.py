@@ -51,10 +51,8 @@ def _chunk_polys(id_pairs, geoms_left, geoms_right, n_jobs):
 
 
 def _intersect_area_on_chunk(geoms1, geoms2):
-    import pygeos
-
-    intersection = pygeos.intersection(geoms1, geoms2)
-    areas = pygeos.measurement.area(intersection)
+    intersection = geoms1.intersection(geoms2)
+    areas = intersection.area
     return areas
 
 
