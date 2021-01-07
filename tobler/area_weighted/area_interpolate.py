@@ -13,11 +13,13 @@ import os
 
 from tobler.util.util import _check_crs, _nan_check, _inf_check, _check_presence_of_crs
 
+
 def _chunk_dfs(geoms_to_chunk, geoms_full, n_jobs):
     chunk_size = np.int64(geoms_to_chunk.shape[0] / n_jobs) + 1
     for i in range(n_jobs):
         start = i * chunk_size
-        yield geoms_to_chunk.iloc[start:start+chunk_size], geoms_full
+        yield geoms_to_chunk.iloc[start : start + chunk_size], geoms_full
+
 
 def _index_n_query(geoms1, geoms2):
     # Pick largest for STRTree, query_bulk the smallest
@@ -28,10 +30,7 @@ def _index_n_query(geoms1, geoms2):
         large = geoms2
         small = geoms1
     # Build tree + query
-    qry_polyIDs, tree_polyIDs = large.sindex.query_bulk(
-            small,
-            predicate="intersects"
-    )
+    qry_polyIDs, tree_polyIDs = large.sindex.query_bulk(small, predicate="intersects")
     # Remap IDs to global
     large_global_ids = large.iloc[tree_polyIDs].index.values
     small_global_ids = small.iloc[qry_polyIDs].index.values
@@ -41,19 +40,23 @@ def _index_n_query(geoms1, geoms2):
     else:
         return np.array([small_global_ids, large_global_ids]).T
 
+
 def _chunk_polys(id_pairs, geoms_left, geoms_right, n_jobs):
     chunk_size = np.int64(id_pairs.shape[0] / n_jobs) + 1
     for i in range(n_jobs):
         start = i * chunk_size
-        chunk1 = geoms_left.values.data[id_pairs[start:start+chunk_size, 0]]
-        chunk2 = geoms_right.values.data[id_pairs[start:start+chunk_size, 1]]
+        chunk1 = geoms_left.values.data[id_pairs[start : start + chunk_size, 0]]
+        chunk2 = geoms_right.values.data[id_pairs[start : start + chunk_size, 1]]
         yield chunk1, chunk2
+
 
 def _intersect_area_on_chunk(geoms1, geoms2):
     import pygeos
+
     intersection = pygeos.intersection(geoms1, geoms2)
     areas = pygeos.measurement.area(intersection)
     return areas
+
 
 def _area_tables_binning_parallel(source_df, target_df, n_jobs=-1):
     """Construct area allocation and source-target correspondence tables using
@@ -80,6 +83,7 @@ def _area_tables_binning_parallel(source_df, target_df, n_jobs=-1):
 
     """
     from joblib import Parallel, delayed, parallel_backend
+
     if _check_crs(source_df, target_df):
         pass
     else:
@@ -101,31 +105,21 @@ def _area_tables_binning_parallel(source_df, target_df, n_jobs=-1):
     # Spatial index query
     ## Reindex on positional IDs
     to_workers = _chunk_dfs(
-            gpd.GeoSeries(
-                to_chunk.geometry.values,
-                crs=to_chunk.crs
-                ), 
-            gpd.GeoSeries(
-                df_full.geometry.values,
-                crs=df_full.crs
-                ), 
-            n_jobs
-        )
+        gpd.GeoSeries(to_chunk.geometry.values, crs=to_chunk.crs),
+        gpd.GeoSeries(df_full.geometry.values, crs=df_full.crs),
+        n_jobs,
+    )
 
     with parallel_backend("loky", inner_max_num_threads=1):
         worker_out = Parallel(n_jobs=n_jobs)(
-            delayed(_index_n_query)(*chunk_pair)
-            for chunk_pair in to_workers
+            delayed(_index_n_query)(*chunk_pair) for chunk_pair in to_workers
         )
 
     ids_src, ids_tgt = np.concatenate(worker_out).T
 
     # Intersection + area calculation
     chunks_to_intersection = _chunk_polys(
-        np.vstack([ids_src, ids_tgt]).T,
-        df1.geometry,
-        df2.geometry,
-        n_jobs
+        np.vstack([ids_src, ids_tgt]).T, df1.geometry, df2.geometry, n_jobs
     )
     with parallel_backend("loky", inner_max_num_threads=1):
         worker_out = Parallel(n_jobs=n_jobs)(
@@ -142,6 +136,7 @@ def _area_tables_binning_parallel(source_df, target_df, n_jobs=-1):
     )
     table = table.todok()
     return table
+
 
 def _area_tables_binning(source_df, target_df, spatial_index):
     """Construct area allocation and source-target correspondence tables using a spatial indexing approach
@@ -272,6 +267,7 @@ def _area_interpolate_binning(
     table=None,
     allocate_total=True,
     spatial_index="auto",
+    n_jobs=1,
 ):
     """
     Area interpolation for extensive and intensive variables.
@@ -302,6 +298,11 @@ def _area_interpolate_binning(
             - "auto": attempts to guess the most efficient alternative.
               Currently, this option uses the largest table to build the
               index, and performs a `bulk_query` on the shorter table.
+        This argument is ignored if n_jobs>1 (or n_jobs=-1).
+    n_jobs : int
+        [Optional. Default=1] Number of processes to run in parallel to
+        generate the area allocation. If -1, this is set to the number of CPUs
+        available. If `table` is passed, this is ignored.
 
     Returns
     -------
@@ -346,7 +347,12 @@ def _area_interpolate_binning(
         return None
 
     if table is None:
-        table = _area_tables_binning(source_df, target_df, spatial_index)
+        if n_jobs == 1:
+            table = _area_tables_binning(source_df, target_df, spatial_index)
+        else:
+            table = _area_tables_binning_parallel(
+                source_df, target_df, spatial_index, n_jobs=n_jobs
+            )
 
     den = source_df[source_df.geometry.name].area.values
     if allocate_total:
