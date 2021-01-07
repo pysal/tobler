@@ -42,7 +42,7 @@ def _index_n_query(geoms1, geoms2):
 
 
 def _chunk_polys(id_pairs, geoms_left, geoms_right, n_jobs):
-    chunk_size = np.int64(id_pairs.shape[0] / n_jobs) + 1
+    chunk_size = id_pairs.shape[0] // n_jobs + 1
     for i in range(n_jobs):
         start = i * chunk_size
         chunk1 = geoms_left.values.data[id_pairs[start : start + chunk_size, 0]]
