@@ -303,6 +303,8 @@ def _area_interpolate_binning(
         [Optional. Default=1] Number of processes to run in parallel to
         generate the area allocation. If -1, this is set to the number of CPUs
         available. If `table` is passed, this is ignored.
+        NOTE: as of Jan'21 multi-core functionality requires master versions
+        of `pygeos` and `geopandas`.
 
     Returns
     -------
