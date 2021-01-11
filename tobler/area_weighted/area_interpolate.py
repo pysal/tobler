@@ -15,7 +15,7 @@ from tobler.util.util import _check_crs, _nan_check, _inf_check, _check_presence
 
 
 def _chunk_dfs(geoms_to_chunk, geoms_full, n_jobs):
-    chunk_size = np.int64(geoms_to_chunk.shape[0] / n_jobs) + 1
+    chunk_size = geoms_to_chunk.shape // n_jobs + 1
     for i in range(n_jobs):
         start = i * chunk_size
         yield geoms_to_chunk.iloc[start : start + chunk_size], geoms_full
@@ -42,7 +42,7 @@ def _index_n_query(geoms1, geoms2):
 
 
 def _chunk_polys(id_pairs, geoms_left, geoms_right, n_jobs):
-    chunk_size = np.int64(id_pairs.shape[0] / n_jobs) + 1
+    chunk_size = id_pairs.shape[0] // n_jobs + 1
     for i in range(n_jobs):
         start = i * chunk_size
         chunk1 = geoms_left.values.data[id_pairs[start : start + chunk_size, 0]]
@@ -51,10 +51,8 @@ def _chunk_polys(id_pairs, geoms_left, geoms_right, n_jobs):
 
 
 def _intersect_area_on_chunk(geoms1, geoms2):
-    import pygeos
-
-    intersection = pygeos.intersection(geoms1, geoms2)
-    areas = pygeos.measurement.area(intersection)
+    intersection = geoms1.intersection(geoms2)
+    areas = intersection.area
     return areas
 
 
