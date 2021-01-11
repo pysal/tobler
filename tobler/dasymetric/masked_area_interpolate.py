@@ -49,7 +49,9 @@ def masked_area_interpolate(
     if not codes:
         codes = [21, 22, 23, 24]
     if not raster:
-        raise IOError('You must pass the path to a raster that can be read with rasterio')
+        raise IOError(
+            "You must pass the path to a raster that can be read with rasterio"
+        )
 
     if not tables:
         tables = _area_tables_raster(

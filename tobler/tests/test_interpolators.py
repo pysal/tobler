@@ -67,6 +67,20 @@ def test_area_interpolate_sindex_options():
         )
 
 
+@pytest.mark.xfail(reason="requires master of pygeos and geopandas")
+def test_area_interpolate_parallel():
+    sac1, sac2 = datasets()
+    area = area_interpolate(
+        source_df=sac1,
+        target_df=sac2,
+        extensive_variables=["TOT_POP"],
+        intensive_variables=["pct_poverty"],
+        n_jobs=-1,
+    )
+    assert_almost_equal(area.TOT_POP.sum(), 1796856, decimal=0)
+    assert_almost_equal(area.pct_poverty.sum(), 2140, decimal=0)
+
+
 def test_area_tables_binning():
     sac1, sac2 = datasets()
 
