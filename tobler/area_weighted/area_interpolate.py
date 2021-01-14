@@ -15,7 +15,7 @@ from tobler.util.util import _check_crs, _nan_check, _inf_check, _check_presence
 
 
 def _chunk_dfs(geoms_to_chunk, geoms_full, n_jobs):
-    chunk_size = geoms_to_chunk.shape // n_jobs + 1
+    chunk_size = geoms_to_chunk.shape[0] // n_jobs + 1
     for i in range(n_jobs):
         start = i * chunk_size
         yield geoms_to_chunk.iloc[start : start + chunk_size], geoms_full
@@ -51,8 +51,9 @@ def _chunk_polys(id_pairs, geoms_left, geoms_right, n_jobs):
 
 
 def _intersect_area_on_chunk(geoms1, geoms2):
-    intersection = geoms1.intersection(geoms2)
-    areas = intersection.area
+    import pygeos
+
+    areas = pygeos.area(pygeos.intersection(geoms1, geoms2))
     return areas
 
 
@@ -128,7 +129,10 @@ def _area_tables_binning_parallel(source_df, target_df, n_jobs=-1):
 
     # Build DOK table
     table = coo_matrix(
-        (areas, (ids_src, ids_tgt),),
+        (
+            areas,
+            (ids_src, ids_tgt),
+        ),
         shape=(df1.shape[0], df2.shape[0]),
         dtype=np.float32,
     )
@@ -189,7 +193,10 @@ def _area_tables_binning(source_df, target_df, spatial_index):
     areas = df1.geometry.values[ids_src].intersection(df2.geometry.values[ids_tgt]).area
 
     table = coo_matrix(
-        (areas, (ids_src, ids_tgt),),
+        (
+            areas,
+            (ids_src, ids_tgt),
+        ),
         shape=(df1.shape[0], df2.shape[0]),
         dtype=np.float32,
     )
@@ -350,9 +357,7 @@ def _area_interpolate_binning(
         if n_jobs == 1:
             table = _area_tables_binning(source_df, target_df, spatial_index)
         else:
-            table = _area_tables_binning_parallel(
-                source_df, target_df, spatial_index, n_jobs=n_jobs
-            )
+            table = _area_tables_binning_parallel(source_df, target_df, n_jobs=n_jobs)
 
     den = source_df[source_df.geometry.name].area.values
     if allocate_total:
