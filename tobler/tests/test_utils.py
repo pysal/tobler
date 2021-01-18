@@ -33,3 +33,10 @@ def test_h3fy_clip():
     assert_almost_equal(
         sac_hex.to_crs(32710).unary_union.area, 13131736346.537416, decimal=4
     )
+
+def test_h3_multipoly():
+    va = geopandas.read_file(load_example('virginia').get_path('virginia.shp'))
+    va = h3fy(va)
+    assert_almost_equal(
+        va.to_crs(2284).unary_union.area, 1106844905155.1118, decimal=4
+    )
