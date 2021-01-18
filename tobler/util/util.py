@@ -146,23 +146,24 @@ def h3fy(source, resolution=6, clip=False, return_geoms=True):
     """
     # h3 hexes only work on polygons, not multipolygons
     source = source.explode()
-    try:  # this will fail if the resulting unary_union is a multipolygon, but this avoids having to call unary_union twice
-        return _to_hex(
-            source, resolution=resolution, clip=clip, return_geoms=return_geoms
+    source_unary = geopandas.GeoDataFrame(geopandas.GeoSeries(source.unary_union, name='geometry'))
+    source_unary.crs = source.crs
+    if type(source_unary.iloc[0].geometry) == Polygon:
+        hexagons = _to_hex(
+            source_unary, resolution=resolution, clip=clip, return_geoms=return_geoms
         )
-    except ValueError:
+        return hexagons
+    else:
         output = []
-        for i, row in geopandas.GeoDataFrame(
-            geopandas.GeoSeries(source.unary_union).explode()
-        ).iterrows():
-            row = geopandas.GeoDataFrame(geometry=row)
+        for i, row in source_unary.explode().iterrows():
+            row = geopandas.GeoDataFrame(geopandas.GeoSeries(row.geometry, name='geometry'))
             row.crs = source.crs
             hexes = _to_hex(
                 row, resolution=resolution, clip=clip, return_geoms=return_geoms
             )
             output.append(hexes)
-            combined = pandas.concat(output)
-        return combined
+            hexagons = pandas.concat(output)
+    return hexagons
 
 
 def _to_hex(source, resolution=6, clip=False, return_geoms=True):
@@ -204,7 +205,7 @@ def _to_hex(source, resolution=6, clip=False, return_geoms=True):
     hexids = pandas.Series(
         list(
             h3.polyfill(
-                source.unary_union.__geo_interface__,
+                source.geometry.values[0].__geo_interface__,
                 resolution,
                 geo_json_conformant=True,
             )
