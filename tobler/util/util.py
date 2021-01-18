@@ -146,6 +146,8 @@ def h3fy(source, resolution=6, clip=False, return_geoms=True):
         if `return_geoms` is False, a pandas.Series of h3 hexagon ids
     """
     # h3 hexes only work on polygons, not multipolygons
+    if source.crs is None:
+        raise ValueError('source geodataframe must have a valid CRS set before using this function')
     source = source.explode()
 
     orig_crs = source.crs
@@ -166,11 +168,12 @@ def h3fy(source, resolution=6, clip=False, return_geoms=True):
             output.append(hexes)
             hexagons = pandas.concat(output)
 
+    if return_geoms and clip:
+        hexagons = geopandas.clip(hexagons, source)
+
     if return_geoms and not hexagons.crs.equals(orig_crs):
         hexagons = hexagons.to_crs(orig_crs)
 
-    if return_geoms and clip:
-        hexagons = geopandas.clip(hexagons, source)
 
     return hexagons
 
