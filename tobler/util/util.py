@@ -146,17 +146,20 @@ def h3fy(source, resolution=6, clip=False, return_geoms=True):
     """
     # h3 hexes only work on polygons, not multipolygons
     source = source.explode()
-
-    if type(source.unary_union) == Polygon:
-        return _to_hex(source, resolution=resolution, clip=clip, return_geoms=return_geoms)
-    else:
+    try:  # this will fail if the resulting unary_union is a multipolygon, but this avoids having to call unary_union twice
+        return _to_hex(
+            source, resolution=resolution, clip=clip, return_geoms=return_geoms
+        )
+    except ValueError:
         output = []
         for i, row in geopandas.GeoDataFrame(
             geopandas.GeoSeries(source.unary_union).explode()
         ).iterrows():
             row = geopandas.GeoDataFrame(geometry=row)
             row.crs = source.crs
-            hexes = _to_hex(row,resolution=resolution, clip=clip, return_geoms=return_geoms)
+            hexes = _to_hex(
+                row, resolution=resolution, clip=clip, return_geoms=return_geoms
+            )
             output.append(hexes)
             combined = pandas.concat(output)
         return combined
