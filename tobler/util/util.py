@@ -67,8 +67,9 @@ def is_crs_utm(crs):
     if not crs:
         return False
     crs_obj = CRS.from_user_input(crs)
-    if crs_obj.coordinate_operation and crs_obj.coordinate_operation.name.upper().startswith(
-        "UTM"
+    if (
+        crs_obj.coordinate_operation
+        and crs_obj.coordinate_operation.name.upper().startswith("UTM")
     ):
         return True
     return False
@@ -146,38 +147,44 @@ def h3fy(source, resolution=6, clip=False, return_geoms=True):
     """
     # h3 hexes only work on polygons, not multipolygons
     source = source.explode()
-    source_unary = geopandas.GeoDataFrame(geopandas.GeoSeries(source.unary_union, name='geometry'))
-    source_unary.crs = source.crs
-    if type(source_unary.iloc[0].geometry) == Polygon:
+
+    orig_crs = source.crs
+
+    if not source.crs.is_geographic:
+        source = source.to_crs(4326)
+
+    source_unary = source.unary_union
+
+    if type(source_unary) == Polygon:
         hexagons = _to_hex(
-            source_unary, resolution=resolution, clip=clip, return_geoms=return_geoms
+            source_unary, resolution=resolution, return_geoms=return_geoms
         )
     else:
         output = []
-        for i, row in source_unary.explode().iterrows():
-            row = geopandas.GeoDataFrame(geopandas.GeoSeries(row.geometry, name='geometry'))
-            row.crs = source.crs
-            hexes = _to_hex(
-                row, resolution=resolution, clip=clip, return_geoms=return_geoms
-            )
+        for geom in source_unary.geoms:
+            hexes = _to_hex(geom, resolution=resolution, return_geoms=return_geoms)
             output.append(hexes)
             hexagons = pandas.concat(output)
+
+    if return_geoms and not hexagons.crs.equals(orig_crs):
+        hexagons = hexagons.to_crs(orig_crs)
+
+    if return_geoms and clip:
+        hexagons = geopandas.clip(hexagons, source)
+
     return hexagons
 
 
-def _to_hex(source, resolution=6, clip=False, return_geoms=True):
+def _to_hex(source, resolution=6, return_geoms=True):
     """Generate a hexgrid geodataframe that covers the face of a source geodataframe.
 
     Parameters
     ----------
-    source : geopandas.GeoDataFrame
-        GeoDataFrame to transform into a hexagonal grid
+    source : geoemtry
+        geoemtry to transform into a hexagonal grid (needs to support __geo_interface__)
     resolution : int, optional (default is 6)
         resolution of output h3 hexgrid.
         See <https://h3geo.org/docs/core-library/restable> for more information
-    clip : bool, optional (default is False)
-        if True, hexagons are clipped to the precise boundary of the source gdf. Otherwise,
-        heaxgons along the boundary will be left intact.
     return_geoms: bool, optional (default is True)
         whether to generate hexagon geometries as a geodataframe or simply return
         hex ids as a pandas.Series
@@ -196,15 +203,11 @@ def _to_hex(source, resolution=6, clip=False, return_geoms=True):
             "You can install it with `conda install h3-py` or "
             "`pip install h3`"
         )
-    orig_crs = source.crs
-
-    if not source.crs.is_geographic:
-        source = source.to_crs(4326)
 
     hexids = pandas.Series(
         list(
             h3.polyfill(
-                source.geometry.values[0].__geo_interface__,
+                source.__geo_interface__,
                 resolution,
                 geo_json_conformant=True,
             )
@@ -218,14 +221,6 @@ def _to_hex(source, resolution=6, clip=False, return_geoms=True):
         lambda hex_id: Polygon(h3.h3_to_geo_boundary(hex_id, geo_json=True)),
     )
 
-    hexs = geopandas.GeoDataFrame(hexids, geometry=polys, crs=source.crs).set_index(
-        "hex_id"
-    )
-
-    if clip:
-        hexs = geopandas.clip(hexs, source)
-
-    if not hexs.crs.equals(orig_crs):
-        hexs = hexs.to_crs(orig_crs)
+    hexs = geopandas.GeoDataFrame(hexids, geometry=polys, crs=4326).set_index("hex_id")
 
     return hexs
