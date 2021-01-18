@@ -144,6 +144,47 @@ def h3fy(source, resolution=6, clip=False, return_geoms=True):
         if `return_geoms` is True, a geopandas.GeoDataFrame whose rows comprise a hexagonal h3 grid (indexed on h3 hex id).
         if `return_geoms` is False, a pandas.Series of h3 hexagon ids
     """
+    # h3 hexes only work on polygons, not multipolygons
+    source = source.explode()
+
+    if type(source.unary_union) == Polygon:
+        return _to_hex(source, resolution=resolution, clip=clip, return_geoms=return_geoms)
+    else:
+        output = []
+        for i, row in geopandas.GeoDataFrame(
+            geopandas.GeoSeries(source.unary_union).explode()
+        ).iterrows():
+            row = geopandas.GeoDataFrame(geometry=row)
+            row.crs = source.crs
+            hexes = _to_hex(row,resolution=resolution, clip=clip, return_geoms=return_geoms)
+            output.append(hexes)
+            combined = pandas.concat(output)
+        return combined
+
+
+def _to_hex(source, resolution=6, clip=False, return_geoms=True):
+    """Generate a hexgrid geodataframe that covers the face of a source geodataframe.
+
+    Parameters
+    ----------
+    source : geopandas.GeoDataFrame
+        GeoDataFrame to transform into a hexagonal grid
+    resolution : int, optional (default is 6)
+        resolution of output h3 hexgrid.
+        See <https://h3geo.org/docs/core-library/restable> for more information
+    clip : bool, optional (default is False)
+        if True, hexagons are clipped to the precise boundary of the source gdf. Otherwise,
+        heaxgons along the boundary will be left intact.
+    return_geoms: bool, optional (default is True)
+        whether to generate hexagon geometries as a geodataframe or simply return
+        hex ids as a pandas.Series
+
+    Returns
+    -------
+    pandas.Series or geopandas.GeoDataFrame
+        if `return_geoms` is True, a geopandas.GeoDataFrame whose rows comprise a hexagonal h3 grid (indexed on h3 hex id).
+        if `return_geoms` is False, a pandas.Series of h3 hexagon ids
+    """
     try:
         import h3
     except ImportError:
