@@ -176,12 +176,12 @@ def h3fy(source, resolution=6, clip=False, return_geoms=True):
 
 
 def _to_hex(source, resolution=6, return_geoms=True):
-    """Generate a hexgrid geodataframe that covers the face of a source geodataframe.
+    """Generate a hexgrid geodataframe that covers the face of a source geometry.
 
     Parameters
     ----------
-    source : geoemtry
-        geoemtry to transform into a hexagonal grid (needs to support __geo_interface__)
+    source : geometry
+        geometry to transform into a hexagonal grid (needs to support __geo_interface__)
     resolution : int, optional (default is 6)
         resolution of output h3 hexgrid.
         See <https://h3geo.org/docs/core-library/restable> for more information
