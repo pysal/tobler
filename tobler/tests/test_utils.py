@@ -38,5 +38,5 @@ def test_h3_multipoly():
     va = geopandas.read_file(load_example('virginia').get_path('virginia.shp'))
     va = h3fy(va)
     assert_almost_equal(
-        va.to_crs(2284).unary_union.area, 1106844905155.1118, decimal=4
+        va.to_crs(2284).unary_union.area, 1106844905155.1118, decimal=0
     )
