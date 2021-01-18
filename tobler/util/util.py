@@ -152,7 +152,6 @@ def h3fy(source, resolution=6, clip=False, return_geoms=True):
         hexagons = _to_hex(
             source_unary, resolution=resolution, clip=clip, return_geoms=return_geoms
         )
-        return hexagons
     else:
         output = []
         for i, row in source_unary.explode().iterrows():
