@@ -285,3 +285,7 @@ intersphinx_mapping = {
 numpydoc_xref_ignore = {'type', 'optional', 'default', 'shape', 'fitted', 'instance',
                         'cluster', 'of', 'or', 'if', 'using', 'otherwise', 'required',
                         'from'}
+
+# Bib Variables
+bibtex_default_style = 'plain'
+bibtex_reference_style ="author_year"
