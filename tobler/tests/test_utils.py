@@ -18,6 +18,15 @@ def test_h3fy_nogeoms():
     sac_hex = h3fy(sac1, return_geoms=False)
     assert len(sac_hex) == 364
 
+def test_h3fy_nocrs():
+    sac1 = load_example("Sacramento1")
+    sac1 = geopandas.read_file(sac1.get_path("sacramentot2.shp"))
+    sac1.crs=None
+    try:
+        sac_hex = h3fy(sac1, return_geoms=True)
+    except ValueError:
+        pass
+
 
 def test_h3fy_diff_crs():
     sac1 = load_example("Sacramento1")
