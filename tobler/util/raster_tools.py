@@ -15,7 +15,7 @@ def _parse_geom(geom_str):
 
 
 def extract_raster_features(gdf, raster_path, pixel_types=None, nodata=255):
-    """Generate a geodataframe from raster pixels.
+    """Generate a geodataframe by extracting shapes of raster features using rasterio's features module.
 
     Parameters
     ----------
@@ -37,11 +37,11 @@ def extract_raster_features(gdf, raster_path, pixel_types=None, nodata=255):
         The geometry of each zone is the boundary of a contiguous group of pixels with 
         the same value; the `value` column contains the pixel value of each zone.
     """
-    with rio.open(raster_path) as src:  # read nationwide file
+    with rio.open(raster_path) as src:
 
         raster_crs = src.crs.data
         gdf = gdf.to_crs(raster_crs)
-        geomask = [gdf.explode().unary_union.__geo_interface__]
+        geomask = [gdf.unary_union.__geo_interface__]
 
         out_image, out_transform = rio.mask.mask(
             src, geomask, nodata=nodata, crop=True
