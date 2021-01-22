@@ -1,12 +1,13 @@
 """Utilities for fetching data from GADM."""
 import os
 import tempfile
-
-import geopandas as gpd
+import time
 from warnings import warn
 
+import geopandas as gpd
 
-def get_gadm(code, level=0, use_fsspec=True, gpkg=True):
+
+def get_gadm(code, level=0, use_fsspec=True, gpkg=True, n_retries=3):
     """Collect data from GADM as a geodataframe.
 
     Parameters
@@ -20,6 +21,9 @@ def get_gadm(code, level=0, use_fsspec=True, gpkg=True):
     gpkg : bool
         whether to read from a geopackage or shapefile. If True,
         geopackage will be read; shapefile if False. Ignored if using fsspec
+    n_retries : int optional
+        number of retries in case read fails from direct stream from GADM.
+        Ignored if using fsspec.
 
     Returns
     -------
@@ -29,12 +33,12 @@ def get_gadm(code, level=0, use_fsspec=True, gpkg=True):
     Notes
     -------
     If not using the fsspec package, this function uses fiona's syntax to read a geodataframe directly with
-    geopandas `read_file` function. Unfortunately, sometimes the read fails
-    before the file is complete resulting in an error, or occasionally, a
+    geopandas `read_file` function. Unfortunately, sometimes the operation fails
+    before the read is complete resulting in an error--or occasionally, a
     geodataframe with missing rows. Repeating the call sometimes helps.
 
-    When using fsspec, `get_gadm` does not suffer these issues, but has additional requirements.
-    If fsspec is available, this function uses `fsspec` syntax to store a temporary file which is then
+    When using fsspec, the function doesn't suffer these issues, but requires an additional dependency.
+    If fsspec is available, this function its syntax to store a temporary file which is then
     read in by geopandas. In theory, the file could be read into fsspec directly
     without storing it in a temporary directory, but when reading a bytestream of GPKG,
     geopandas does not allow the specification of a particular layer (so reading GPKG
@@ -44,6 +48,7 @@ def get_gadm(code, level=0, use_fsspec=True, gpkg=True):
 
     try:
         import fsspec
+
         has_fsspec = True
     except ImportError:
         has_fsspec = False
@@ -60,17 +65,31 @@ def get_gadm(code, level=0, use_fsspec=True, gpkg=True):
                 )
                 return gdf
     else:
-        warn('Reading data directly from gadm can be unstable. For more predictable '
-             'performance install the fsspec package and set `use_fsspec=True`. '
-             'See the function notes for more information')
+        warn(
+            "Reading data directly from gadm can be unstable. For more predictable "
+            "performance install the fsspec package and set `use_fsspec=True`. "
+            "See the function notes for more information"
+        )
         url = "zip+http://biogeo.ucdavis.edu/data/gadm3.6/"
 
-        if gpkg:
-            gdf = gpd.read_file(
-                url + f"shp/gadm36_{code}_shp.zip!gadm36_{code}_{level}.shp",
-                layer=f"gadm36_{code}_{level}",
-            )
-        else:
-            gdf = gpd.read_file(url + f"gpkg/gadm36_{code}_gpkg.zip!gadm36_{code}.gpkg")
+        attempts = 0
+        while attempts < n_retries:
+            try:
+                if not gpkg:
+                    gdf = gpd.read_file(
+                        url + f"shp/gadm36_{code}_shp.zip!gadm36_{code}_{level}.shp",
+                    )
 
-        return gdf
+                else:
+                    gdf = gpd.read_file(
+                        url + f"gpkg/gadm36_{code}_gpkg.zip!gadm36_{code}.gpkg",
+                        layer=f"gadm36_{code}_{level}",
+                    )
+                return gdf
+            except Exception:
+                warn("Direct read attempt failed. Retrying.")
+                attempts += 1
+                time.sleep(1)
+        raise ValueError(
+            "Unable to read data. Try calling the function again or use fsspec"
+        )
