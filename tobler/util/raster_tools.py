@@ -18,6 +18,11 @@ def _chunk_dfs(geoms_to_chunk, n_jobs):
         start = i * chunk_size
         yield geoms_to_chunk.iloc[start : start + chunk_size]
 
+def _chunk_dfs_with_args(geoms_to_chunk, n_jobs, args):
+    chunk_size = geoms_to_chunk.shape[0] // n_jobs + 1
+    for i in range(n_jobs):
+        start = i * chunk_size
+        yield geoms_to_chunk.iloc[start : start + chunk_size], args
 
 def _parse_geom(geom_str):
     return shape(ast.literal_eval(geom_str))
@@ -27,7 +32,7 @@ def _apply_parser(df):
     return df.apply(_parse_geom)
 
 
-def extract_raster_features(gdf, raster_path, pixel_types=None, nodata=255, n_jobs=-1):
+def extract_raster_features(gdf, raster_path, pixel_values=None, nodata=255, n_jobs=-1):
     """Generate a geodataframe from raster data by polygonizing contiguous pixels with the same value using rasterio's features module.
 
     Parameters
@@ -37,7 +42,7 @@ def extract_raster_features(gdf, raster_path, pixel_types=None, nodata=255, n_jo
         clipped to the extent of the geodataframe
     raster_path : str
         path to raster file, such as downloaded from <https://lcviewer.vito.be/download>
-    pixel_types : list-like, optional
+    pixel_values : list-like, optional
         subset of pixel values to extract, by default None. If None, this function
         may generate a very large geodataframe
     nodata : int, optional
@@ -65,13 +70,13 @@ def extract_raster_features(gdf, raster_path, pixel_types=None, nodata=255, n_jo
             src, geomask, nodata=nodata, crop=True
         )  # clip to AoI using a vector layer
 
-        if pixel_types:
-            mask = np.isin(out_image, pixel_types)  # only include requested pixels
-            shapes = list(
-                features.shapes(out_image, mask=mask, transform=out_transform)
-            )  # convert regions to polygons
-        else:
-            shapes = list(features.shapes(out_image, transform=out_transform))
+        if pixel_values:
+            pixel_values = np.isin(
+                out_image, pixel_values
+            )  # only include requested pixels
+        shapes = list(
+            features.shapes(out_image, pixel_values, 4, transform=out_transform)
+        )  # convert regions to polygons
     res = list(zip(*shapes))
     geoms = pd.Series(res[0], name="geometry").astype(str)
     pieces = _chunk_dfs(geoms, n_jobs)
