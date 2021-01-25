@@ -91,10 +91,10 @@ def extract_raster_features(
     geoms = pd.concat(
         Parallel(n_jobs=n_jobs)(delayed(_apply_parser)(i) for i in pieces)
     )
+    geoms = gpd.GeoSeries(geoms).buffer(0) # we sometimes get self-intersecting rings
     vals = pd.Series(res[1], name="value")
-    gdf = gpd.GeoDataFrame(vals, geometry=geoms)
+    gdf = gpd.GeoDataFrame(vals, geometry=geoms, crs=raster_crs)
     if collapse_values:
         gdf = gdf.drop(columns=["value"])  # values col is misleading in this case
-    gdf.crs = raster_crs
 
     return gdf
