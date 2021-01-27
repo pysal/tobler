@@ -24,3 +24,4 @@ dependencies:
   - pip
   - pygeos
   - h3-py
+  - joblib

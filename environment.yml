@@ -18,3 +18,4 @@ dependencies:
   - pygeos
   - mapclassify 
   - descartes
+  - joblib
