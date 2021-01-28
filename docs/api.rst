@@ -32,6 +32,7 @@ variables being assigned to the target
 .. autosummary::
    :toctree: generated/
 
+   extract_raster_features
    masked_area_interpolate
 
 
