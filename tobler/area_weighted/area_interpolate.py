@@ -129,10 +129,7 @@ def _area_tables_binning_parallel(source_df, target_df, n_jobs=-1):
 
     # Build DOK table
     table = coo_matrix(
-        (
-            areas,
-            (ids_src, ids_tgt),
-        ),
+        (areas, (ids_src, ids_tgt),),
         shape=(df1.shape[0], df2.shape[0]),
         dtype=np.float32,
     )
@@ -193,10 +190,7 @@ def _area_tables_binning(source_df, target_df, spatial_index):
     areas = df1.geometry.values[ids_src].intersection(df2.geometry.values[ids_tgt]).area
 
     table = coo_matrix(
-        (
-            areas,
-            (ids_src, ids_tgt),
-        ),
+        (areas, (ids_src, ids_tgt),),
         shape=(df1.shape[0], df2.shape[0]),
         dtype=np.float32,
     )
@@ -273,9 +267,10 @@ def _area_interpolate_binning(
     allocate_total=True,
     spatial_index="auto",
     n_jobs=1,
+    categorical_variables=None,
 ):
     """
-    Area interpolation for extensive and intensive variables.
+    Area interpolation for extensive, intensive and categorical variables.
 
     Parameters
     ----------
@@ -310,6 +305,8 @@ def _area_interpolate_binning(
         available. If `table` is passed, this is ignored.
         NOTE: as of Jan'21 multi-core functionality requires master versions
         of `pygeos` and `geopandas`.
+    categorical_variables : list
+        [Optional. Default=None] Columns in dataframes for categorical variables
 
     Returns
     -------
@@ -344,6 +341,9 @@ def _area_interpolate_binning(
      v_j = \\sum_i v_i w_{i,j}
 
      w_{i,j} = a_{i,j} / \\sum_k a_{k,j}
+
+    For categorical variables, the estimate returns ratio of presence of each
+    unique category.
     """
     source_df = source_df.copy()
     target_df = target_df.copy()
@@ -404,10 +404,25 @@ def _area_interpolate_binning(
         intensive = np.asarray(intensive)
         intensive = pd.DataFrame(intensive.T, columns=intensive_variables)
 
+    if categorical_variables:
+        categorical = {}
+        for variable in categorical_variables:
+            unique = source_df[variable].unique()
+            for value in unique:
+                mask = source_df[variable] == value
+                categorical[f"{variable}_{value}"] = np.asarray(
+                    table[mask].sum(axis=0)
+                )[0]
+
+        categorical = pd.DataFrame(categorical)
+        categorical = categorical.div(target_df.area, axis="rows")
+
     if extensive_variables:
         dfs.append(extensive)
     if intensive_variables:
         dfs.append(intensive)
+    if categorical_variables:
+        dfs.append(categorical)
 
     df = pd.concat(dfs, axis=1)
     df["geometry"] = target_df[target_df.geometry.name].reset_index(drop=True)
