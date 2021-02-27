@@ -30,6 +30,10 @@ def datasets():
         sac1 = geopandas.read_file(sac1.get_path("sacramentot2.shp"))
         sac2 = geopandas.read_file(sac2.get_path("SacramentoMSA2.shp"))
         sac1["pct_poverty"] = sac1.POV_POP / sac1.POV_TOT
+        categories = ["cat", "dog", "donkey", "wombat", "capybara"]
+        sac1["animal"] = (categories * ((len(sac1) // len(categories)) + 1))[
+            : len(sac1)
+        ]
 
         return sac1, sac2
     else:
@@ -44,9 +48,15 @@ def test_area_interpolate():
         target_df=sac2,
         extensive_variables=["TOT_POP"],
         intensive_variables=["pct_poverty"],
+        categorical_variables=["animal"],
     )
     assert_almost_equal(area.TOT_POP.sum(), 1796856, decimal=0)
     assert_almost_equal(area.pct_poverty.sum(), 2140, decimal=0)
+    assert_almost_equal(area.animal_cat.sum(), 32, decimal=0)
+    assert_almost_equal(area.animal_dog.sum(), 19, decimal=0)
+    assert_almost_equal(area.animal_donkey.sum(), 22, decimal=0)
+    assert_almost_equal(area.animal_wombat.sum(), 23, decimal=0)
+    assert_almost_equal(area.animal_capybara.sum(), 20, decimal=0)
 
 
 @pytest.mark.skipif(QUILTMISSING, reason="quilt3 not available.")
