@@ -8,3 +8,4 @@ from . import area_weighted
 from . import dasymetric
 from . import model
 from . import util
+from . import diagnostics

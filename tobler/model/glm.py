@@ -12,6 +12,7 @@ from ..area_weighted._vectorized_raster_interpolation import (
     _return_weights_from_regression,
 )
 from tobler.util import project_gdf
+from tobler.diagnostics import _smaup
 
 
 def glm_pixel_adjusted(
@@ -100,6 +101,7 @@ def glm(
     likelihood="poisson",
     force_crs_match=True,
     return_model=False,
+    smaup_kwds=None
 ):
     """Estimate interpolated values using raster data as input to a generalized linear model.
 
@@ -130,6 +132,11 @@ def glm(
     return model : bool
         whether to return the fitted model in addition to the interpolated geodataframe.
         If true, this will return (geodataframe, model)
+    smaup_kwds : dict
+        [Optional. Default = None] Keyword arguments for tobler's smaup wrapper
+        Requires the following values:
+        int: 'k' for number of regions to be tested and
+        libpysal.weights: 'w' to calculate Moran's I.
 
     Returns
     --------
@@ -143,6 +150,14 @@ def glm(
     source_df = source_df.copy()
     target_df = target_df.copy()
     _check_presence_of_crs(source_df)
+
+    if smaup_kwds is not None:
+        stat = _smaup(smaup_kwds["k"], source_df[variable].to_numpy(), smaup_kwds["w"])
+        if stat.summary.find('H0 is rejected'):
+            warn(f"{variable} is affected by the MAUP. Interpolations of this variable may not be accourate!")
+        else:
+            print(f"{variable} is not affected by the MAUP.")
+    
     liks = {"poisson": Poisson, "gaussian": Gaussian, "neg_binomial": NegativeBinomial}
 
     if likelihood not in liks.keys():

@@ -6,12 +6,13 @@ Area Weighted Interpolation
 import numpy as np
 import geopandas as gpd
 from ._vectorized_raster_interpolation import _fast_append_profile_in_gdf
-import warnings
+from warnings import warn
 from scipy.sparse import dok_matrix, diags, coo_matrix
 import pandas as pd
 import os
 
 from tobler.util.util import _check_crs, _nan_check, _inf_check, _check_presence_of_crs
+from tobler.diagnostics import _smaup
 
 
 def _chunk_dfs(geoms_to_chunk, geoms_full, n_jobs):
@@ -268,6 +269,7 @@ def _area_interpolate_binning(
     spatial_index="auto",
     n_jobs=1,
     categorical_variables=None,
+    smaup_kwds=None
 ):
     """
     Area interpolation for extensive, intensive and categorical variables.
@@ -307,6 +309,11 @@ def _area_interpolate_binning(
         of `pygeos` and `geopandas`.
     categorical_variables : list
         [Optional. Default=None] Columns in dataframes for categorical variables
+    smaup_kwds : dict
+        [Optional. Default = None] Keyword arguments for tobler's smaup wrapper
+        Requires the following values:
+        int: 'k' for number of regions to be tested and
+        libpysal.weights: 'w' to calculate Moran's I.
 
     Returns
     -------
@@ -347,6 +354,14 @@ def _area_interpolate_binning(
     """
     source_df = source_df.copy()
     target_df = target_df.copy()
+
+    if smaup_kwds is not None:
+        for var in intensive_variables,extensive_variables:
+            stat = _smaup(smaup_kwds["k"], source_df[var].to_numpy(), smaup_kwds["w"])
+            if stat.summary.find('H0 is rejected'):
+                warn(f"{var} is affected by the MAUP. Interpolations of this variable may not be accourate!")
+            else:
+                print(f"{var} is not affected by the MAUP.")
 
     if _check_crs(source_df, target_df):
         pass
@@ -614,7 +629,7 @@ def _area_tables_raster(
     res_union_pre = gpd.overlay(source_df, target_df, how="union")
 
     # Establishing a CRS for the generated union
-    warnings.warn(
+    warn(
         "The CRS for the generated union will be set to be the same as source_df."
     )
     res_union_pre.crs = source_df.crs
