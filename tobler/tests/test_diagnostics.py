@@ -3,6 +3,8 @@
 import geopandas
 from tobler.diagnostics import _smaup
 from libpysal.weights import Queen
+from libpysal.examples import load_example
+
 
 sac1 = load_example("Sacramento1")
 sac1 = geopandas.read_file(sac1.get_path("sacramentot2.shp"))
