@@ -356,7 +356,7 @@ def _area_interpolate_binning(
     target_df = target_df.copy()
 
     if smaup_kwds is not None:
-        for var in intensive_variables,extensive_variables:
+        for var in intensive_variables:
             stat = _smaup(smaup_kwds["k"], source_df[var].to_numpy(), smaup_kwds["w"])
             if stat.summary.find('H0 is rejected'):
                 warn(f"{var} is affected by the MAUP. Interpolations of this variable may not be accourate!")
