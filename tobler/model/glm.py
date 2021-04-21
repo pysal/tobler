@@ -150,7 +150,7 @@ def glm(
     _check_presence_of_crs(source_df)
 
     if smaup_weight is not None:
-        for var in intensive_variables:
+        for var in variable:
             stat = _smaup(
                 source_df=source_df,
                 target_df=target_df,
@@ -161,7 +161,7 @@ def glm(
             else:
                 print(f"{var} is not affected by the MAUP.")
     else:
-        for var in intensive_variables:
+        for var in variable:
             stat = _smaup(
                 source_df=source_df,
                 target_df=target_df,
