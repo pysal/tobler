@@ -16,7 +16,7 @@ def masked_area_interpolate(
     intensive_variables=None,
     allocate_total=True,
     tables=None,
-    smaup_kwds=None,
+    smaup_weight=None,
 ):
     """Interpolate data between two polygonal datasets using an auxiliary raster to mask out uninhabited land.
 
@@ -42,12 +42,10 @@ def masked_area_interpolate(
         whether to allocate the total from the source geometries (the default is True).
     tables : tuple of two numpy.array (optional)
          As generated from `tobler.area_weighted.area_tables_raster` (the default is None).
-    smaup_kwds : dict
-        [Optional. Default = None] Keyword arguments for tobler's smaup wrapper
-        Requires the following values:
-        int: 'k' for number of regions to be tested and
-        libpysal.weights: 'w' to calculate Moran's I.
-
+    smaup_weight : libpysal.weights
+        [Optional. Default = None] Argument for tobler's smaup wrapper
+        w to calculate Moran's I. Will use Rook if nothing is passed.
+        
     Returns
     -------
     geopandas.GeoDataFrame
@@ -62,9 +60,23 @@ def masked_area_interpolate(
             "You must pass the path to a raster that can be read with rasterio"
         )
 
-    if smaup_kwds is not None:
+    if smaup_weight is not None:
         for var in intensive_variables:
-            stat = _smaup(smaup_kwds["k"], source_df[var].to_numpy(), smaup_kwds["w"])
+            stat = _smaup(
+                source_df=source_df,
+                target_df=target_df,
+                y=source_df[var].to_numpy(),
+                w=smaup_weight)
+            if stat.summary.find('H0 is rejected'):
+                warn(f"{var} is affected by the MAUP. Interpolations of this variable may not be accourate!")
+            else:
+                print(f"{var} is not affected by the MAUP.")
+    else:
+        for var in intensive_variables:
+            stat = _smaup(
+                source_df=source_df,
+                target_df=target_df,
+                y=source_df[var].to_numpy())
             if stat.summary.find('H0 is rejected'):
                 warn(f"{var} is affected by the MAUP. Interpolations of this variable may not be accourate!")
             else:

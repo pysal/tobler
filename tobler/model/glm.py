@@ -101,7 +101,7 @@ def glm(
     likelihood="poisson",
     force_crs_match=True,
     return_model=False,
-    smaup_kwds=None
+    smaup_weight=None
 ):
     """Estimate interpolated values using raster data as input to a generalized linear model.
 
@@ -132,11 +132,9 @@ def glm(
     return model : bool
         whether to return the fitted model in addition to the interpolated geodataframe.
         If true, this will return (geodataframe, model)
-    smaup_kwds : dict
-        [Optional. Default = None] Keyword arguments for tobler's smaup wrapper
-        Requires the following values:
-        int: 'k' for number of regions to be tested and
-        libpysal.weights: 'w' to calculate Moran's I.
+    smaup_weight : libpysal.weights
+        [Optional. Default = None] Argument for tobler's smaup wrapper
+        w to calculate Moran's I. Will use Rook if nothing is passed.
 
     Returns
     --------
@@ -151,12 +149,27 @@ def glm(
     target_df = target_df.copy()
     _check_presence_of_crs(source_df)
 
-    if smaup_kwds is not None:
-        stat = _smaup(smaup_kwds["k"], source_df[variable].to_numpy(), smaup_kwds["w"])
-        if stat.summary.find('H0 is rejected'):
-            warn(f"{variable} is affected by the MAUP. Interpolations of this variable may not be accourate!")
-        else:
-            print(f"{variable} is not affected by the MAUP.")
+    if smaup_weight is not None:
+        for var in intensive_variables:
+            stat = _smaup(
+                source_df=source_df,
+                target_df=target_df,
+                y=source_df[var].to_numpy(),
+                w=smaup_weight)
+            if stat.summary.find('H0 is rejected'):
+                warn(f"{var} is affected by the MAUP. Interpolations of this variable may not be accourate!")
+            else:
+                print(f"{var} is not affected by the MAUP.")
+    else:
+        for var in intensive_variables:
+            stat = _smaup(
+                source_df=source_df,
+                target_df=target_df,
+                y=source_df[var].to_numpy())
+            if stat.summary.find('H0 is rejected'):
+                warn(f"{var} is affected by the MAUP. Interpolations of this variable may not be accourate!")
+            else:
+                print(f"{var} is not affected by the MAUP.")
     
     liks = {"poisson": Poisson, "gaussian": Gaussian, "neg_binomial": NegativeBinomial}
 

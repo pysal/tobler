@@ -269,7 +269,7 @@ def _area_interpolate_binning(
     spatial_index="auto",
     n_jobs=1,
     categorical_variables=None,
-    smaup_kwds=None
+    smaup_weight=None
 ):
     """
     Area interpolation for extensive, intensive and categorical variables.
@@ -309,11 +309,9 @@ def _area_interpolate_binning(
         of `pygeos` and `geopandas`.
     categorical_variables : list
         [Optional. Default=None] Columns in dataframes for categorical variables
-    smaup_kwds : dict
-        [Optional. Default = None] Keyword arguments for tobler's smaup wrapper
-        Requires the following values:
-        int: 'k' for number of regions to be tested and
-        libpysal.weights: 'w' to calculate Moran's I.
+    smaup_weight : libpysal.weights
+        [Optional. Default = None] Argument for tobler's smaup wrapper
+        w to calculate Moran's I. Will use Rook if nothing is passed.
 
     Returns
     -------
@@ -355,9 +353,23 @@ def _area_interpolate_binning(
     source_df = source_df.copy()
     target_df = target_df.copy()
 
-    if smaup_kwds is not None:
+    if smaup_weight is not None:
         for var in intensive_variables:
-            stat = _smaup(smaup_kwds["k"], source_df[var].to_numpy(), smaup_kwds["w"])
+            stat = _smaup(
+                source_df=source_df,
+                target_df=target_df,
+                y=source_df[var].to_numpy(),
+                w=smaup_weight)
+            if stat.summary.find('H0 is rejected'):
+                warn(f"{var} is affected by the MAUP. Interpolations of this variable may not be accourate!")
+            else:
+                print(f"{var} is not affected by the MAUP.")
+    else:
+        for var in intensive_variables:
+            stat = _smaup(
+               source_df=source_df,
+               target_df=target_df,
+               y=source_df[var].to_numpy())
             if stat.summary.find('H0 is rejected'):
                 warn(f"{var} is affected by the MAUP. Interpolations of this variable may not be accourate!")
             else:
