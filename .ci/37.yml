@@ -25,3 +25,4 @@ dependencies:
   - pygeos
   - h3-py
   - joblib
+  - astropy
