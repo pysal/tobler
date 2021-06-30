@@ -49,6 +49,17 @@ and the auxiliary data. It then uses that model to predict population levels at 
    glm
    glm_pixel_adjusted
 
+Pycnophylactic
+------------------
+Pycnophylactic interpolation is based on `Tobler's technique <https://www.tandfonline.com/doi/abs/10.1080/01621459.1979.10481647>`_
+for generating smooth, volume-preserving contour maps  
+
+.. currentmodule:: tobler.pycno
+
+.. autosummary::
+   :toctree: generated/
+
+   pycno_interpolate
 
 Util
 ---------

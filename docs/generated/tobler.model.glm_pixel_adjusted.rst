@@ -1,6 +1,0 @@
-﻿tobler.model.glm\_pixel\_adjusted
-=================================
-
-.. currentmodule:: tobler.model
-
-.. autofunction:: glm_pixel_adjusted
