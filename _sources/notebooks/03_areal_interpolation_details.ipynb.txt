@@ -1,0 +1,807 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Estimation Walkthrough"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 37,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from shapely.geometry import Polygon\n",
+    "import numpy as np\n",
+    "%matplotlib inline"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 38,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import geopandas as gpd\n",
+    "from tobler import area_weighted"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 39,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from tobler.area_weighted import _area_tables_binning as area_tables\n",
+    "from tobler.area_weighted import area_interpolate"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Example: Two GeoDataFrames"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 40,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "iVBORw0KGgoAAAANSUhEUgAAAPsAAAD4CAYAAAAq5pAIAAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjMuMywgaHR0cHM6Ly9tYXRwbG90bGliLm9yZy/Il7ecAAAACXBIWXMAAAsTAAALEwEAmpwYAAAKgElEQVR4nO3dUYhdB53H8e9vk4qmppiSUTRpdiqUqghSGdZqQZZGobuK8WEXKlS6IuRlV6sIUvelrz6I6IMIQ60WLJUlFiwirqUqsrCEnaQF245LpWobjWakaoMvtfjfh7my03FiJ/ecm3vN//uBMPeee+65f5J855x75+QkVYWky9/fzHsASZeGsUtNGLvUhLFLTRi71MTeS/liBw8erOXl5Uv5klIrp06d+nVVLe302CWNfXl5mbW1tUv5klIrSX52occ8jJeaMHapCWOXmjB2qQljl5p4ydiT3JPkXJLHtiy7OslDSZ6cfD0w2zElDbWbPftXgFu2LbsTeLiqrgMentyXtMBeMvaq+gHw7LbFx4B7J7fvBd4/7liSxjbtSTWvqaqzAFV1NsmrL7RikuPAcYAjR47sauNXX3UVvzl/fsrRpMvTgf37efa556Z+/szPoKuqVWAVYGVlZVdXyvjN+fN4SQ3pxTJwBzjtp/G/SvJagMnXc4OmkDRz08b+IHD75PbtwDfGGUfSrOzmR2/3A/8NXJ/kTJIPA58G3p3kSeDdk/uSFthLvmevqg9c4KGjI88iaYY8g05qwtilJoxdasLYpSaMXWrC2KUmjF1qwtilJoxdasLYpSaMXWrC2KUmjF1qwtilJoxdasLYpSaMXWrC2KUmjF1qwtilJoxdasLYpSaMXWrC2KUmjF1qwtilJoxdasLYpSaMXWrC2KUmjF1qYlDsST6e5PEkjyW5P8nLxxpM0rimjj3JIeCjwEpVvRnYA9w61mCSxjX0MH4v8Ioke4F9wC+GjyRpFqaOvap+DnwGeBo4C/yuqr6zfb0kx5OsJVnb2NiYflJJgww5jD8AHAOuBV4HXJnktu3rVdVqVa1U1crS0tL0k0oaZMhh/LuAn1TVRlX9AXgAeMc4Y0ka25DYnwZuTLIvSYCjwPo4Y0ka25D37CeBE8Bp4IeTba2ONJekke0d8uSqugu4a6RZJM2QZ9BJTRi71ISxS00Yu9SEsUtNGLvUhLFLTRi71ISxS00Yu9SEsUtNGLvUhLFLTRi71ISxS00Yu9SEsUtNGLvUhLFLTRi71ISxS00Yu9SEsUtNGLvUhLFLTRi71ISxS00Yu9SEsUtNGLvUxKDYk7wqyYkkP0qynuTtYw0maVyD/n924PPAt6vqn5K8DNg3wkySZmDq2JNcBbwT+BeAqnoeeH6csSSNbchh/OuBDeDLSR5JcneSK7evlOR4krUkaxsbGwNeTtIQQ2LfC7wV+GJV3QD8Hrhz+0pVtVpVK1W1srS0NODlJA0xJPYzwJmqOjm5f4LN+CUtoKljr6pfAs8kuX6y6CjwxChTSRrd0E/jPwLcN/kk/ingQ8NHkjQLg2KvqkeBlXFGkTRLnkEnNWHsUhPGLjVh7FITxi41YexSE8YuNWHsUhPGLjVh7FITxi41YexSE8YuNWHsUhND/z37zGTeA0gL5oqBz1/Y2GveA0gLZugO0MN4qQljl5owdqkJY5eaMHapCWOXmjB2qQljl5owdqkJY5eaMHapCWOXmjB2qQljl5owdqmJwbEn2ZPkkSTfHGMgSbMxxp79DmB9hO1ImqFBsSc5DLwHuHuccSTNytA9++eATwJ/vNAKSY4nWUuytrGxMfDlJE1r6tiTvBc4V1Wn/tJ6VbVaVStVtbK0tDTty0kaaMie/SbgfUl+CnwNuDnJV0eZStLopo69qj5VVYerahm4FfhuVd022mSSRuXP2aUmRrlufFV9H/j+GNuSNBvu2aUmjF1qwtilJoxdasLYpSaMXWrC2KUmjF1qwtilJoxdasLYpSaMXWrC2KUmjF1qwtilJoxdasLYpSaMXWrC2KUmjF1qwtilJoxdasLYpSaMXWrC2KUmjF1qwtilJoxdasLYpSaMXWpi6tiTXJPke0nWkzye5I4xB5M0riH/P/sLwCeq6nSS/cCpJA9V1RMjzSZpRFPv2avqbFWdntw+D6wDh8YaTNK4RnnPnmQZuAE4ucNjx5OsJVnb2NgY4+UkTWFw7EleCXwd+FhVPbf98aparaqVqlpZWloa+nKSpjQo9iRXsBn6fVX1wDgjSZqFIZ/GB/gSsF5Vnx1vJEmzMGTPfhPwQeDmJI9Ofv3jSHNJGtnUP3qrqv8CMuIskmbIM+ikJoxdasLYpSaMXWrC2KUmjF1qwtilJoxdasLYpSaMXWrC2KUmjF1qwtilJoxdasLYpSaMXWrC2KUmjF1qwtilJoxdasLYpSaMXWrC2KUmjF1qwtilJoxdasLYpSaMXWrC2KUmjF1qwtilJgbFnuSWJP+b5MdJ7hxrKEnjmzr2JHuALwD/ALwJ+ECSN401mKRxDdmz/x3w46p6qqqeB74GHBtnLElj2zvguYeAZ7bcPwO8bftKSY4DxwGOHDmy641nwGDS5ejA/v2Dnj8k9p16rD9bULUKrAKsrKz82eM7qdrVapIuwpDD+DPANVvuHwZ+MWwcSbMyJPb/Aa5Lcm2SlwG3Ag+OM5aksU19GF9VLyT5N+A/gT3APVX1+GiTSRrVkPfsVNW3gG+NNIukGfIMOqkJY5eaMHapCWOXmsilPIElyQbws12sehD49YzHmdYizwaLPd8izwaXx3x/W1VLOz1wSWPfrSRrVbUy7zl2ssizwWLPt8izweU/n4fxUhPGLjWxqLGvznuAv2CRZ4PFnm+RZ4PLfL6FfM8uaXyLumeXNDJjl5pYqNgX+QKWSa5J8r0k60keT3LHvGfaLsmeJI8k+ea8Z9kuyauSnEjyo8nv4dvnPdOfJPn45M/0sST3J3n5nOe5J8m5JI9tWXZ1koeSPDn5euBit7swsf8VXMDyBeATVfVG4EbgXxdsPoA7gPV5D3EBnwe+XVVvAN7CgsyZ5BDwUWClqt7M5j/XvnW+U/EV4JZty+4EHq6q64CHJ/cvysLEzoJfwLKqzlbV6cnt82z+ZT0036n+X5LDwHuAu+c9y3ZJrgLeCXwJoKqer6rfznWoF9sLvCLJXmAfc77iUlX9AHh22+JjwL2T2/cC77/Y7S5S7DtdwHJhYtoqyTJwA3ByzqNs9Tngk8Af5zzHTl4PbABfnrzNuDvJlfMeCqCqfg58BngaOAv8rqq+M9+pdvSaqjoLmzse4NUXu4FFin1XF7CctySvBL4OfKyqnpv3PABJ3gucq6pT857lAvYCbwW+WFU3AL9nisPQWZi89z0GXAu8DrgyyW3znWo2Fin2hb+AZZIr2Az9vqp6YN7zbHET8L4kP2Xz7c/NSb4635Fe5Axwpqr+dCR0gs34F8G7gJ9U1UZV/QF4AHjHnGfaya+SvBZg8vXcxW5gkWJf6AtYJgmb7znXq+qz855nq6r6VFUdrqplNn/fvltVC7N3qqpfAs8kuX6y6CjwxBxH2upp4MYk+yZ/xkdZkA8Pt3kQuH1y+3bgGxe7gUHXoBvTX8EFLG8CPgj8MMmjk2X/PrkOn17aR4D7Jt/InwI+NOd5AKiqk0lOAKfZ/InLI8z5tNkk9wN/DxxMcga4C/g08B9JPszmN6h/vujterqs1MMiHcZLmiFjl5owdqkJY5eaMHapCWOXmjB2qYn/AznkZf4HNCDWAAAAAElFTkSuQmCC\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "polys1 = gpd.GeoSeries([Polygon([(0,0), (10,0), (10,5), (0,5)]),\n",
+    "                      Polygon([(0,5), (0,10),  (10,10), (10,5)])])\n",
+    "\n",
+    "polys2 = gpd.GeoSeries([Polygon([(0,0), (5,0), (5,7), (0,7)]),\n",
+    "                      Polygon([(5,0), (5,10),  (10,10), (10,0)]),\n",
+    "                       Polygon([(0,7), (0,10), (5,10), (5,7)  ])\n",
+    "                       ])\n",
+    "\n",
+    "df1 = gpd.GeoDataFrame({'geometry': polys1})\n",
+    "df2 = gpd.GeoDataFrame({'geometry': polys2})\n",
+    "df1['population'] = [ 500,  200]\n",
+    "df1['pci'] = [75, 100]\n",
+    "df1['income'] = df1['population'] * df1['pci']\n",
+    "\n",
+    "df2['population'] = [ 500,  100, 200]\n",
+    "df2['pci'] = [75, 80, 100]\n",
+    "df2['income'] = df2['population'] * df2['pci']\n",
+    "\n",
+    "ax = df1.plot(color='red', edgecolor='k')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 41,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "ax = df2.plot(color='green', alpha=0.5, edgecolor='k')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 42,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "res_union = gpd.overlay(df1, df2, how='union')\n",
+    "ax = res_union.plot(alpha=0.5, cmap='tab10')\n",
+    "df1.plot(ax=ax, facecolor='none', edgecolor='k');\n",
+    "df2.plot(ax=ax, facecolor='none', edgecolor='k');"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Area Table"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 43,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "\u001b[0;31mSignature:\u001b[0m \u001b[0marea_tables\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0msource_df\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mtarget_df\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mspatial_index\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+       "\u001b[0;31mDocstring:\u001b[0m\n",
+       "Construct area allocation and source-target correspondence tables using a spatial indexing approach\n",
+       "...\n",
+       "\n",
+       "NOTE: this currently relies on Geopandas' spatial index machinery\n",
+       "\n",
+       "Parameters\n",
+       "----------\n",
+       "source_df : geopandas.GeoDataFrame\n",
+       "    GeoDataFrame containing input data and polygons\n",
+       "target_df : geopandas.GeoDataFramee\n",
+       "    GeoDataFrame defining the output geometries\n",
+       "spatial_index : str\n",
+       "    Spatial index to use to build the allocation of area from source to\n",
+       "    target tables. It currently support the following values:\n",
+       "        - \"source\": build the spatial index on `source_df`\n",
+       "        - \"target\": build the spatial index on `target_df`\n",
+       "        - \"auto\": attempts to guess the most efficient alternative.\n",
+       "          Currently, this option uses the largest table to build the\n",
+       "          index, and performs a `bulk_query` on the shorter table.\n",
+       "\n",
+       "Returns\n",
+       "-------\n",
+       "tables : scipy.sparse.dok_matrix\n",
+       "\u001b[0;31mFile:\u001b[0m      ~/projects/tobler/tobler/area_weighted/area_interpolate.py\n",
+       "\u001b[0;31mType:\u001b[0m      function\n"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "area_tables?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 44,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<2x3 sparse matrix of type '<class 'numpy.float32'>'\n",
+       "\twith 5 stored elements in Dictionary Of Keys format>"
+      ]
+     },
+     "execution_count": 44,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "area_tables(df1, df2, 'auto')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 45,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<3x2 sparse matrix of type '<class 'numpy.float32'>'\n",
+       "\twith 5 stored elements in Dictionary Of Keys format>"
+      ]
+     },
+     "execution_count": 45,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "area_tables(df2, df1, 'auto')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 46,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>population</th>\n",
+       "      <th>income</th>\n",
+       "      <th>pci</th>\n",
+       "      <th>geometry</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>289.999998</td>\n",
+       "      <td>22749.999762</td>\n",
+       "      <td>82.14286</td>\n",
+       "      <td>POLYGON ((0.00000 0.00000, 5.00000 0.00000, 5....</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>350.000000</td>\n",
+       "      <td>28750.000000</td>\n",
+       "      <td>87.50000</td>\n",
+       "      <td>POLYGON ((5.00000 0.00000, 5.00000 10.00000, 1...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>59.999996</td>\n",
+       "      <td>5999.999642</td>\n",
+       "      <td>100.00000</td>\n",
+       "      <td>POLYGON ((0.00000 7.00000, 0.00000 10.00000, 5...</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   population        income        pci  \\\n",
+       "0  289.999998  22749.999762   82.14286   \n",
+       "1  350.000000  28750.000000   87.50000   \n",
+       "2   59.999996   5999.999642  100.00000   \n",
+       "\n",
+       "                                            geometry  \n",
+       "0  POLYGON ((0.00000 0.00000, 5.00000 0.00000, 5....  \n",
+       "1  POLYGON ((5.00000 0.00000, 5.00000 10.00000, 1...  \n",
+       "2  POLYGON ((0.00000 7.00000, 0.00000 10.00000, 5...  "
+      ]
+     },
+     "execution_count": 46,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "extensive_vars = ['population', 'income']\n",
+    "intensive_vars = ['pci']\n",
+    "estimates = area_interpolate(df1, df2, extensive_variables = extensive_vars,\n",
+    "                            intensive_variables = intensive_vars)\n",
+    "\n",
+    "estimates"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 47,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>population</th>\n",
+       "      <th>income</th>\n",
+       "      <th>pci</th>\n",
+       "      <th>geometry</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>407.142866</td>\n",
+       "      <td>30785.714924</td>\n",
+       "      <td>77.500000</td>\n",
+       "      <td>POLYGON ((0.00000 0.00000, 10.00000 0.00000, 1...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>392.857149</td>\n",
+       "      <td>34714.286193</td>\n",
+       "      <td>84.999997</td>\n",
+       "      <td>POLYGON ((0.00000 5.00000, 0.00000 10.00000, 1...</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   population        income        pci  \\\n",
+       "0  407.142866  30785.714924  77.500000   \n",
+       "1  392.857149  34714.286193  84.999997   \n",
+       "\n",
+       "                                            geometry  \n",
+       "0  POLYGON ((0.00000 0.00000, 10.00000 0.00000, 1...  \n",
+       "1  POLYGON ((0.00000 5.00000, 0.00000 10.00000, 1...  "
+      ]
+     },
+     "execution_count": 47,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "extensive_vars = ['population', 'income']\n",
+    "intensive_vars = ['pci']\n",
+    "estimates = area_interpolate(df2, df1, extensive_variables = extensive_vars,\n",
+    "                            intensive_variables = intensive_vars)\n",
+    "estimates"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Non-exhuastive case\n",
+    "\n",
+    "Here the first set of polygons have an envelope that does not coincide with that of the second dataframe.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 48,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<AxesSubplot:>"
+      ]
+     },
+     "execution_count": 48,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "polys1 = gpd.GeoSeries([Polygon([(0,0), (12,0), (12,5), (0,5)]),\n",
+    "                      Polygon([(0,5), (0,10),  (10,10), (10,5)])])\n",
+    "\n",
+    "polys2 = gpd.GeoSeries([Polygon([(0,0), (5,0), (5,7), (0,7)]),\n",
+    "                      Polygon([(5,0), (5,10),  (10,10), (10,0)]),\n",
+    "                       Polygon([(0,7), (0,10), (5,10), (5,7)  ])\n",
+    "                       ])\n",
+    "\n",
+    "df1 = gpd.GeoDataFrame({'geometry': polys1})\n",
+    "df2 = gpd.GeoDataFrame({'geometry': polys2})\n",
+    "df1['population'] = [ 500,  200]\n",
+    "df1['pci'] = [75, 100]\n",
+    "df1['income'] = df1['population'] * df1['pci']\n",
+    "\n",
+    "df2['population'] = [ 500,  100, 200]\n",
+    "df2['pci'] = [75, 80, 100]\n",
+    "df2['income'] = df2['population'] * df2['pci']\n",
+    "\n",
+    "ax = df1.plot(color='red', edgecolor='k')\n",
+    "df2.plot(ax=ax, color='green',edgecolor='k')\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 49,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>population</th>\n",
+       "      <th>pci</th>\n",
+       "      <th>geometry</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>289.999998</td>\n",
+       "      <td>82.14286</td>\n",
+       "      <td>POLYGON ((0.00000 0.00000, 5.00000 0.00000, 5....</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>350.000000</td>\n",
+       "      <td>87.50000</td>\n",
+       "      <td>POLYGON ((5.00000 0.00000, 5.00000 10.00000, 1...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>59.999996</td>\n",
+       "      <td>100.00000</td>\n",
+       "      <td>POLYGON ((0.00000 7.00000, 0.00000 10.00000, 5...</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   population        pci                                           geometry\n",
+       "0  289.999998   82.14286  POLYGON ((0.00000 0.00000, 5.00000 0.00000, 5....\n",
+       "1  350.000000   87.50000  POLYGON ((5.00000 0.00000, 5.00000 10.00000, 1...\n",
+       "2   59.999996  100.00000  POLYGON ((0.00000 7.00000, 0.00000 10.00000, 5..."
+      ]
+     },
+     "execution_count": 49,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "extensive_vars = ['population']\n",
+    "intensive_vars = ['pci']\n",
+    "estimates = area_interpolate(df1, df2, extensive_variables = extensive_vars,\n",
+    "                            intensive_variables = intensive_vars)\n",
+    "estimates"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 50,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "population    699.999994\n",
+       "pci           269.642860\n",
+       "dtype: float64"
+      ]
+     },
+     "execution_count": 50,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "estimates.sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 51,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>population</th>\n",
+       "      <th>pci</th>\n",
+       "      <th>geometry</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>248.333333</td>\n",
+       "      <td>82.14286</td>\n",
+       "      <td>POLYGON ((0.00000 0.00000, 5.00000 0.00000, 5....</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>308.333333</td>\n",
+       "      <td>87.50000</td>\n",
+       "      <td>POLYGON ((5.00000 0.00000, 5.00000 10.00000, 1...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>60.000000</td>\n",
+       "      <td>100.00000</td>\n",
+       "      <td>POLYGON ((0.00000 7.00000, 0.00000 10.00000, 5...</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   population        pci                                           geometry\n",
+       "0  248.333333   82.14286  POLYGON ((0.00000 0.00000, 5.00000 0.00000, 5....\n",
+       "1  308.333333   87.50000  POLYGON ((5.00000 0.00000, 5.00000 10.00000, 1...\n",
+       "2   60.000000  100.00000  POLYGON ((0.00000 7.00000, 0.00000 10.00000, 5..."
+      ]
+     },
+     "execution_count": 51,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "extensive_vars = ['population']\n",
+    "intensive_vars = ['pci']\n",
+    "estimates = area_interpolate(df1, df2, extensive_variables = extensive_vars,\n",
+    "                            intensive_variables = intensive_vars,\n",
+    "                            allocate_total=False)\n",
+    "estimates"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 52,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "population    616.666667\n",
+       "pci           269.642860\n",
+       "dtype: float64"
+      ]
+     },
+     "execution_count": 52,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "estimates.sum()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "When setting `allocate_total=False` the total population of a source zone is not completely allocated, but rather the proportion of total population is set to the area of intersection over the area of the source zone."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "This will have no effect when the source df is df2 and the target df is df 1:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 53,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>population</th>\n",
+       "      <th>geometry</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>407.142866</td>\n",
+       "      <td>POLYGON ((0.00000 0.00000, 12.00000 0.00000, 1...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>392.857149</td>\n",
+       "      <td>POLYGON ((0.00000 5.00000, 0.00000 10.00000, 1...</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   population                                           geometry\n",
+       "0  407.142866  POLYGON ((0.00000 0.00000, 12.00000 0.00000, 1...\n",
+       "1  392.857149  POLYGON ((0.00000 5.00000, 0.00000 10.00000, 1..."
+      ]
+     },
+     "execution_count": 53,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "extensive_vars = ['population']\n",
+    "estimates = area_interpolate(df2, df1, extensive_variables = extensive_vars)\n",
+    "estimates"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 54,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>population</th>\n",
+       "      <th>geometry</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>407.142857</td>\n",
+       "      <td>POLYGON ((0.00000 0.00000, 12.00000 0.00000, 1...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>392.857143</td>\n",
+       "      <td>POLYGON ((0.00000 5.00000, 0.00000 10.00000, 1...</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   population                                           geometry\n",
+       "0  407.142857  POLYGON ((0.00000 0.00000, 12.00000 0.00000, 1...\n",
+       "1  392.857143  POLYGON ((0.00000 5.00000, 0.00000 10.00000, 1..."
+      ]
+     },
+     "execution_count": 54,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "extensive_vars = ['population']\n",
+    "estimates = area_interpolate(df2, df1, extensive_variables = extensive_vars, allocate_total=False)\n",
+    "estimates"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.6"
+  },
+  "widgets": {
+   "application/vnd.jupyter.widget-state+json": {
+    "state": {},
+    "version_major": 2,
+    "version_minor": 0
+   }
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}
