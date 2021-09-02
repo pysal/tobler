@@ -21,11 +21,6 @@ def datasets():
 def test_pycno_interpolate():
     sac1, sac2 = datasets()
     pyc = pycno_interpolate(
-        source_df=sac1,
-        target_df=sac2,
-        variables=["TOT_POP"],
-        cellsize=500
+        source_df=sac1, target_df=sac2, variables=["TOT_POP"], cellsize=500
     )
-    assert_almost_equal(pyc.TOT_POP.sum(), 1794618.503, decimal=3)
-
-
+    assert_almost_equal(pyc.TOT_POP.sum(), 1794618.503, decimal=1)
