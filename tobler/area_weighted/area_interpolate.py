@@ -129,7 +129,10 @@ def _area_tables_binning_parallel(source_df, target_df, n_jobs=-1):
 
     # Build DOK table
     table = coo_matrix(
-        (areas, (ids_src, ids_tgt),),
+        (
+            areas,
+            (ids_src, ids_tgt),
+        ),
         shape=(df1.shape[0], df2.shape[0]),
         dtype=np.float32,
     )
@@ -190,7 +193,10 @@ def _area_tables_binning(source_df, target_df, spatial_index):
     areas = df1.geometry.values[ids_src].intersection(df2.geometry.values[ids_tgt]).area
 
     table = coo_matrix(
-        (areas, (ids_src, ids_tgt),),
+        (
+            areas,
+            (ids_src, ids_tgt),
+        ),
         shape=(df1.shape[0], df2.shape[0]),
         dtype=np.float32,
     )
@@ -359,7 +365,7 @@ def _area_interpolate_binning(
         else:
             table = _area_tables_binning_parallel(source_df, target_df, n_jobs=n_jobs)
 
-    den = source_df[source_df.geometry.name].area.values
+    den = source_df.area.values
     if allocate_total:
         den = np.asarray(table.sum(axis=1))
     den = den + (den == 0)
@@ -415,7 +421,7 @@ def _area_interpolate_binning(
                 )[0]
 
         categorical = pd.DataFrame(categorical)
-        categorical = categorical.div(target_df.area, axis="rows")
+        categorical = categorical.div(target_df.area.values, axis="rows")
 
     if extensive_variables:
         dfs.append(extensive)
