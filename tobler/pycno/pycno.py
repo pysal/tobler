@@ -30,8 +30,8 @@ def pycno(
 ):
     try:
         from astropy.convolution import convolve as astro_convolve
-    except Exception:
-        raise ("Pycnophylactic interpolation requires the astropy package")
+    except (ImportError, ModuleNotFoundError):
+        raise ImportError("Pycnophylactic interpolation requires the astropy package")
 
     """Returns a smooth pycnophylactic interpolation raster for a given geodataframe
 
@@ -286,7 +286,7 @@ def pycno_interpolate(
     Original implementation written by @danlewis85 at <https://github.com/danlewis85/pycno/>
     and based in part on the R pycno package by Chris Brusndon (<https://cran.r-project.org/web/packages/pycno/index.html>)
 
-    References: :cite:`tobler_smooth_1979` 
+    References: :cite:`tobler_smooth_1979`
     """
     assert source_df.crs.equals(
         target_df.crs
