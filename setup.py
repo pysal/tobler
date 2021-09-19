@@ -2,6 +2,10 @@
 
 Tobler is a Python library for areal interpolation.
 """
+import os
+import versioneer
+from setuptools import setup, find_packages
+from distutils.command.build_py import build_py
 
 
 DOCLINES = __doc__.split("\n")
@@ -9,15 +13,6 @@ DOCLINES = __doc__.split("\n")
 with open("README.md", "r", encoding="utf8") as file:
     long_description = file.read()
 
-
-from setuptools import setup, find_packages
-from distutils.command.build_py import build_py
-import os
-
-# Get __version__ from tobler/__init__.py without importing the package
-# __version__ has to be defined in the first line
-with open("tobler/__init__.py", "r") as f:
-    exec(f.readline())
 
 # BEFORE importing distutils, remove MANIFEST. distutils doesn't properly
 # update it when the contents of directories change.
@@ -49,7 +44,8 @@ def setup_package():
 
     setup(
         name="tobler",  # name of package
-        version=__version__,
+        version=versioneer.get_version(),
+        cmdclass=versioneer.get_cmdclass({"build_py": build_py}),
         description=DOCLINES[0],
         # long_description="\n".join(DOCLINES[2:]),
         long_description=long_description,
@@ -78,7 +74,6 @@ def setup_package():
         install_requires=install_reqs,
         extras_require=extras_reqs,
         zip_safe=False,
-        cmdclass={"build.py": build_py},
     )
 
 
