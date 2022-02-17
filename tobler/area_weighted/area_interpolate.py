@@ -204,64 +204,6 @@ def _area_tables_binning(source_df, target_df, spatial_index):
     return table
 
 
-def _area_tables(source_df, target_df):
-    """
-    Construct area allocation and source-target correspondence tables.
-
-    Parameters
-    ----------
-    source_df : geopandas.GeoDataFrame
-    target_df : geopandas.GeoDataFrame
-
-    Returns
-    -------
-    tables : tuple (optional)
-            two 2-D numpy arrays
-            SU: area of intersection of source geometry i with union geometry j
-            UT: binary mapping of union geometry j to target geometry t
-
-
-
-    Notes
-    -----
-    The assumption is both dataframes have the same coordinate reference system.
-
-    Union geometry is a geometry formed by the intersection of a source geometry and a target geometry
-
-    SU Maps source geometry to union geometry, UT maps union geometry to target geometry
-
-    """
-    if _check_crs(source_df, target_df):
-        pass
-    else:
-        return None
-    source_df = source_df.copy()
-    source_df = source_df.copy()
-
-    n_s = source_df.shape[0]
-    n_t = target_df.shape[0]
-    _left = np.arange(n_s)
-    _right = np.arange(n_t)
-    source_df.loc[:, "_left"] = _left  # create temporary index for union
-    target_df.loc[:, "_right"] = _right  # create temporary index for union
-    res_union = gpd.overlay(source_df, target_df, how="union")
-    n_u, _ = res_union.shape
-    SU = np.zeros(
-        (n_s, n_u)
-    )  # holds area of intersection of source geom with union geom
-    UT = np.zeros((n_u, n_t))  # binary table mapping union geom to target geom
-    for index, row in res_union.iterrows():
-        # only union polygons that intersect both a source and a target geometry matter
-        if not np.isnan(row["_left"]) and not np.isnan(row["_right"]):
-            s_id = int(row["_left"])
-            t_id = int(row["_right"])
-            SU[s_id, index] = row[row.geometry.name].area
-            UT[index, t_id] = 1
-    source_df.drop(["_left"], axis=1, inplace=True)
-    target_df.drop(["_right"], axis=1, inplace=True)
-    return SU, UT
-
-
 def _area_interpolate_binning(
     source_df,
     target_df,
