@@ -78,8 +78,9 @@ def h3fy(source, resolution=6, clip=False, return_geoms=True):
     """
     # h3 hexes only work on polygons, not multipolygons
     if source.crs is None:
-        raise ValueError('source geodataframe must have a valid CRS set before using this function')
-    source = source.explode()
+        raise ValueError(
+            "source geodataframe must have a valid CRS set before using this function"
+        )
 
     orig_crs = source.crs
 
@@ -104,7 +105,6 @@ def h3fy(source, resolution=6, clip=False, return_geoms=True):
 
     if return_geoms and not hexagons.crs.equals(orig_crs):
         hexagons = hexagons.to_crs(orig_crs)
-
 
     return hexagons
 
