@@ -10,6 +10,10 @@ import rasterio as rio
 from joblib import Parallel, delayed
 from rasterio import features
 from shapely.geometry import shape
+from rasterio.mask import mask
+import warnings
+from ..util.util import _check_presence_of_crs
+import rasterstats as rs
 
 
 def _chunk_dfs(geoms_to_chunk, n_jobs):
@@ -25,6 +29,45 @@ def _parse_geom(geom_str):
 
 def _apply_parser(df):
     return df.apply(_parse_geom)
+
+
+def _fast_append_profile_in_gdf(geodataframe, raster_path, force_crs_match=True):
+    """Append categorical zonal statistics (counts by pixel type) as columns to an input geodataframe.
+
+    geodataframe : geopandas.GeoDataFrame
+        geodataframe that has overlay with the raster. If some polygon do not overlay the raster,
+        consider a preprocessing step using the function subset_gdf_polygons_from_raster.
+    raster_path : str
+        path to the raster image.
+    force_crs_match : bool, Default is True.
+        Whether the Coordinate Reference System (CRS) of the polygon will be reprojected to
+        the CRS of the raster file. It is recommended to let this argument as True.
+
+    Notes
+    -----
+    The generated geodataframe will input the value 0 for each Type that is not present in the raster
+    for each polygon.
+    """
+
+    _check_presence_of_crs(geodataframe)
+    if force_crs_match:
+        with rio.open(raster_path) as raster:
+            # raster =
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                geodataframe = geodataframe.to_crs(crs=raster.crs.data)
+    else:
+        warnings.warn(
+            "The GeoDataFrame is not being reprojected. The clipping might be being performing on unmatching polygon to the raster."
+        )
+
+    zonal_gjson = rs.zonal_stats(
+        geodataframe, raster_path, prefix="Type_", geojson_out=True, categorical=True
+    )
+
+    zonal_ppt_gdf = gpd.GeoDataFrame.from_features(zonal_gjson)
+
+    return zonal_ppt_gdf
 
 
 def extract_raster_features(
@@ -58,7 +101,7 @@ def extract_raster_features(
     -------
     geopandas.GeoDataFrame
         geodataframe whose rows are the zones extracted by the rasterio.features module.
-        The geometry of each zone is the boundary of a contiguous group of pixels with 
+        The geometry of each zone is the boundary of a contiguous group of pixels with
         the same value; the `value` column contains the pixel value of each zone.
     """
     if n_jobs == -1:
@@ -69,7 +112,7 @@ def extract_raster_features(
         gdf = gdf.to_crs(raster_crs)
         geomask = [gdf.unary_union.__geo_interface__]
 
-        out_image, out_transform = rio.mask.mask(
+        out_image, out_transform = mask(
             src, geomask, nodata=nodata, crop=True
         )  # clip to AoI using a vector layer
 
@@ -91,7 +134,7 @@ def extract_raster_features(
     geoms = pd.concat(
         Parallel(n_jobs=n_jobs)(delayed(_apply_parser)(i) for i in pieces)
     )
-    geoms = gpd.GeoSeries(geoms).buffer(0) # we sometimes get self-intersecting rings
+    geoms = gpd.GeoSeries(geoms).buffer(0)  # we sometimes get self-intersecting rings
     vals = pd.Series(res[1], name="value")
     gdf = gpd.GeoDataFrame(vals, geometry=geoms, crs=raster_crs)
     if collapse_values:
