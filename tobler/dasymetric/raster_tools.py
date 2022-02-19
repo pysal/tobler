@@ -52,10 +52,7 @@ def _fast_append_profile_in_gdf(geodataframe, raster_path, force_crs_match=True)
     _check_presence_of_crs(geodataframe)
     if force_crs_match:
         with rio.open(raster_path) as raster:
-            # raster =
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
-                geodataframe = geodataframe.to_crs(crs=raster.crs.data)
+            geodataframe = geodataframe.to_crs(crs=raster.crs.data)
     else:
         warnings.warn(
             "The GeoDataFrame is not being reprojected. The clipping might be being performing on unmatching polygon to the raster."

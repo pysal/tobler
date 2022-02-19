@@ -2,19 +2,21 @@ import geopandas as gpd
 
 from ..area_weighted import area_interpolate
 from .raster_tools import extract_raster_features
+from warnings import warn
 
 
 def masked_area_interpolate(
     source_df,
     target_df,
     raster,
-    pixel_values=[21, 22, 23, 24],
+    pixel_values,
     extensive_variables=None,
     intensive_variables=None,
     categorical_variables=None,
     allocate_total=True,
     nodata=255,
     n_jobs=-1,
+    codes=None,
 ):
     """Interpolate data between two polygonal datasets using an auxiliary raster to mask out uninhabited land.
 
@@ -27,8 +29,9 @@ def masked_area_interpolate(
     raster : str
         path to raster file that contains ancillary data
     pixel_values : list of ints
-        list of pixel values that should be considered part of the mask. Default is
-        [21,22,23,24], which match the "developed" land types in NLCD land cover data
+        list of pixel values that should be considered part of the mask. For example if
+        using data from NLCD Land Cover Database <https://www.mrlc.gov/data>, a common
+        input might be [21,22,23,24], which match the "developed" land types in that dataset
     extensive_variables : list
         Columns of the input dataframe containing extensive variables to interpolate
     intensive_variables : list
@@ -52,6 +55,11 @@ def masked_area_interpolate(
         variables as the columns
 
     """
+    if codes:
+        warn(
+            "The `codes` keyword is deprecated and will be removed shortly. Please use `pixel_values` instead"
+        )
+        pixel_values = codes
     source_df = source_df.copy()
     assert not any(
         source_df.index.duplicated()

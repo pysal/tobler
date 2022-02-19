@@ -2,6 +2,7 @@
 import sys
 import pandas as pd
 import geopandas
+import pytest
 
 try:
     import quilt3
@@ -12,10 +13,7 @@ except ImportError:
 
 import os
 from libpysal.examples import load_example
-from numpy.testing import assert_almost_equal
 from tobler.dasymetric import masked_area_interpolate
-from tobler.area_weighted import area_interpolate
-import pytest
 
 
 def datasets():
@@ -42,47 +40,6 @@ def datasets():
 
 
 @pytest.mark.skipif(QUILTMISSING, reason="quilt3 not available.")
-def test_area_interpolate():
-    sac1, sac2 = datasets()
-    area = area_interpolate(
-        source_df=sac1,
-        target_df=sac2,
-        extensive_variables=["TOT_POP"],
-        intensive_variables=["pct_poverty"],
-        categorical_variables=["animal"],
-    )
-    assert_almost_equal(area.TOT_POP.sum(), 1796856, decimal=0)
-    assert_almost_equal(area.pct_poverty.sum(), 2140, decimal=0)
-    assert_almost_equal(area.animal_cat.sum(), 32, decimal=0)
-    assert_almost_equal(area.animal_dog.sum(), 19, decimal=0)
-    assert_almost_equal(area.animal_donkey.sum(), 22, decimal=0)
-    assert_almost_equal(area.animal_wombat.sum(), 23, decimal=0)
-    assert_almost_equal(area.animal_capybara.sum(), 20, decimal=0)
-
-
-@pytest.mark.skipif(QUILTMISSING, reason="quilt3 not available.")
-def test_area_interpolate_custom_index():
-    sac1, sac2 = datasets()
-    sac1.index = sac1.index * 2
-    sac2.index = sac2.index * 13
-    area = area_interpolate(
-        source_df=sac1,
-        target_df=sac2,
-        extensive_variables=["TOT_POP"],
-        intensive_variables=["pct_poverty"],
-        categorical_variables=["animal"],
-    )
-    assert_almost_equal(area.TOT_POP.sum(), 1796856, decimal=0)
-    assert_almost_equal(area.pct_poverty.sum(), 2140, decimal=0)
-    assert_almost_equal(area.animal_cat.sum(), 32, decimal=0)
-    assert_almost_equal(area.animal_dog.sum(), 19, decimal=0)
-    assert_almost_equal(area.animal_donkey.sum(), 22, decimal=0)
-    assert_almost_equal(area.animal_wombat.sum(), 23, decimal=0)
-    assert_almost_equal(area.animal_capybara.sum(), 20, decimal=0)
-    assert not area.isna().any().any()
-
-
-@pytest.mark.skipif(QUILTMISSING, reason="quilt3 not available.")
 def test_masked_area_interpolate():
     sac1, sac2 = datasets()
     masked = masked_area_interpolate(
@@ -91,6 +48,7 @@ def test_masked_area_interpolate():
         extensive_variables=["TOT_POP"],
         intensive_variables=["pct_poverty"],
         raster="nlcd_2011.tif",
+        pixel_values=[21, 22, 23, 24],
     )
     assert masked.TOT_POP.sum().round(0) == sac1.TOT_POP.sum()
     assert masked.pct_poverty.sum() > 2000
