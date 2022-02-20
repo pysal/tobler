@@ -47,7 +47,6 @@ and the auxiliary data. It then uses that model to predict population levels at 
    :toctree: generated/
 
    glm
-   glm_pixel_adjusted
 
 Pycnophylactic
 ------------------

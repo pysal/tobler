@@ -1,8 +1,5 @@
 """test interpolation functions."""
-import sys
-import pandas as pd
 import geopandas
-import pytest
 
 try:
     import quilt3
@@ -13,7 +10,8 @@ except ImportError:
 
 import os
 from libpysal.examples import load_example
-from tobler.dasymetric import masked_area_interpolate
+from tobler.model import glm
+import pytest
 
 
 def datasets():
@@ -40,15 +38,9 @@ def datasets():
 
 
 @pytest.mark.skipif(QUILTMISSING, reason="quilt3 not available.")
-def test_masked_area_interpolate():
+def test_glm_poisson():
     sac1, sac2 = datasets()
-    masked = masked_area_interpolate(
-        source_df=sac1,
-        target_df=sac2,
-        extensive_variables=["TOT_POP"],
-        intensive_variables=["pct_poverty"],
-        raster="nlcd_2011.tif",
-        pixel_values=[21, 22, 23, 24],
+    glm_poisson = glm(
+        source_df=sac2, target_df=sac1, variable="POP2001", raster="nlcd_2011.tif",
     )
-    assert masked.TOT_POP.sum().round(0) == sac1.TOT_POP.sum()
-    assert masked.pct_poverty.sum() > 2000
+    assert glm_poisson.POP2001.sum() > 1469000

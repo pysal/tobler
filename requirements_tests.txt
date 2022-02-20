@@ -16,3 +16,5 @@ twine
 xgboost
 shap >=0.33
 quilt3 >=3.1.11
+h3
+astropy
