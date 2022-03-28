@@ -40,6 +40,45 @@ def test_area_interpolate_singlecore():
     assert_almost_equal(area.animal_capybara.sum(), 20, decimal=0)
 
 
+def test_area_interpolate_extensive():
+    sac1, sac2 = datasets()
+    area = area_interpolate(
+        source_df=sac1,
+        target_df=sac2,
+        extensive_variables=["TOT_POP"],
+        n_jobs=1,
+    )
+    assert_almost_equal(area.TOT_POP.sum(), 1796856, decimal=0)
+
+
+def test_area_interpolate_intensive():
+    sac1, sac2 = datasets()
+    area = area_interpolate(
+        source_df=sac1,
+        target_df=sac2,
+        intensive_variables=["pct_poverty"],
+        n_jobs=1,
+    )
+    assert_almost_equal(area.pct_poverty.sum(), 2140, decimal=0)
+
+
+def test_area_interpolate_categorical():
+    sac1, sac2 = datasets()
+    area = area_interpolate(
+        source_df=sac1,
+        target_df=sac2,
+        extensive_variables=["TOT_POP"],
+        intensive_variables=["pct_poverty"],
+        categorical_variables=["animal"],
+        n_jobs=1,
+    )
+    assert_almost_equal(area.animal_cat.sum(), 32, decimal=0)
+    assert_almost_equal(area.animal_dog.sum(), 19, decimal=0)
+    assert_almost_equal(area.animal_donkey.sum(), 22, decimal=0)
+    assert_almost_equal(area.animal_wombat.sum(), 23, decimal=0)
+    assert_almost_equal(area.animal_capybara.sum(), 20, decimal=0)
+
+
 def test_area_interpolate_custom_index():
     sac1, sac2 = datasets()
     sac1.index = sac1.index * 2
@@ -128,3 +167,30 @@ def test_area_tables_binning():
     assert auto.mean() == pytest.approx(2.7552649e-05)
 
     assert (auto[5][0].toarray() > 0).sum() == 7
+
+
+def test_passed_table():
+    sac1, sac2 = datasets()
+    csr = _area_tables_binning(source_df=sac1, target_df=sac2, spatial_index="auto")
+
+    area = area_interpolate(
+        source_df=sac1,
+        target_df=sac2,
+        extensive_variables=["TOT_POP"],
+        intensive_variables=["pct_poverty"],
+        table=csr,
+    )
+    assert_almost_equal(area.TOT_POP.sum(), 1796856, decimal=0)
+    assert_almost_equal(area.pct_poverty.sum(), 2140, decimal=0)
+
+    dok = csr.todok()
+
+    area = area_interpolate(
+        source_df=sac1,
+        target_df=sac2,
+        extensive_variables=["TOT_POP"],
+        intensive_variables=["pct_poverty"],
+        table=dok,
+    )
+    assert_almost_equal(area.TOT_POP.sum(), 1796856, decimal=0)
+    assert_almost_equal(area.pct_poverty.sum(), 2140, decimal=0)
