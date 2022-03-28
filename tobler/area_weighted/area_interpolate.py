@@ -76,7 +76,7 @@ def _area_tables_binning_parallel(source_df, target_df, n_jobs=-1):
 
     Returns
     -------
-    tables : scipy.sparse.dok_matrix
+    tables : scipy.sparse.csr_matrix
 
     """
     from joblib import Parallel, delayed, parallel_backend
@@ -125,7 +125,7 @@ def _area_tables_binning_parallel(source_df, target_df, n_jobs=-1):
         )
     areas = np.concatenate(worker_out)
 
-    # Build DOK table
+    # Build CSR table
     table = coo_matrix(
         (
             areas,
@@ -134,7 +134,7 @@ def _area_tables_binning_parallel(source_df, target_df, n_jobs=-1):
         shape=(df1.shape[0], df2.shape[0]),
         dtype=np.float32,
     )
-    table = table.todok()
+    table = table.tocsr()
     return table
 
 
@@ -161,7 +161,7 @@ def _area_tables_binning(source_df, target_df, spatial_index):
 
     Returns
     -------
-    tables : scipy.sparse.dok_matrix
+    tables : scipy.sparse.csr_matrix
 
     """
     if _check_crs(source_df, target_df):
@@ -199,7 +199,7 @@ def _area_tables_binning(source_df, target_df, spatial_index):
         dtype=np.float32,
     )
 
-    table = table.todok()
+    table = table.tocsr()
 
     return table
 
@@ -226,7 +226,7 @@ def _area_interpolate_binning(
         [Optional. Default=None] Columns in dataframes for extensive variables
     intensive_variables : list
         [Optional. Default=None] Columns in dataframes for intensive variables
-    table : scipy.sparse.dok_matrix
+    table : scipy.sparse.csr_matrix
         [Optional. Default=None] Area allocation source-target correspondence
         table. If not provided, it will be built from `source_df` and
         `target_df` using `tobler.area_interpolate._area_tables_binning`
@@ -305,19 +305,20 @@ def _area_interpolate_binning(
         else:
             table = _area_tables_binning_parallel(source_df, target_df, n_jobs=n_jobs)
 
-    den = source_df.area.values
-    if allocate_total:
-        den = np.asarray(table.sum(axis=1))
-    den = den + (den == 0)
-    den = 1.0 / den
-    n = den.shape[0]
-    den = den.reshape((n,))
-    den = diags([den], [0])
-    weights = den.dot(table)  # row standardize table
-
     dfs = []
     extensive = []
     if extensive_variables:
+
+        den = source_df.area.values
+        if allocate_total:
+            den = np.asarray(table.sum(axis=1))
+        den = den + (den == 0)
+        den = 1.0 / den
+        n = den.shape[0]
+        den = den.reshape((n,))
+        den = diags([den], [0])
+        weights = den.dot(table)  # row standardize table
+
         for variable in extensive_variables:
             vals = _nan_check(source_df, variable)
             vals = _inf_check(source_df, variable)
@@ -329,15 +330,16 @@ def _area_interpolate_binning(
         extensive = np.array(extensive)
         extensive = pd.DataFrame(extensive.T, columns=extensive_variables)
 
-    area = np.asarray(table.sum(axis=0))
-    den = 1.0 / (area + (area == 0))
-    n, k = den.shape
-    den = den.reshape((k,))
-    den = diags([den], [0])
-    weights = table.dot(den)
-
     intensive = []
     if intensive_variables:
+
+        area = np.asarray(table.sum(axis=0))
+        den = 1.0 / (area + (area == 0))
+        n, k = den.shape
+        den = den.reshape((k,))
+        den = diags([den], [0])
+        weights = table.dot(den)
+
         for variable in intensive_variables:
             vals = _nan_check(source_df, variable)
             vals = _inf_check(source_df, variable)
