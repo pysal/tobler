@@ -89,6 +89,7 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True,
         )
 
     orig_crs = source.crs
+    clipper = source
 
     if not source.crs.is_geographic:
         if buffer:
@@ -96,7 +97,6 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True,
             source = source.buffer(distance).to_crs(4326)
         else:
             source = source.to_crs(4326)
-            clipper = source
 
     source_unary = source.unary_union
 
