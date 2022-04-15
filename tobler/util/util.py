@@ -53,7 +53,8 @@ def _check_presence_of_crs(geoinput):
 
 
 
-def h3fy(source, resolution=6, clip=False, return_geoms=True):
+def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True,
+         distance=0):
     """Generate a hexgrid geodataframe that covers the face of a source geodataframe.
 
     Parameters
@@ -64,11 +65,16 @@ def h3fy(source, resolution=6, clip=False, return_geoms=True):
         resolution of output h3 hexgrid.
         See <https://h3geo.org/docs/core-library/restable> for more information
     clip : bool, optional (default is False)
-        if True, hexagons are clipped to the precise boundary of the source gdf. Otherwise,
+        if True, hexagons are clipped by the boundary of the source gdf. Otherwise,
         heaxgons along the boundary will be left intact.
+    buffer : bool, optional (default is False)
+        if True, force hexagons to completely fill the interior of the source area.
+        if False, (h3 default) may result in empty areas within the source area.
     return_geoms: bool, optional (default is True)
         whether to generate hexagon geometries as a geodataframe or simply return
         hex ids as a pandas.Series
+    distance : int/float
+        distance in source crs to use to buffer source prior to hexify and clip.
 
     Returns
     -------
@@ -85,9 +91,15 @@ def h3fy(source, resolution=6, clip=False, return_geoms=True):
     orig_crs = source.crs
 
     if not source.crs.is_geographic:
-        source = source.to_crs(4326)
+        if buffer:
+            clipper = source.to_crs(4326)
+            source = source.buffer(distance).to_crs(4326)
+        else:
+            source = source.to_crs(4326)
+            clipper = source
 
     source_unary = source.unary_union
+
 
     if type(source_unary) == Polygon:
         hexagons = _to_hex(
@@ -101,7 +113,7 @@ def h3fy(source, resolution=6, clip=False, return_geoms=True):
             hexagons = pandas.concat(output)
 
     if return_geoms and clip:
-        hexagons = geopandas.clip(hexagons, source)
+        hexagons = geopandas.clip(hexagons, clipper)
 
     if return_geoms and not hexagons.crs.equals(orig_crs):
         hexagons = hexagons.to_crs(orig_crs)
@@ -109,7 +121,7 @@ def h3fy(source, resolution=6, clip=False, return_geoms=True):
     return hexagons
 
 
-def _to_hex(source, resolution=6, return_geoms=True):
+def _to_hex(source, resolution=6, return_geoms=True, buffer=True):
     """Generate a hexgrid geodataframe that covers the face of a source geometry.
 
     Parameters
@@ -138,6 +150,8 @@ def _to_hex(source, resolution=6, return_geoms=True):
             "`pip install h3`"
         )
 
+
+
     hexids = pandas.Series(
         list(
             h3.polyfill(
@@ -148,8 +162,10 @@ def _to_hex(source, resolution=6, return_geoms=True):
         ),
         name="hex_id",
     )
+        
     if not return_geoms:
         return hexids
+
 
     polys = hexids.apply(
         lambda hex_id: Polygon(h3.h3_to_geo_boundary(hex_id, geo_json=True)),
