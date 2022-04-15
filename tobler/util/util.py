@@ -12,6 +12,48 @@ from pyproj import CRS
 from shapely.geometry import Polygon
 
 
+# from https://h3geo.org/docs/core-library/restable/
+hexvals = pandas.DataFrame(data=np.array([
+    [0, 4250546.8477000, 1107.712591000, 122],
+    [1, 607220.9782429, 418.676005500, 842],
+    [2, 86745.8540347, 158.244655800, 5882],
+    [3, 12392.2648621, 59.810857940, 41162],
+    [4, 1770.3235517, 22.606379400, 288122],
+    [5, 252.9033645, 8.544408276, 2016842],
+    [6, 36.1290521, 3.229482772, 14117882],
+    [7, 5.1612932, 1.220629759, 98825162],
+    [8, 0.7373276, 0.461354684, 691776122],
+    [9, 0.1053325, 0.174375668, 4842432842],
+    [10, 0.0150475, 0.065907807, 33897029882],
+    [11, 0.0021496, 0.024910561, 237279209162],
+    [12, 0.0003071, 0.009415526, 1660954464122],
+    [13, 0.0000439, 0.003559893, 11626681248842],
+    [14, 0.0000063, 0.001348575, 81386768741882],
+    [15, 0.0000009, 0.000509713, 569707381193162]
+]), columns=["resolution", "area",
+             'edge_length', 'number'])
+
+
+def circumradius(resolution, hexvals=hexvals):
+    """Find the circumradius of an h3 hexagon at given resolution.
+
+     Parameters
+    ----------
+    resolution : int
+        h3 grid resolution
+    
+    hexvals : DataFrame
+        statistics on h3py hexagons at different resolutions
+
+    Returns
+    -------
+    circumradius : float
+        circumradius in meters
+    """
+    cr = hexvals[hexvals.resolution == resolution].edge_length.values.item()
+    return 1000 * cr
+
+
 def _check_crs(source_df, target_df):
     """check if crs is identical"""
     if not (source_df.crs == target_df.crs):
@@ -53,8 +95,7 @@ def _check_presence_of_crs(geoinput):
 
 
 
-def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True,
-         distance=0):
+def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
     """Generate a hexgrid geodataframe that covers the face of a source geodataframe.
 
     Parameters
@@ -73,8 +114,6 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True,
     return_geoms: bool, optional (default is True)
         whether to generate hexagon geometries as a geodataframe or simply return
         hex ids as a pandas.Series
-    distance : int/float
-        distance in source crs to use to buffer source prior to hexify and clip.
 
     Returns
     -------
@@ -94,6 +133,7 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True,
     if not source.crs.is_geographic:
         if buffer:
             clipper = source.to_crs(4326)
+            distance = circumradius(resolution)
             source = source.buffer(distance).to_crs(4326)
         else:
             source = source.to_crs(4326)
