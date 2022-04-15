@@ -12,29 +12,8 @@ from pyproj import CRS
 from shapely.geometry import Polygon
 
 
-# from https://h3geo.org/docs/core-library/restable/
-hexvals = pandas.DataFrame(data=np.array([
-    [0, 4250546.8477000, 1107.712591000, 122],
-    [1, 607220.9782429, 418.676005500, 842],
-    [2, 86745.8540347, 158.244655800, 5882],
-    [3, 12392.2648621, 59.810857940, 41162],
-    [4, 1770.3235517, 22.606379400, 288122],
-    [5, 252.9033645, 8.544408276, 2016842],
-    [6, 36.1290521, 3.229482772, 14117882],
-    [7, 5.1612932, 1.220629759, 98825162],
-    [8, 0.7373276, 0.461354684, 691776122],
-    [9, 0.1053325, 0.174375668, 4842432842],
-    [10, 0.0150475, 0.065907807, 33897029882],
-    [11, 0.0021496, 0.024910561, 237279209162],
-    [12, 0.0003071, 0.009415526, 1660954464122],
-    [13, 0.0000439, 0.003559893, 11626681248842],
-    [14, 0.0000063, 0.001348575, 81386768741882],
-    [15, 0.0000009, 0.000509713, 569707381193162]
-]), columns=["resolution", "area",
-             'edge_length', 'number'])
 
-
-def circumradius(resolution, hexvals=hexvals):
+def circumradius(resolution):
     """Find the circumradius of an h3 hexagon at given resolution.
 
      Parameters
@@ -42,15 +21,21 @@ def circumradius(resolution, hexvals=hexvals):
     resolution : int
         h3 grid resolution
     
-    hexvals : DataFrame
-        statistics on h3py hexagons at different resolutions
-
     Returns
     -------
     circumradius : float
         circumradius in meters
     """
-    cr = hexvals[hexvals.resolution == resolution].edge_length.values.item()
+    try:
+        import h3
+    except ImportError:
+        raise ImportError(
+            "This function requires the `h3` library. "
+            "You can install it with `conda install h3-py` or "
+            "`pip install h3`"
+        )
+
+    cr = h3.edge_length(resolution)
     return 1000 * cr
 
 
