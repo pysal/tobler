@@ -112,14 +112,27 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
     orig_crs = source.crs
     clipper = source
 
-    if not source.crs.is_geographic:
+    if source.crs.is_geographic:  
+        if buffer:  # if CRS is geographic but user wants a buffer, we need to estimate
+            warn(
+                "Input geogdataframe uses geographic coordinates. Falling back to estimated UTM zone "
+                "to generate desired buffer. If this produces unexpected results, reproject the input data "
+                "prior to using this function"
+            )
+            source = (
+                source.to_crs(source.estimate_utm_crs())
+                .buffer(circumradius(resolution))
+                .to_crs(4326)
+            )
+
+    else:  # if CRS is projected, we need lat/long
         crs_units = source.crs.to_dict()["units"]
-        if buffer:
+        if buffer:  #  we can only convert between units we know
             if not crs_units in ["m", "us-ft"]:
                 raise ValueError(
                     f"The coordinate system uses an unknown measurement unit: {crs_units} ."
-                    "Currently, acceptably inputs include meters or U.S. feet. Please reproject the input "
-                    "geodataframe to a system that uses these units or pass `buffer=False`"
+                    "Currently, acceptable inputs include meters or U.S. feet. Please reproject the input "
+                    "geodataframe into a CRS that uses one of these units or pass `buffer=False`"
                 )
             clipper = source.to_crs(4326)
             distance = circumradius(resolution)
@@ -128,19 +141,6 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
             source = source.buffer(distance).to_crs(4326)
         else:
             source = source.to_crs(4326)
-
-    # if CRS is geographic but user wants a buffer, we need to estimate
-    if buffer:
-        warn(
-            "Input geogdataframe uses geographic coordinates. Falling back to estimated UTM zone "
-            "to generate desired buffer. If this produces unexpected results, reproject the input data "
-            "prior to using this function"
-        )
-        source = (
-            source.to_crs(source.estimate_utm_crs())
-            .buffer(circumradius(resolution))
-            .to_crs(4326)
-        )
 
     source_unary = source.unary_union
 
