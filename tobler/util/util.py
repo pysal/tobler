@@ -12,7 +12,6 @@ from pyproj import CRS
 from shapely.geometry import Polygon
 
 
-
 def circumradius(resolution):
     """Find the circumradius of an h3 hexagon at given resolution.
 
@@ -20,7 +19,7 @@ def circumradius(resolution):
     ----------
     resolution : int
         h3 grid resolution
-    
+
     Returns
     -------
     circumradius : float
@@ -35,8 +34,7 @@ def circumradius(resolution):
             "`pip install h3`"
         )
 
-    cr = h3.edge_length(resolution)
-    return 1000 * cr
+    return h3.edge_length(resolution, "m")
 
 
 def _check_crs(source_df, target_df):
@@ -79,7 +77,6 @@ def _check_presence_of_crs(geoinput):
         raise KeyError("Geodataframe must have a CRS set before using this function.")
 
 
-
 def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
     """Generate a hexgrid geodataframe that covers the face of a source geodataframe.
 
@@ -116,15 +113,36 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
     clipper = source
 
     if not source.crs.is_geographic:
+        crs_units = source.crs.to_dict()["units"]
         if buffer:
+            if not crs_units in ["m", "us-ft"]:
+                raise ValueError(
+                    f"The coordinate system uses an unknown measurement unit: {crs_units} ."
+                    "Currently, acceptably inputs include meters or U.S. feet. Please reproject the input "
+                    "geodataframe to a system that uses these units or pass `buffer=False`"
+                )
             clipper = source.to_crs(4326)
             distance = circumradius(resolution)
+            if crs_units == "ft-us":
+                distance = distance * 3.281
             source = source.buffer(distance).to_crs(4326)
         else:
             source = source.to_crs(4326)
 
-    source_unary = source.unary_union
+    # if CRS is geographic but user wants a buffer, we need to estimate
+    if buffer:
+        warn(
+            "Input geogdataframe uses geographic coordinates. Falling back to estimated UTM zone "
+            "to generate desired buffer. If this produces unexpected results, reproject the input data "
+            "prior to using this function"
+        )
+        source = (
+            source.to_crs(source.estimate_utm_crs())
+            .buffer(circumradius(resolution))
+            .to_crs(4326)
+        )
 
+    source_unary = source.unary_union
 
     if type(source_unary) == Polygon:
         hexagons = _to_hex(
@@ -175,8 +193,6 @@ def _to_hex(source, resolution=6, return_geoms=True, buffer=True):
             "`pip install h3`"
         )
 
-
-
     hexids = pandas.Series(
         list(
             h3.polyfill(
@@ -187,10 +203,9 @@ def _to_hex(source, resolution=6, return_geoms=True, buffer=True):
         ),
         name="hex_id",
     )
-        
+
     if not return_geoms:
         return hexids
-
 
     polys = hexids.apply(
         lambda hex_id: Polygon(h3.h3_to_geo_boundary(hex_id, geo_json=True)),
