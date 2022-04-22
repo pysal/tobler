@@ -1,8 +1,5 @@
-"""
-Useful functions for spatial interpolation methods of tobler
-"""
+"""Useful functions to support tobler's interpolation methods."""
 
-import math
 from warnings import warn
 
 import geopandas
@@ -112,10 +109,10 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
     orig_crs = source.crs
     clipper = source
 
-    if source.crs.is_geographic:  
+    if source.crs.is_geographic:
         if buffer:  # if CRS is geographic but user wants a buffer, we need to estimate
             warn(
-                "Input geogdataframe uses geographic coordinates. Falling back to estimated UTM zone "
+                "The source geodataframe is stored in a geographic CRS. Falling back to estimated UTM zone "
                 "to generate desired buffer. If this produces unexpected results, reproject the input data "
                 "prior to using this function"
             )
@@ -130,9 +127,9 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
         if buffer:  #  we can only convert between units we know
             if not crs_units in ["m", "us-ft"]:
                 raise ValueError(
-                    f"The coordinate system uses an unknown measurement unit: {crs_units} ."
-                    "Currently, acceptable inputs include meters or U.S. feet. Please reproject the input "
-                    "geodataframe into a CRS that uses one of these units or pass `buffer=False`"
+                    f"The CRS of source geodataframe uses an unknown measurement unit: `{crs_units}`. "
+                    "The `buffer` argument requires either a geographic CRS or a projected one measured "
+                    "in meters or feet (U.S.)"
                 )
             clipper = source.to_crs(4326)
             distance = circumradius(resolution)
