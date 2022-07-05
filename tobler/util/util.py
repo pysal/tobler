@@ -5,7 +5,6 @@ from warnings import warn
 import geopandas
 import numpy as np
 import pandas
-from pyproj import CRS
 from shapely.geometry import Polygon
 
 
@@ -150,7 +149,7 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
         for geom in source_unary.geoms:
             hexes = _to_hex(geom, resolution=resolution, return_geoms=return_geoms)
             output.append(hexes)
-            hexagons = pandas.concat(output)
+        hexagons = pandas.concat(output)
 
     if return_geoms and clip:
         hexagons = geopandas.clip(hexagons, clipper)
