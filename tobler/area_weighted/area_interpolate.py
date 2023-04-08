@@ -49,9 +49,9 @@ def _chunk_polys(id_pairs, geoms_left, geoms_right, n_jobs):
 
 
 def _intersect_area_on_chunk(geoms1, geoms2):
-    import pygeos
+    import shapely
 
-    areas = pygeos.area(pygeos.intersection(geoms1, geoms2))
+    areas = shapely.area(shapely.intersection(geoms1, geoms2))
     return areas
 
 
@@ -249,8 +249,6 @@ def _area_interpolate_binning(
         [Optional. Default=1] Number of processes to run in parallel to
         generate the area allocation. If -1, this is set to the number of CPUs
         available. If `table` is passed, this is ignored.
-        NOTE: as of Jan'21 multi-core functionality requires master versions
-        of `pygeos` and `geopandas`.
     categorical_variables : list
         [Optional. Default=None] Columns in dataframes for categorical variables
 

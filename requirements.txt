@@ -7,5 +7,5 @@ statsmodels
 rasterstats
 libpysal
 tqdm
-pygeos
 joblib
+shapely>=2
