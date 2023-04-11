@@ -43,15 +43,13 @@ def _chunk_polys(id_pairs, geoms_left, geoms_right, n_jobs):
     chunk_size = id_pairs.shape[0] // n_jobs + 1
     for i in range(n_jobs):
         start = i * chunk_size
-        chunk1 = geoms_left.values.data[id_pairs[start : start + chunk_size, 0]]
-        chunk2 = geoms_right.values.data[id_pairs[start : start + chunk_size, 1]]
+        chunk1 = geoms_left.array[id_pairs[start : start + chunk_size, 0]]
+        chunk2 = geoms_right.array[id_pairs[start : start + chunk_size, 1]]
         yield chunk1, chunk2
 
 
 def _intersect_area_on_chunk(geoms1, geoms2):
-    import pygeos
-
-    areas = pygeos.area(pygeos.intersection(geoms1, geoms2))
+    areas = geoms1.intersection(geoms2).area
     return areas
 
 
@@ -249,8 +247,6 @@ def _area_interpolate_binning(
         [Optional. Default=1] Number of processes to run in parallel to
         generate the area allocation. If -1, this is set to the number of CPUs
         available. If `table` is passed, this is ignored.
-        NOTE: as of Jan'21 multi-core functionality requires master versions
-        of `pygeos` and `geopandas`.
     categorical_variables : list
         [Optional. Default=None] Columns in dataframes for categorical variables
 
@@ -308,7 +304,6 @@ def _area_interpolate_binning(
     dfs = []
     extensive = []
     if extensive_variables:
-
         den = source_df.area.values
         if allocate_total:
             den = np.asarray(table.sum(axis=1))
@@ -332,7 +327,6 @@ def _area_interpolate_binning(
 
     intensive = []
     if intensive_variables:
-
         area = np.asarray(table.sum(axis=0))
         den = 1.0 / (area + (area == 0))
         n, k = den.shape

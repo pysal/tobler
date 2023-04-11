@@ -11,7 +11,7 @@
 
 # PySAL `tobler`
 
-`tobler` is a python package for areal interpolation, dasymetric mapping, change of support, and small area estimation. It provides a suite of tools with a simple interface for transferring data from one polygonal representation to another. Common examples include standardizing census data from different time periods to a single representation (i.e. to overcome boundary changes in successive years), or the conversion of data collected at different spatial scales into shared units of analysis (e.g. converting zip code and neighborhood data into a regular grid). `tobler` is part of the [PySAL](https://pysal.org) family of packages for spatial data science and provides highly performant implementations of basic and advanced interpolation methods, leveraging [`pygeos`](https://pygeos.readthedocs.io/en/latest/) to optimize for multicore architecture. The package name is an homage to the legendary quantitative geographer [Waldo Tobler](https://en.wikipedia.org/wiki/Waldo_R._Tobler), a pioneer in geographic interpolation methods, spatial analysis, and computational social science.
+`tobler` is a python package for areal interpolation, dasymetric mapping, change of support, and small area estimation. It provides a suite of tools with a simple interface for transferring data from one polygonal representation to another. Common examples include standardizing census data from different time periods to a single representation (i.e. to overcome boundary changes in successive years), or the conversion of data collected at different spatial scales into shared units of analysis (e.g. converting zip code and neighborhood data into a regular grid). `tobler` is part of the [PySAL](https://pysal.org) family of packages for spatial data science and provides highly performant implementations of basic and advanced interpolation methods, leveraging [`shapely`](https://shapely.readthedocs.io/en/latest/) to optimize for multicore architecture. The package name is an homage to the legendary quantitative geographer [Waldo Tobler](https://en.wikipedia.org/wiki/Waldo_R._Tobler), a pioneer in geographic interpolation methods, spatial analysis, and computational social science.
 
 ![DC tracts to hexgrid](docs/_static/images/notebooks_census_to_hexgrid_25_1.png)
 
@@ -49,7 +49,7 @@ Model-based interpolation uses [spatial] statistical models to estimate a relati
 
 ```bash
 $ conda env create -f environment.yml
-$ conda activate tobler 
+$ conda activate tobler
 $ python setup.py develop
 ```
 
@@ -65,7 +65,7 @@ The project is licensed under the [BSD license](https://github.com/pysal/tobler/
 
 ## Funding
 
-<img src="docs/figs/nsf_logo.jpg" width="50"> 
+<img src="docs/figs/nsf_logo.jpg" width="50">
 
 Award #1733705 [Neighborhoods in Space-Time Contexts](https://www.nsf.gov/awardsearch/showAward?AWD_ID=1733705&HistoricalAwards=false)
 

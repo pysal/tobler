@@ -15,7 +15,6 @@ dependencies:
   - libpysal
   - tqdm
   - pip
-  - pygeos
-  - mapclassify 
+  - mapclassify
   - descartes
   - joblib
