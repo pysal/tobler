@@ -22,9 +22,7 @@ def area_join(source_df, target_df, variables):
     -------
     joined : geopandas.GeoDataFrame
          target_df GeoDataFrame with joined variables as additional columns
-
-
-
+    
     """
     if not pd.api.types.is_list_like(variables):
         variables = [variables]
