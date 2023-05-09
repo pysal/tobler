@@ -1,0 +1,110 @@
+[build-system]
+requires = ["setuptools>=61.0", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+
+[project]
+name = "tobler"
+dynamic = ["version"]
+authors = [
+    { name = "Eli Knaap", email = "ek@knaaptime.com" },
+    { name = "Serge Rey", email = "sjsrey@gmail.com" },
+]
+maintainers = [{ name = "pysal contributors" }]
+license = { text = "BSD 3-Clause" }
+description = "Tobler is a Python library for areal interpolation."
+keywords = [
+    "dasymetric mapping, spatial analysis, interpolation, change of support"
+]
+readme = { text = """\
+Spatial interpolation, Dasymetric Mapping, & Change of Support"
+
+""", content-type = "text/x-rst" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: GIS",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "numpy",
+    "pandas",
+    "geopandas",
+    "rasterio",
+    "scipy",
+    "statsmodels",
+    "rasterstats",
+    "libpysal",
+    "tqdm",
+    "joblib"
+]
+
+[project.urls]
+Home = "https://github.com/pysal/tobler/"
+Repository = "https://github.com/pysal/tobler"
+
+[project.optional-dependencies]
+dev = ["pre-commit"]
+docs = [
+    "nbsphinx",
+    "numpydoc",
+    "pandoc",
+    "sphinx",
+    "sphinxcontrib-bibtex",
+    "sphinx_bootstrap_theme",
+    "mkdocs-jupyter",
+    "myst-parser"
+]
+tests = [
+    "codecov",
+    "coverage",
+    "pytest",
+    "pytest-mpl",
+    "pytest-cov",
+    "watermark",
+    "h3",
+    "astropy"
+]
+
+[tool.setuptools.packages.find]
+include = ["tobler", "tobler.*"]
+
+[tool.black]
+line-length = 88
+
+[tool.ruff]
+line-length = 88
+select = ["E", "F", "W", "I", "UP", "N", "B", "A", "C4", "SIM", "ARG"]
+target-version = "py38"
+ignore = [
+    "B006",
+    "B008",
+    "B009",
+    "B010",
+    "C408",
+    "E731",
+    "F401",
+    "F403",
+    "N803",
+    "N806",
+    "N999",
+    "UP007"
+]
+exclude = ["tobler/tests/*", "docs/*"]
+
+[tool.coverage.run]
+source = ["./tobler"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "if self.debug:",
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "except ModuleNotFoundError:",
+    "except ImportError",
+]
+ignore_errors = true
+omit = ["tobler/tests/*", "docs/conf.py"]

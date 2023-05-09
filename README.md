@@ -50,7 +50,8 @@ Model-based interpolation uses [spatial] statistical models to estimate a relati
 ```bash
 $ conda env create -f environment.yml
 $ conda activate tobler
-$ python setup.py develop
+$ pip install -e . --no-deps
+
 ```
 
 ## Contribute
