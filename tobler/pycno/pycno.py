@@ -126,7 +126,7 @@ def pycno(
 
     def correct2Da(data):
 
-        for idx, val in gdf[value_field].iteritems():
+        for idx, val in gdf[value_field].items():
             # Create zone mask from feature_array
             mask = masked_where(feature_array == idx, feature_array).mask
             # Work out the correction factor
@@ -138,7 +138,7 @@ def pycno(
 
     def correct2Dm(data):
 
-        for idx, val in gdf[value_field].iteritems():
+        for idx, val in gdf[value_field].items():
             # Create zone mask from feature_array
             mask = masked_where(feature_array == idx, feature_array).mask
             # Work out the correction factor
@@ -233,7 +233,7 @@ def extract_values(pycno_array, gdf, transform, fieldname="Estimate"):
 
     estimates = []
     # Iterate through geodataframe and extract values
-    for idx, geom in gdf["geometry"].iteritems():
+    for idx, geom in gdf["geometry"].items():
         mask = geometry_mask(
             [geom], pycno_array.shape, transform=transform, invert=True
         )

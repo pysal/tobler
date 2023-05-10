@@ -22,9 +22,7 @@ def area_join(source_df, target_df, variables):
     -------
     joined : geopandas.GeoDataFrame
          target_df GeoDataFrame with joined variables as additional columns
-
-
-
+    
     """
     if not pd.api.types.is_list_like(variables):
         variables = [variables]
@@ -34,7 +32,7 @@ def area_join(source_df, target_df, variables):
             raise ValueError(f"Column '{v}' already present in target_df.")
 
     target_df = target_df.copy()
-    target_ix, source_ix = source_df.sindex.query_bulk(
+    target_ix, source_ix = source_df.sindex.query(
         target_df.geometry, predicate="intersects"
     )
     areas = (

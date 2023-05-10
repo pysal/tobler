@@ -1,3 +1,0 @@
-include MANIFEST.in LICENSE.txt requirements_docs.txt requirements_tests.txt requirements.txt
-include versioneer.py
-include tobler/_version.py

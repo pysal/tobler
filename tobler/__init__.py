@@ -3,11 +3,10 @@
 =================================================
 
 """
-from . import area_weighted
-from . import dasymetric
-from . import model
-from . import util
-from . import pycno
+import contextlib
+from importlib.metadata import PackageNotFoundError, version
 
-from . import _version
-__version__ = _version.get_versions()['version']
+from . import area_weighted, dasymetric, model, pycno, util
+
+with contextlib.suppress(PackageNotFoundError):
+    __version__ = version("tobler")
