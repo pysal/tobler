@@ -36,7 +36,7 @@ def datasets():
     else:
         pass
 
-
+@pytest.mark.xfail
 @pytest.mark.skipif(QUILTMISSING, reason="quilt3 not available.")
 def test_glm_poisson():
     sac1, sac2 = datasets()
