@@ -20,7 +20,7 @@ def _chunk_dfs(geoms_to_chunk, geoms_full, n_jobs):
 
 
 def _index_n_query(geoms1, geoms2):
-    # Pick largest for STRTree, query_bulk the smallest
+    # Pick largest for STRTree, query the smallest
     if geoms1.shape[0] > geoms2.shape[0]:
         large = geoms1
         small = geoms2
@@ -28,7 +28,7 @@ def _index_n_query(geoms1, geoms2):
         large = geoms2
         small = geoms1
     # Build tree + query
-    qry_polyIDs, tree_polyIDs = large.sindex.query_bulk(small, predicate="intersects")
+    qry_polyIDs, tree_polyIDs = large.sindex.query(small, predicate="intersects")
     # Remap IDs to global
     large_global_ids = large.iloc[tree_polyIDs].index.values
     small_global_ids = small.iloc[qry_polyIDs].index.values
@@ -60,7 +60,7 @@ def _area_tables_binning_parallel(source_df, target_df, n_jobs=-1):
 
     NOTE: currently, the largest df is chunked and the other one is shipped in
     full to each core; within each process, the spatial index is built for the
-    largest set of geometries, and the other one used for `query_bulk`
+    largest set of geometries, and the other one used for `query`
 
     Parameters
     ----------
@@ -178,9 +178,9 @@ def _area_tables_binning(source_df, target_df, spatial_index):
             spatial_index = "target"
 
     if spatial_index == "source":
-        ids_tgt, ids_src = df1.sindex.query_bulk(df2.geometry, predicate="intersects")
+        ids_tgt, ids_src = df1.sindex.query(df2.geometry, predicate="intersects")
     elif spatial_index == "target":
-        ids_src, ids_tgt = df2.sindex.query_bulk(df1.geometry, predicate="intersects")
+        ids_src, ids_tgt = df2.sindex.query(df1.geometry, predicate="intersects")
     else:
         raise ValueError(
             f"'{spatial_index}' is not a valid option. Use 'auto', 'source' or 'target'."

@@ -32,7 +32,7 @@ requires-python = ">=3.9"
 dependencies = [
     "numpy",
     "pandas",
-    "geopandas",
+    "geopandas >=0.13",
     "rasterio",
     "scipy",
     "statsmodels",

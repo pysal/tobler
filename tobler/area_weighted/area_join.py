@@ -32,7 +32,7 @@ def area_join(source_df, target_df, variables):
             raise ValueError(f"Column '{v}' already present in target_df.")
 
     target_df = target_df.copy()
-    target_ix, source_ix = source_df.sindex.query_bulk(
+    target_ix, source_ix = source_df.sindex.query(
         target_df.geometry, predicate="intersects"
     )
     areas = (
