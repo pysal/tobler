@@ -9,9 +9,11 @@ except ImportError:
     QUILTMISSING = True
 
 import os
-from libpysal.examples import load_example
-from tobler.model import glm
+
 import pytest
+from libpysal.examples import load_example
+
+from tobler.model import glm
 
 
 def datasets():
@@ -36,7 +38,6 @@ def datasets():
     else:
         pass
 
-@pytest.mark.xfail
 @pytest.mark.skipif(QUILTMISSING, reason="quilt3 not available.")
 def test_glm_poisson():
     sac1, sac2 = datasets()
