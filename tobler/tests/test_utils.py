@@ -49,7 +49,7 @@ def test_h3fy_clip():
     )
 
 
-@pytest.mark.skipif(platform.system() == "Windows", reason='untested on windows')
+@pytest.mark.skipif(platform.system() == "Windows", reason='Unknown precision error on Windows. See #174 for details')
 def test_h3_multipoly():
     va = geopandas.read_file(load_example("virginia").get_path("virginia.shp"))
     va = h3fy(va)
