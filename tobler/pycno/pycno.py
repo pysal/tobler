@@ -157,7 +157,7 @@ def pycno(
         if handle_null:
             sm = astroSmooth2d(value_array)
         else:
-            sm = smooth2d(value_array)
+            sm = smooth2D(value_array)
 
         # Relaxation to prevent overcompensation in the smoothing step
         value_array = value_array * r + (1.0 - r) * sm
