@@ -2,6 +2,9 @@ name: tobler
 channels:
   - conda-forge
 dependencies:
+  - dask-geopandas
+  - dask
+  - distributed
   - jupyterlab
   - numpy
   - geopandas >=0.13
