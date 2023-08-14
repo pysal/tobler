@@ -102,7 +102,8 @@ def area_interpolate_dask(
             'auto',
             1,
             categorical_variables,
-            category_vars
+            category_vars,
+            False
         )
         lr = source_dgdf.spatial_partitions.iloc[l]
         rr = target_dgdf.spatial_partitions.iloc[r]
@@ -129,6 +130,7 @@ def area_interpolate_dask(
         n_jobs=1,
         categorical_variables=categorical_variables,
         category_vars=category_vars
+        categorical_frequency=False
     )
     # Build output table
     transferred = dask_geopandas.GeoDataFrame(
@@ -237,6 +239,7 @@ def id_area_interpolate(
         spatial_index=spatial_index,
         n_jobs=n_jobs,
         categorical_variables=categorical_variables,
+        categorical_frequency=False
     )
     estimates[id_col] = target_df[id_col].values
     

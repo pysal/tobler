@@ -212,6 +212,7 @@ def _area_interpolate_binning(
     spatial_index="auto",
     n_jobs=1,
     categorical_variables=None,
+    categorical_frequency=True
 ):
     """
     Area interpolation for extensive, intensive and categorical variables.
@@ -249,6 +250,11 @@ def _area_interpolate_binning(
         available. If `table` is passed, this is ignored.
     categorical_variables : list
         [Optional. Default=None] Columns in dataframes for categorical variables
+    categorical_frequency : Boolean
+        [Optional. Default=True] If True, `estimates` returns the frequency of each
+        value in a categorical variable in every polygon of `target_df` (proportion of
+        area). If False, `estimates` contains the area in every polygon of `target_df`
+        that is occupied by each value of the categorical
 
     Returns
     -------
@@ -357,7 +363,8 @@ def _area_interpolate_binning(
                 )[0]
 
         categorical = pd.DataFrame(categorical)
-        categorical = categorical.div(target_df.area.values, axis="rows")
+        if categorical_frequency is True:
+            categorical = categorical.div(target_df.area.values, axis="rows")
 
     if extensive_variables:
         dfs.append(extensive)
