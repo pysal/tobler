@@ -10,8 +10,6 @@ from dask.base import tokenize
 from dask.highlevelgraph import HighLevelGraph
 from .area_interpolate import _area_interpolate_binning as area_interpolate
 
-from dask.distributed import print as dprint
-
 def area_interpolate_dask(
     source_dgdf,
     target_dgdf,
@@ -162,7 +160,6 @@ def area_interpolate_dask(
             .agg({v: 'sum' for v in category_vars})
         )    
         out = out.join(out_categorical, on=id_col)
-    #return transferred
     return out
 
 def id_area_interpolate(
@@ -248,5 +245,4 @@ def id_area_interpolate(
         estimates = estimates.join(
             pandas.DataFrame(index=estimates.index, columns=category_vars_to_add)
         )    
-    #dprint(f"######################\n{estimates}\n######################")
     return estimates
