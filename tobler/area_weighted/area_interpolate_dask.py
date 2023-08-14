@@ -17,6 +17,7 @@ def area_interpolate_dask(
     extensive_variables=None,
     intensive_variables=None,
     categorical_variables=None,
+    categorical_frequency=True
 ):
     '''
     Out-of-core and parallel area interpolation for categorical variables.
@@ -45,6 +46,12 @@ def area_interpolate_dask(
         [Optional. Default=None] Columns in `source_dgdf` for categorical variables       
         IMPORTANT: categorical variables must be of type `'category[known]'`. This is so
         all categories are known ahead of time and Dask can run lazily.
+    categorical_frequency : Boolean
+        [Optional. Default=True] If True, `estimates` returns the frequency of each
+        value in a categorical variable in every polygon of `target_df` (proportion of
+        area). If False, `estimates` contains the area in every polygon of `target_df`
+        that is occupied by each value of the categorical
+
 
     Returns
     -------
@@ -101,7 +108,6 @@ def area_interpolate_dask(
             1,
             categorical_variables,
             category_vars,
-            False
         )
         lr = source_dgdf.spatial_partitions.iloc[l]
         rr = target_dgdf.spatial_partitions.iloc[r]
@@ -127,8 +133,7 @@ def area_interpolate_dask(
         spatial_index='auto',
         n_jobs=1,
         categorical_variables=categorical_variables,
-        category_vars=category_vars
-        categorical_frequency=False
+        category_vars=category_vars,
     )
     # Build output table
     transferred = dask_geopandas.GeoDataFrame(
@@ -162,6 +167,11 @@ def area_interpolate_dask(
             .agg({v: 'sum' for v in category_vars})
         )    
         out = out.join(out_categorical, on=id_col)
+        if categorical_frequency is True:
+            cols = out_categorical.columns.tolist()
+            out[cols] = out[cols].div(
+                out.area, axis='index'
+            )
     return out
 
 def id_area_interpolate(
