@@ -1,9 +1,11 @@
 """test interpolation functions."""
 import geopandas
+import dask_geopandas
 
 from libpysal.examples import load_example
 from numpy.testing import assert_almost_equal
 from tobler.area_weighted import area_interpolate
+from tobler.area_weighted import area_interpolate_dask
 from tobler.area_weighted.area_interpolate import _area_tables_binning
 from geopandas.testing import assert_geodataframe_equal
 import pytest
@@ -65,6 +67,32 @@ def test_area_interpolate_intensive():
 def test_area_interpolate_categorical():
     sac1, sac2 = datasets()
     area = area_interpolate(
+        source_df=sac1,
+        target_df=sac2,
+        extensive_variables=["TOT_POP"],
+        intensive_variables=["pct_poverty"],
+        categorical_variables=["animal"],
+        n_jobs=1,
+    )
+    assert_almost_equal(area.animal_cat.sum(), 32, decimal=0)
+    assert_almost_equal(area.animal_dog.sum(), 19, decimal=0)
+    assert_almost_equal(area.animal_donkey.sum(), 22, decimal=0)
+    assert_almost_equal(area.animal_wombat.sum(), 23, decimal=0)
+    assert_almost_equal(area.animal_capybara.sum(), 20, decimal=0)
+
+
+def test_area_interpolate_categorical_dask():
+    sac1, sac2 = datasets()
+    sac1['animal'] = sac1['animal'].astype('category')
+    dsac1 = (
+            dask_geopandas.from_geopandas(sac1, npartitions=2)
+            .spatial_shuffle(by='hilbert', shuffle='tasks')
+    )
+    dsac2 = (
+            dask_geopandas.from_geopandas(sac2, npartitions=2)
+            .spatial_shuffle(by='hilbert', shuffle='tasks')
+    )
+    area = area_interpolate_dask.area_interpolate_dask(
         source_df=sac1,
         target_df=sac2,
         extensive_variables=["TOT_POP"],
