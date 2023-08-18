@@ -93,8 +93,8 @@ def test_area_interpolate_categorical_dask():
             .spatial_shuffle(by='hilbert', shuffle='tasks')
     )
     area = area_interpolate_dask(
-        source_dgdf=sac1,
-        target_dgdf=sac2,
+        source_dgdf=dsac1,
+        target_dgdf=dsac2,
         id_col='ZIP',
         categorical_variables=["animal"],
     )
