@@ -95,6 +95,7 @@ def test_area_interpolate_categorical_dask():
     area = area_interpolate_dask(
         source_dgdf=sac1,
         target_dgdf=sac2,
+        id_col='ZIP',
         categorical_variables=["animal"],
     )
     assert_almost_equal(area.animal_cat.sum(), 32, decimal=0)
