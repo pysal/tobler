@@ -97,7 +97,7 @@ def test_area_interpolate_categorical_dask():
         target_dgdf=dsac2,
         id_col='ZIP',
         categorical_variables=["animal"],
-    )
+    ).compute()
     assert_almost_equal(area.animal_cat.sum(), 32, decimal=0)
     assert_almost_equal(area.animal_dog.sum(), 19, decimal=0)
     assert_almost_equal(area.animal_donkey.sum(), 22, decimal=0)
