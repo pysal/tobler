@@ -4,11 +4,18 @@ Area Weighted Interpolation, out-of-core and parallel through Dask
 
 import pandas
 import geopandas
-import dask_geopandas
 import numpy as np
-from dask.base import tokenize
-from dask.highlevelgraph import HighLevelGraph
 from .area_interpolate import _area_interpolate_binning as area_interpolate
+try:
+    import dask_geopandas
+    from dask.base import tokenize
+    from dask.highlevelgraph import HighLevelGraph
+except ImportError:
+    raise ImportError(
+        "Area interpolation with Dask requires `dask` and "
+        "`dask_geopandas` installed to run. Please install them "
+        "before importing this functionality."
+    )
 
 def area_interpolate_dask(
     source_dgdf,
