@@ -93,12 +93,9 @@ def test_area_interpolate_categorical_dask():
             .spatial_shuffle(by='hilbert', shuffle='tasks')
     )
     area = area_interpolate_dask(
-        source_df=sac1,
-        target_df=sac2,
-        extensive_variables=["TOT_POP"],
-        intensive_variables=["pct_poverty"],
+        source_dgdf=sac1,
+        target_dgdf=sac2,
         categorical_variables=["animal"],
-        n_jobs=1,
     )
     assert_almost_equal(area.animal_cat.sum(), 32, decimal=0)
     assert_almost_equal(area.animal_dog.sum(), 19, decimal=0)
