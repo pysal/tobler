@@ -3,6 +3,9 @@ channels:
   - conda-forge
 dependencies:
   - python=3.10
+  - dask
+  - dask-geopandas
+  - distributed
   - jupyterlab
   - numpy
   - geopandas

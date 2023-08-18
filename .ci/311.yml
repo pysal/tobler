@@ -4,6 +4,9 @@ channels:
 dependencies:
   - python=3.11
   - jupyterlab
+  - dask
+  - dask-geopandas
+  - distributed
   - numpy
   - geopandas
   - pandas
