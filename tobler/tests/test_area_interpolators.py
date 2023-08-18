@@ -92,7 +92,7 @@ def test_area_interpolate_categorical_dask():
             dask_geopandas.from_geopandas(sac2, npartitions=2)
             .spatial_shuffle(by='hilbert', shuffle='tasks')
     )
-    area = area_interpolate_dask.area_interpolate_dask(
+    area = area_interpolate_dask(
         source_df=sac1,
         target_df=sac2,
         extensive_variables=["TOT_POP"],
