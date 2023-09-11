@@ -3,13 +3,14 @@ Area Weighted Interpolation
 
 """
 
-import numpy as np
-import geopandas as gpd
-from scipy.sparse import diags, coo_matrix
-import pandas as pd
 import os
 
-from tobler.util.util import _check_crs, _nan_check, _inf_check
+import geopandas as gpd
+import numpy as np
+import pandas as pd
+from scipy.sparse import coo_matrix, diags
+
+from tobler.util.util import _check_crs, _inf_check, _nan_check
 
 
 def _chunk_dfs(geoms_to_chunk, geoms_full, n_jobs):
@@ -212,7 +213,7 @@ def _area_interpolate_binning(
     spatial_index="auto",
     n_jobs=1,
     categorical_variables=None,
-    categorical_frequency=True
+    categorical_frequency=True,
 ):
     """
     Area interpolation for extensive, intensive and categorical variables.
@@ -376,4 +377,5 @@ def _area_interpolate_binning(
     df = pd.concat(dfs, axis=1)
     df["geometry"] = target_df[target_df.geometry.name].reset_index(drop=True)
     df = gpd.GeoDataFrame(df.replace(np.inf, np.nan))
-    return df
+
+    return df.set_index(target_df.index)
