@@ -125,7 +125,6 @@ def pycno(
         return padarray[1:-1, 1:-1]
 
     def correct2Da(data):
-
         for idx, val in gdf[value_field].items():
             # Create zone mask from feature_array
             mask = masked_where(feature_array == idx, feature_array).mask
@@ -137,7 +136,6 @@ def pycno(
         return data
 
     def correct2Dm(data):
-
         for idx, val in gdf[value_field].items():
             # Create zone mask from feature_array
             mask = masked_where(feature_array == idx, feature_array).mask
@@ -186,7 +184,6 @@ def pycno(
 
 
 def save_pycno(pycno_array, transform, crs, filestring, driver="GTiff"):
-
     """Saves a numpy array as a raster, largely a helper function for pycno
     Args:
         pycno_array (numpy array): 2D numpy array of pycnophylactic surface
@@ -218,7 +215,6 @@ def save_pycno(pycno_array, transform, crs, filestring, driver="GTiff"):
 
 
 def extract_values(pycno_array, gdf, transform, fieldname="Estimate"):
-
     """Extract raster value sums according to a provided polygon geodataframe
     Args:
         pycno_array (numpy array): 2D numpy array of pycnophylactic surface.
@@ -238,7 +234,7 @@ def extract_values(pycno_array, gdf, transform, fieldname="Estimate"):
             [geom], pycno_array.shape, transform=transform, invert=True
         )
         estimates.append(nansum(pycno_array[mask]))
-    out = pd.Series(estimates)
+    out = pd.Series(estimates, index=gdf.index)
     return out
 
 
