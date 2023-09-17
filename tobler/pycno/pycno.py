@@ -28,11 +28,6 @@ from rasterio.features import rasterize
 def pycno(
     gdf, value_field, cellsize, r=0.2, handle_null=True, converge=3, verbose=True
 ):
-    try:
-        from astropy.convolution import convolve as astro_convolve
-    except (ImportError, ModuleNotFoundError):
-        raise ImportError("Pycnophylactic interpolation requires the astropy package")
-
     """Returns a smooth pycnophylactic interpolation raster for a given geodataframe
 
     Args:
@@ -115,6 +110,13 @@ def pycno(
 
     # The convolution function from astropy handles nulls.
     def astroSmooth2d(data):
+        try:
+            from astropy.convolution import convolve as astro_convolve
+        except (ImportError, ModuleNotFoundError) as err:
+            raise ImportError(
+                "Pycnophylactic interpolation with handle_null=True "
+                "requires the astropy package"
+            ) from err
         s1d = lambda s: astro_convolve(s, [0.5, 0, 0.5])
         # pad the data array with the mean value
         padarray = pad(data, 1, "constant", constant_values=nanmean(data))
