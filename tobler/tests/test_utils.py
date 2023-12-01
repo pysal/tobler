@@ -4,6 +4,7 @@ import platform
 
 import geopandas
 import pytest
+import shapely
 from libpysal.examples import load_example
 from numpy.testing import assert_almost_equal
 
@@ -54,3 +55,10 @@ def test_h3_multipoly():
     va = geopandas.read_file(load_example("virginia").get_path("virginia.shp"))
     va = h3fy(va)
     assert_almost_equal(va.to_crs(2284).unary_union.area, 1106844905155.1118, decimal=0)
+
+
+def test_h3fy_3d():
+    gdf = sac1.copy()
+    gdf.geometry = shapely.force_3d(gdf.geometry)
+    sac_hex = h3fy(gdf, return_geoms=True)
+    assert sac_hex.shape == (364, 1)

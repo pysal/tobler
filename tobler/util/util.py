@@ -5,6 +5,7 @@ from warnings import warn
 import geopandas
 import numpy as np
 import pandas
+import shapely
 from shapely.geometry import Polygon
 
 
@@ -138,7 +139,7 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
         else:
             source = source.to_crs(4326)
 
-    source_unary = source.unary_union
+    source_unary = shapely.force_2d(source.unary_union)
 
     if type(source_unary) == Polygon:
         hexagons = _to_hex(
