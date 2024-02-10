@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Generating h3 Hexgrids from GeoDataFrames &#8212; tobler v0.1.dev1+g185123f Manual</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Extracting Urban Features from Raster Data" href="extract_urban_areas.html" />
+    <link rel="prev" title="Estimation Walkthrough" href="03_areal_interpolation_details.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          tobler</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1.dev1+g185123f</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../installation.html">Installation</a></li>
+                <li><a href="../tutorial.html">Tutorial</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-a-released-version">Installing a released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-a-development-from-source">Installing a development from source</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../tutorial.html">Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01_interpolation_methods_overview.html">Overview of <code class="docutils literal notranslate"><span class="pre">tobler</span></code>s Interpolation Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_areal_interpolation_example.html">Areal interpolation: Tracts to Voting Precincts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_areal_interpolation_details.html">Estimation Walkthrough</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Generating h3 Hexgrids from GeoDataFrames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extract_urban_areas.html">Extracting Urban Features from Raster Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binary_dasymetric.html">Implementing Binary Dasymetric Interpolation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#area-weighted">Area Weighted</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#dasymetric">Dasymetric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#model">Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#pycnophylactic">Pycnophylactic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#util">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Generating h3 Hexgrids from GeoDataFrames</a><ul>
+<li><a class="reference internal" href="#Getting-data-from-CenPy">Getting data from CenPy</a></li>
+<li><a class="reference internal" href="#Creating-Hexgrids-with-the-h3fy-function">Creating Hexgrids with the <code class="docutils literal notranslate"><span class="pre">h3fy</span></code> function</a></li>
+<li><a class="reference internal" href="#Interpolating-to-a-hexgrid">Interpolating to a hexgrid</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars and line breaks on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+    white-space: pre;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt .copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+.jp-RenderedHTMLCommon table,
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+.jp-RenderedHTMLCommon thead,
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+.jp-RenderedHTMLCommon tr,
+.jp-RenderedHTMLCommon th,
+.jp-RenderedHTMLCommon td,
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+.jp-RenderedHTMLCommon th,
+div.rendered_html th {
+  font-weight: bold;
+}
+.jp-RenderedHTMLCommon tbody tr:nth-child(odd),
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+.jp-RenderedHTMLCommon tbody tr:hover,
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<section id="Generating-h3-Hexgrids-from-GeoDataFrames">
+<h1>Generating h3 Hexgrids from GeoDataFrames<a class="headerlink" href="#Generating-h3-Hexgrids-from-GeoDataFrames" title="Permalink to this heading">¶</a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import geopandas  as gpd
+import matplotlib.pyplot as plt
+import pandas
+import libpysal
+from tobler.util import h3fy
+from tobler.area_weighted import area_interpolate
+%load_ext watermark
+%watermark -v -a &quot;author: eli knaap&quot; -d -u -p tobler,cenpy,geopandas
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Author: author: eli knaap
+
+Last updated: 2021-01-18
+
+Python implementation: CPython
+Python version       : 3.8.6
+IPython version      : 7.19.0
+
+tobler   : 0.5.4
+cenpy    : 1.0.0.post4
+geopandas: 0.8.1
+
+</pre></div></div>
+</div>
+<p><strong>Note</strong>: This notebook relies on functionality from the <code class="docutils literal notranslate"><span class="pre">`contextily</span></code> &lt;<a class="reference external" href="https://contextily.readthedocs.io/en/latest/">https://contextily.readthedocs.io/en/latest/</a>&gt;`__ package that provides convenient basemaps for geospatial plots, and the <code class="docutils literal notranslate"><span class="pre">`cenpy</span></code> &lt;<a class="reference external" href="https://cenpy-devs.github.io/cenpy/">https://cenpy-devs.github.io/cenpy/</a>&gt;`__ package that provide a convenient interface to the U.S. Census API. These can be installed with</p>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">contextily</span> <span class="pre">cenpy</span></code></div>
+<div class="line">or</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">contextily</span> <span class="pre">cenpy</span> <span class="pre">-c</span> <span class="pre">conda-forge</span></code></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import contextily as ctx
+from cenpy import products
+</pre></div>
+</div>
+</div>
+<section id="Getting-data-from-CenPy">
+<h2>Getting data from CenPy<a class="headerlink" href="#Getting-data-from-CenPy" title="Permalink to this heading">¶</a></h2>
+<p>To begin with, we will fetch some data from the 2017 ACS</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>acs = products.ACS(2017)
+</pre></div>
+</div>
+</div>
+<p>We’re looking for median home value, so first we will filter the ACS tables by those containing “value” in the description so we can find the correct variable code</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>acs.filter_tables(&#39;VALUE&#39;, by=&#39;description&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>description</th>
+      <th>columns</th>
+    </tr>
+    <tr>
+      <th>table_name</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>B25075</th>
+      <td>VALUE</td>
+      <td>[B25075_001E, B25075_002E, B25075_003E, B25075...</td>
+    </tr>
+    <tr>
+      <th>B25076</th>
+      <td>LOWER VALUE QUARTILE (DOLLARS)</td>
+      <td>[B25076_001E]</td>
+    </tr>
+    <tr>
+      <th>B25077</th>
+      <td>MEDIAN VALUE (DOLLARS)</td>
+      <td>[B25077_001E]</td>
+    </tr>
+    <tr>
+      <th>B25078</th>
+      <td>UPPER VALUE QUARTILE (DOLLARS)</td>
+      <td>[B25078_001E]</td>
+    </tr>
+    <tr>
+      <th>B25079</th>
+      <td>AGGREGATE VALUE (DOLLARS) BY AGE OF HOUSEHOLDER</td>
+      <td>[B25079_001E, B25079_002E, B25079_003E, B25079...</td>
+    </tr>
+    <tr>
+      <th>B25080</th>
+      <td>AGGREGATE VALUE (DOLLARS) BY UNITS IN STRUCTURE</td>
+      <td>[B25080_001E, B25080_002E, B25080_003E, B25080...</td>
+    </tr>
+    <tr>
+      <th>B25082</th>
+      <td>AGGREGATE VALUE (DOLLARS) BY MORTGAGE STATUS</td>
+      <td>[B25082_001E, B25082_002E, B25082_003E]</td>
+    </tr>
+    <tr>
+      <th>B25083</th>
+      <td>MEDIAN VALUE (DOLLARS) FOR MOBILE HOMES</td>
+      <td>[B25083_001E]</td>
+    </tr>
+    <tr>
+      <th>B25096</th>
+      <td>MORTGAGE STATUS BY VALUE</td>
+      <td>[B25096_001E, B25096_002E, B25096_003E, B25096...</td>
+    </tr>
+    <tr>
+      <th>B25097</th>
+      <td>MORTGAGE STATUS BY MEDIAN VALUE (DOLLARS)</td>
+      <td>[B25097_001E, B25097_002E, B25097_003E]</td>
+    </tr>
+    <tr>
+      <th>B25100</th>
+      <td>MORTGAGE STATUS BY RATIO OF VALUE TO HOUSEHOLD...</td>
+      <td>[B25100_001E, B25100_002E, B25100_003E, B25100...</td>
+    </tr>
+    <tr>
+      <th>B25107</th>
+      <td>MEDIAN VALUE BY YEAR STRUCTURE BUILT</td>
+      <td>[B25107_001E, B25107_002E, B25107_003E, B25107...</td>
+    </tr>
+    <tr>
+      <th>B25108</th>
+      <td>AGGREGATE VALUE (DOLLARS) BY YEAR STRUCTURE BUILT</td>
+      <td>[B25108_001E, B25108_002E, B25108_003E, B25108...</td>
+    </tr>
+    <tr>
+      <th>B25109</th>
+      <td>MEDIAN VALUE BY YEAR HOUSEHOLDER MOVED INTO UNIT</td>
+      <td>[B25109_001E, B25109_002E, B25109_003E, B25109...</td>
+    </tr>
+    <tr>
+      <th>B25110</th>
+      <td>AGGREGATE VALUE (DOLLARS) BY YEAR HOUSEHOLDER ...</td>
+      <td>[B25110_001E, B25110_002E, B25110_003E, B25110...</td>
+    </tr>
+    <tr>
+      <th>B25121</th>
+      <td>HOUSEHOLD INCOME IN THE PAST 12 MONTHS (IN 201...</td>
+      <td>[B25121_001E, B25121_002E, B25121_003E, B25121...</td>
+    </tr>
+    <tr>
+      <th>B992519</th>
+      <td>ALLOCATION OF VALUE</td>
+      <td>[B992519_001E, B992519_002E, B992519_003E]</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>The variable we’re looking for is <code class="docutils literal notranslate"><span class="pre">B25077_001E</span></code>, the median home value of each. Lets collect that data for the Washington DC metropolitan region. The next cell can take a minute or two to run, depending on the speed of your connection.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>dc = acs.from_msa(&#39;Washington-Arlington&#39;, variables=[&#39;B25077_001E&#39;])
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/Users/knaaptime/anaconda3/envs/tobler/lib/python3.8/site-packages/pyproj/crs/crs.py:53: FutureWarning: &#39;+init=&lt;authority&gt;:&lt;code&gt;&#39; syntax is deprecated. &#39;&lt;authority&gt;:&lt;code&gt;&#39; is the preferred initialization method. When making the change, be mindful of axis order changes: https://pyproj4.github.io/pyproj/stable/gotchas.html#axis-order-changes-in-proj-6
+  return _prepare_from_string(&#34; &#34;.join(pjargs))
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>dc.head()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>GEOID</th>
+      <th>geometry</th>
+      <th>B25077_001E</th>
+      <th>NAME</th>
+      <th>state</th>
+      <th>county</th>
+      <th>tract</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>51047930501</td>
+      <td>POLYGON ((-8697543.430 4642311.970, -8697525.0...</td>
+      <td>277000.0</td>
+      <td>Census Tract 9305.01, Culpeper County, Virginia</td>
+      <td>51</td>
+      <td>047</td>
+      <td>930501</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>51043010100</td>
+      <td>POLYGON ((-8692606.860 4745175.960, -8692597.2...</td>
+      <td>319600.0</td>
+      <td>Census Tract 101, Clarke County, Virginia</td>
+      <td>51</td>
+      <td>043</td>
+      <td>010100</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>51107610701</td>
+      <td>POLYGON ((-8656718.120 4739943.880, -8656659.1...</td>
+      <td>461500.0</td>
+      <td>Census Tract 6107.01, Loudoun County, Virginia</td>
+      <td>51</td>
+      <td>107</td>
+      <td>610701</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>51177020408</td>
+      <td>POLYGON ((-8654861.430 4622579.010, -8654714.2...</td>
+      <td>241500.0</td>
+      <td>Census Tract 204.08, Spotsylvania County, Virg...</td>
+      <td>51</td>
+      <td>177</td>
+      <td>020408</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>51061930402</td>
+      <td>POLYGON ((-8657404.180 4678713.200, -8657386.4...</td>
+      <td>402000.0</td>
+      <td>Census Tract 9304.02, Fauquier County, Virginia</td>
+      <td>51</td>
+      <td>061</td>
+      <td>930402</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="Creating-Hexgrids-with-the-h3fy-function">
+<h2>Creating Hexgrids with the <code class="docutils literal notranslate"><span class="pre">h3fy</span></code> function<a class="headerlink" href="#Creating-Hexgrids-with-the-h3fy-function" title="Permalink to this heading">¶</a></h2>
+<p>Using the <code class="docutils literal notranslate"><span class="pre">h3fy</span></code> function from the <code class="docutils literal notranslate"><span class="pre">tobler.util</span></code> module, we can easily generate a hexgrid covering the face of the DC Metropolitan region</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>dc_hex = h3fy(dc)
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>fig, axs = plt.subplots(1,2, figsize=(18,10))
+axs=axs.flatten()
+
+dc.plot(ax=axs[0], alpha=0.4, linewidth=1.6, edgecolor=&#39;white&#39;)
+dc_hex.plot(ax=axs[1], alpha=0.4, linewidth=1.6, edgecolor=&#39;white&#39;)
+
+axs[0].set_title(&#39;Original Tract Data&#39;)
+axs[1].set_title(&#39;Hex Grid&#39;)
+
+for i,_ in enumerate(axs):
+    ctx.add_basemap(axs[i], source=ctx.providers.Stamen.TonerLite)
+    axs[i].axis(&#39;off&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_census_to_hexgrid_15_0.png" class="no-scaled-link" src="../_images/notebooks_census_to_hexgrid_15_0.png" style="width: 1018px; height: 519px;" />
+</div>
+</div>
+<p>By altering the <code class="docutils literal notranslate"><span class="pre">resolution</span></code> parameter, we can generate grids using hexes of various sizes</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>dc_hex_large = h3fy(dc, resolution=5)
+dc_hex_small = h3fy(dc, resolution=7)
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>fig, axs = plt.subplots(1,2, figsize=(18,10))
+
+dc_hex_large.plot(ax=axs[0], alpha=0.4, linewidth=1.6, edgecolor=&#39;white&#39;)
+dc_hex_small.plot(ax=axs[1], alpha=0.4, linewidth=1.6, edgecolor=&#39;white&#39;)
+
+for ax in axs:
+    ctx.add_basemap(ax=ax, source=ctx.providers.Stamen.TonerLite)
+    ax.axis(&#39;off&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_census_to_hexgrid_18_0.png" class="no-scaled-link" src="../_images/notebooks_census_to_hexgrid_18_0.png" style="width: 1018px; height: 509px;" />
+</div>
+</div>
+<p>and by using the <code class="docutils literal notranslate"><span class="pre">clip</span></code> parameter, we can ensure that the hexgrid is does not extend beyond the borders of the input geodataframe</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>dc_hex_clipped = h3fy(dc, resolution=5, clip=True)
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>fig, ax = plt.subplots(figsize=(10,10))
+
+dc_hex_clipped.plot(ax=ax, alpha=0.4, linewidth=1.6, edgecolor=&#39;white&#39;)
+ctx.add_basemap(ax=ax, source=ctx.providers.Stamen.TonerLite)
+ax.axis(&#39;off&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(-8738395.66, -8484578.799999999, 4575391.257202434, 4837245.453466552)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_census_to_hexgrid_21_1.png" class="no-scaled-link" src="../_images/notebooks_census_to_hexgrid_21_1.png" style="width: 541px; height: 558px;" />
+</div>
+</div>
+</section>
+<section id="Interpolating-to-a-hexgrid">
+<h2>Interpolating to a hexgrid<a class="headerlink" href="#Interpolating-to-a-hexgrid" title="Permalink to this heading">¶</a></h2>
+<p>Thus, in just a few lines of code, we can estimate the value of census variables represented by a regular hexgrid</p>
+<p>here, we will estimate the median home value of each hex in the DC region using simple areal interpolation</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>dc_hex_interpolated = area_interpolate(source_df=dc, target_df=dc_hex, intensive_variables=[&#39;B25077_001E&#39;])
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/Users/knaaptime/Dropbox/projects/tobler/tobler/util/util.py:32: UserWarning: nan values in variable: B25077_001E, replacing with 0
+  warn(f&#34;nan values in variable: {column}, replacing with 0&#34;)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>fig, axs = plt.subplots(1,2, figsize=(20,10))
+dc.plot(&#39;B25077_001E&#39;, scheme=&#39;quantiles&#39;, alpha=0.5, ax=axs[0])
+
+dc_hex_interpolated.plot(&#39;B25077_001E&#39;, scheme=&#39;quantiles&#39;, alpha=0.5, ax=axs[1])
+
+axs[0].set_title(&#39;Original Data&#39;)
+axs[1].set_title(&#39;Interpolated Data&#39;)
+
+for ax in axs:
+    ctx.add_basemap(ax=ax, source=ctx.providers.Stamen.TonerLite)
+    ax.axis(&#39;off&#39;)
+plt.suptitle(&#39;Spatial Interpolation with the PySAL $\mathtt{tobler}$ package&#39;, fontsize=16)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Text(0.5, 0.98, &#39;Spatial Interpolation with the PySAL $\\mathtt{tobler}$ package&#39;)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_census_to_hexgrid_26_1.png" class="no-scaled-link" src="../_images/notebooks_census_to_hexgrid_26_1.png" style="width: 1123px; height: 629px;" />
+</div>
+</div>
+<script type="application/vnd.jupyter.widget-state+json">
+{"state": {}, "version_major": 2, "version_minor": 0}
+</script></section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="../_sources/notebooks/census_to_hexgrid.ipynb.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018-, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>(Distributed) areal interpolation &#8212; tobler v0.1.dev1+g185123f Manual</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          tobler</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1.dev1+g185123f</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../installation.html">Installation</a></li>
+                <li><a href="../tutorial.html">Tutorial</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-a-released-version">Installing a released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-a-development-from-source">Installing a development from source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="01_interpolation_methods_overview.html">Overview of <code class="docutils literal notranslate"><span class="pre">tobler</span></code>s Interpolation Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_areal_interpolation_example.html">Areal interpolation: Tracts to Voting Precincts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_areal_interpolation_details.html">Estimation Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="census_to_hexgrid.html">Generating h3 Hexgrids from GeoDataFrames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extract_urban_areas.html">Extracting Urban Features from Raster Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binary_dasymetric.html">Implementing Binary Dasymetric Interpolation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#area-weighted">Area Weighted</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#dasymetric">Dasymetric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#model">Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#pycnophylactic">Pycnophylactic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#util">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">(Distributed) areal interpolation</a><ul>
+<li><a class="reference internal" href="#Setup">Setup</a></li>
+<li><a class="reference internal" href="#Correctness">Correctness</a></li>
+<li><a class="reference internal" href="#Performance">Performance</a><ul>
+<li><a class="reference internal" href="#10x">10x</a></li>
+<li><a class="reference internal" href="#20x">20x</a></li>
+<li><a class="reference internal" href="#30x">30x</a></li>
+<li><a class="reference internal" href="#40x">40x</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars and line breaks on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+    white-space: pre;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt .copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+.jp-RenderedHTMLCommon table,
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+.jp-RenderedHTMLCommon thead,
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+.jp-RenderedHTMLCommon tr,
+.jp-RenderedHTMLCommon th,
+.jp-RenderedHTMLCommon td,
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+.jp-RenderedHTMLCommon th,
+div.rendered_html th {
+  font-weight: bold;
+}
+.jp-RenderedHTMLCommon tbody tr:nth-child(odd),
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+.jp-RenderedHTMLCommon tbody tr:hover,
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<section id="(Distributed)-areal-interpolation">
+<h1>(Distributed) areal interpolation<a class="headerlink" href="#(Distributed)-areal-interpolation" title="Permalink to this heading">¶</a></h1>
+<p>In this notebook, we compare the single-core version in <code class="docutils literal notranslate"><span class="pre">tobler.area_weighted.area_interpolate</span></code> with the distributed version in <code class="docutils literal notranslate"><span class="pre">tobler.area_weighted.area_interpolate_dask</span></code>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import os
+os.environ[&#39;USE_PYGEOS&#39;] = &#39;1&#39;
+
+import pandas
+import geopandas
+import dask_geopandas
+import tobler
+from libpysal.examples import load_example
+import numpy as np
+
+from dask.distributed import Client, LocalCluster
+</pre></div>
+</div>
+</div>
+<section id="Setup">
+<h2>Setup<a class="headerlink" href="#Setup" title="Permalink to this heading">¶</a></h2>
+<p>Load example data from <code class="docutils literal notranslate"><span class="pre">pysal</span></code>:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>c1 = load_example(&#39;Charleston1&#39;)
+c2 = load_example(&#39;Charleston2&#39;)
+
+crs = 6569  # https://epsg.io/6569
+
+tracts = geopandas.read_file(c1.get_path(&#39;sc_final_census2.shp&#39;)).to_crs(crs)
+zip_codes = geopandas.read_file(c2.get_path(&#39;CharlestonMSA2.shp&#39;)).to_crs(crs)
+</pre></div>
+</div>
+</div>
+<p>We make up a categorical variable with four classes distributed randomly across the dataset:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>rng = np.random.default_rng(seed=42)
+
+tracts[&#39;rando&#39;] = pandas.Series(
+    rng.integers(0, 4, len(tracts)), dtype=&#39;category&#39;
+)
+</pre></div>
+</div>
+</div>
+<p>We will set up a local Dask cluster so you can follow the computations on the dashboard (<code class="docutils literal notranslate"><span class="pre">http://localhost:8787</span></code> by default):</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>client = Client(LocalCluster(n_workers=8))
+</pre></div>
+</div>
+</div>
+<p>Finally, for Dask, we need to provide <code class="docutils literal notranslate"><span class="pre">dask_geopandas.GeoDataFrame</span></code> objects with spatial partitions and categorical variables properly set up:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>dtracts = (
+    dask_geopandas.from_geopandas(tracts[[&#39;geometry&#39;, &#39;rando&#39;]], npartitions=16)
+    .spatial_shuffle(by=&#39;hilbert&#39;, shuffle=&quot;tasks&quot;)
+)
+
+dzips = (
+    dask_geopandas.from_geopandas(zip_codes[[&#39;ZIP&#39;, &#39;geometry&#39;]], npartitions=16)
+    .spatial_shuffle(by=&#39;hilbert&#39;, shuffle=&quot;tasks&quot;)
+)
+</pre></div>
+</div>
+</div>
+<hr class="docutils" />
+<p><strong>IMPORTANT</strong> - At this point, only <em>categorical</em> variables are implemented, so those are what we will test.</p>
+<hr class="docutils" />
+</section>
+<section id="Correctness">
+<h2>Correctness<a class="headerlink" href="#Correctness" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Single core</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>cat_sc = tobler.area_weighted.area_interpolate(
+    tracts, zip_codes, categorical_variables=[&#39;rando&#39;]
+)
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Dask</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>cat_dk = tobler.area_weighted.area_interpolate_dask(
+    dtracts, dzips, &#39;ZIP&#39;, categorical_variables=[&#39;rando&#39;]
+).compute()
+</pre></div>
+</div>
+</div>
+<p>And we can compare both results are the same:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>a = (
+    cat_dk
+    .set_index(&#39;ZIP&#39;)
+    .reindex(zip_codes[&#39;ZIP&#39;].values)
+    .drop(columns=&#39;geometry&#39;)
+)
+
+b = (
+    cat_sc
+    .drop(columns=&#39;geometry&#39;)
+    [[&#39;rando_0&#39;, &#39;rando_1&#39;, &#39;rando_2&#39;, &#39;rando_3&#39;]]
+)
+b.index = a.index
+
+(a - b).max()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+rando_0    4.188295e-08
+rando_1    5.328575e-08
+rando_2    5.396667e-08
+rando_3    2.935173e-08
+dtype: float64
+</pre></div></div>
+</div>
+<p>The differences in the estimates for the proportions of each area start at the 8th decimal, and thus likely rounding errors derived from the different approaches used to compute the interpolation (the single core does it in one-shot, while Dask computes parts and brings them together later with a sum).</p>
+</section>
+<section id="Performance">
+<h2>Performance<a class="headerlink" href="#Performance" title="Permalink to this heading">¶</a></h2>
+<hr class="docutils" />
+<p><strong>NOTE</strong> - Timings below do <em>not</em> include computation time required for spatial shuffling and partitioning (which can be substantial with large datasets), or converting from <code class="docutils literal notranslate"><span class="pre">geopandas</span></code>. These are “sunk costs” that’ll only make this approach preferable with large datasets, although they can be computed once and the result stored in disk efficiently (e.g., as Parquet files). Having said that, when “larger” is large enough is not very large in modern terms: from a handful of thousand
+observations the gains will be substantial if several cores/workers are available.</p>
+<hr class="docutils" />
+<p>We can now time the example above:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%%timeit
+cat_sc = tobler.area_weighted.area_interpolate(
+    tracts, zip_codes, categorical_variables=[&#39;rando&#39;]
+)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+85 ms ± 1.51 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%%timeit
+cat_dk = tobler.area_weighted.area_interpolate_dask(
+    dtracts, dzips, &#39;ZIP&#39;, categorical_variables=[&#39;rando&#39;]
+).compute()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+1.41 s ± 51.9 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+</pre></div></div>
+</div>
+<p>This is notably slower (about 5x!). For such a small dataset, the overhead in distributing computations and collecting them overcomes any gains in parallelism.</p>
+<p>Now we can artificially increase the size of the datasets by concatenating them several times and re-computing (this time we only time one execution):</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sizeup = 40
+tracts_lrg = pandas.concat([tracts] * sizeup)
+zips_lrg = pandas.concat([zip_codes] * sizeup)
+print(
+    f&#39;{sizeup}x increase | N. tracts: {len(tracts_lrg)} | N. ZIPs: {len(zips_lrg)}&#39;
+)
+
+dtracts_lrg = (
+    dask_geopandas.from_geopandas(tracts_lrg[[&#39;geometry&#39;, &#39;rando&#39;]], chunksize=500)
+    .spatial_shuffle(by=&#39;hilbert&#39;, shuffle=&quot;tasks&quot;)
+)
+
+dzips_lrg = (
+    dask_geopandas.from_geopandas(zips_lrg[[&#39;ZIP&#39;, &#39;geometry&#39;]], chunksize=500)
+    .spatial_shuffle(by=&#39;hilbert&#39;, shuffle=&quot;tasks&quot;)
+)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+40x increase | N. tracts: 4680 | N. ZIPs: 1680
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/opt/conda/envs/tobler/lib/python3.11/site-packages/distributed/client.py:3161: UserWarning: Sending large graph of size 30.18 MiB.
+This may cause some slowdown.
+Consider scattering data ahead of time and using futures.
+  warnings.warn(
+/opt/conda/envs/tobler/lib/python3.11/site-packages/distributed/client.py:3161: UserWarning: Sending large graph of size 30.18 MiB.
+This may cause some slowdown.
+Consider scattering data ahead of time and using futures.
+  warnings.warn(
+</pre></div></div>
+</div>
+<p>And re-compute the timings:</p>
+<hr class="docutils" />
+<section id="10x">
+<h3>10x<a class="headerlink" href="#10x" title="Permalink to this heading">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%%time
+print(f&#39;Computing for a sizeup of {sizeup}x&#39;)
+cat_sc = tobler.area_weighted.area_interpolate(
+    tracts_lrg, zips_lrg, categorical_variables=[&#39;rando&#39;]
+)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Computing for a sizeup of 10x
+CPU times: user 7.21 s, sys: 11.3 ms, total: 7.23 s
+Wall time: 6.95 s
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%%time
+print(f&#39;Computing for a sizeup of {sizeup}x&#39;)
+cat_dk = tobler.area_weighted.area_interpolate_dask(
+    dtracts_lrg, dzips_lrg, &#39;ZIP&#39;, categorical_variables=[&#39;rando&#39;]
+).compute()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Computing for a sizeup of 10x
+CPU times: user 548 ms, sys: 18 ms, total: 566 ms
+Wall time: 3.56 s
+</pre></div></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="20x">
+<h3>20x<a class="headerlink" href="#20x" title="Permalink to this heading">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%%time
+print(f&#39;Computing for a sizeup of {sizeup}x&#39;)
+cat_sc = tobler.area_weighted.area_interpolate(
+    tracts_lrg, zips_lrg, categorical_variables=[&#39;rando&#39;]
+)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Computing for a sizeup of 20x
+CPU times: user 28.6 s, sys: 26.1 ms, total: 28.7 s
+Wall time: 27.6 s
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%%time
+print(f&#39;Computing for a sizeup of {sizeup}x&#39;)
+cat_dk = tobler.area_weighted.area_interpolate_dask(
+    dtracts_lrg, dzips_lrg, &#39;ZIP&#39;, categorical_variables=[&#39;rando&#39;]
+).compute()
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Computing for a sizeup of 20x
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/opt/conda/envs/tobler/lib/python3.11/site-packages/distributed/client.py:3161: UserWarning: Sending large graph of size 16.77 MiB.
+This may cause some slowdown.
+Consider scattering data ahead of time and using futures.
+  warnings.warn(
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+CPU times: user 1.32 s, sys: 65.3 ms, total: 1.38 s
+Wall time: 9.86 s
+</pre></div></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="30x">
+<h3>30x<a class="headerlink" href="#30x" title="Permalink to this heading">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%%time
+print(f&#39;Computing for a sizeup of {sizeup}x&#39;)
+cat_sc = tobler.area_weighted.area_interpolate(
+    tracts_lrg, zips_lrg, categorical_variables=[&#39;rando&#39;]
+)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Computing for a sizeup of 30x
+CPU times: user 1min 4s, sys: 176 ms, total: 1min 4s
+Wall time: 1min 1s
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%%time
+print(f&#39;Computing for a sizeup of {sizeup}x&#39;)
+cat_dk = tobler.area_weighted.area_interpolate_dask(
+    dtracts_lrg, dzips_lrg, &#39;ZIP&#39;, categorical_variables=[&#39;rando&#39;]
+).compute()
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Computing for a sizeup of 30x
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/opt/conda/envs/tobler/lib/python3.11/site-packages/distributed/client.py:3161: UserWarning: Sending large graph of size 25.14 MiB.
+This may cause some slowdown.
+Consider scattering data ahead of time and using futures.
+  warnings.warn(
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+CPU times: user 1.91 s, sys: 58.8 ms, total: 1.97 s
+Wall time: 14.6 s
+</pre></div></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="40x">
+<h3>40x<a class="headerlink" href="#40x" title="Permalink to this heading">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%%time
+print(f&#39;Computing for a sizeup of {sizeup}x&#39;)
+cat_sc = tobler.area_weighted.area_interpolate(
+    tracts_lrg, zips_lrg, categorical_variables=[&#39;rando&#39;]
+)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Computing for a sizeup of 40x
+CPU times: user 2min 2s, sys: 1.71 s, total: 2min 3s
+Wall time: 1min 53s
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%%time
+print(f&#39;Computing for a sizeup of {sizeup}x&#39;)
+cat_dk = tobler.area_weighted.area_interpolate_dask(
+    dtracts_lrg, dzips_lrg, &#39;ZIP&#39;, categorical_variables=[&#39;rando&#39;]
+).compute()
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Computing for a sizeup of 40x
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/opt/conda/envs/tobler/lib/python3.11/site-packages/distributed/client.py:3161: UserWarning: Sending large graph of size 33.52 MiB.
+This may cause some slowdown.
+Consider scattering data ahead of time and using futures.
+  warnings.warn(
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+CPU times: user 6.99 s, sys: 512 ms, total: 7.5 s
+Wall time: 30.5 s
+</pre></div></div>
+</div>
+</section>
+</section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="../_sources/notebooks/04_area_interpolate_dask.ipynb.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018-, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
