@@ -68,6 +68,9 @@
        
        - name: spatial versions
          run: 'python -c "import geopandas; geopandas.show_versions();"'
+
+       - name: install package
+         run: 'pip install . --no-deps'
        
        - name: run tests
          run: |
