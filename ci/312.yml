@@ -16,6 +16,8 @@ dependencies:
   - libpysal
   - tqdm
   - codecov
+  - pytest-xdist
+  - coverage
   - pytest
   - pytest-mpl
   - pytest-cov

@@ -1,4 +1,5 @@
 """test interpolation functions."""
+
 import geopandas
 import dask_geopandas
 
@@ -85,19 +86,17 @@ def test_area_interpolate_categorical():
 
 def test_area_interpolate_categorical_dask():
     sac1, sac2 = datasets()
-    sac1['animal'] = sac1['animal'].astype('category')
-    dsac1 = (
-            dask_geopandas.from_geopandas(sac1, npartitions=2)
-            .spatial_shuffle(by='hilbert', shuffle='tasks')
+    sac1["animal"] = sac1["animal"].astype("category")
+    dsac1 = dask_geopandas.from_geopandas(sac1, npartitions=2).spatial_shuffle(
+        by="hilbert", shuffle="tasks"
     )
-    dsac2 = (
-            dask_geopandas.from_geopandas(sac2, npartitions=2)
-            .spatial_shuffle(by='hilbert', shuffle='tasks')
+    dsac2 = dask_geopandas.from_geopandas(sac2, npartitions=2).spatial_shuffle(
+        by="hilbert", shuffle="tasks"
     )
     area = area_interpolate_dask(
         source_dgdf=dsac1,
         target_dgdf=dsac2,
-        id_col='ZIP',
+        id_col="ZIP",
         categorical_variables=["animal"],
     ).compute()
     assert_almost_equal(area.animal_cat.sum(), 32, decimal=0)
@@ -180,7 +179,9 @@ def test_area_interpolate_parallel():
 def test_area_tables_binning():
     sac1, sac2 = datasets()
 
-    auto = _area_tables_binning(source_df=sac1, target_df=sac2, spatial_index="auto")
+    auto = _area_tables_binning(
+        source_df=sac1, target_df=sac2, spatial_index="auto"
+    )
     source = _area_tables_binning(
         source_df=sac1, target_df=sac2, spatial_index="source"
     )

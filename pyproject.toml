@@ -64,6 +64,7 @@ tests = [
     "pytest",
     "pytest-mpl",
     "pytest-cov",
+    "pytest-xdist",
     "watermark",
     "h3",
     "astropy"

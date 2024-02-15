@@ -21,6 +21,8 @@ dependencies:
   - pytest
   - pytest-mpl
   - pytest-cov
+  - pytest-xdist
+  - coverage
   - twine
   - pip
   - h3-py
