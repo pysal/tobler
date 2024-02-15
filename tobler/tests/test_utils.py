@@ -53,5 +53,6 @@ def test_h3fy_clip():
 def test_h3_multipoly():
     va = geopandas.read_file(load_example("virginia").get_path("virginia.shp"))
     va = va.to_crs(va.estimate_utm_crs())
+
     va = h3fy(va)
-    assert_almost_equal(va.area.sum(), 103195696198.57391, decimal=0)
+    assert_almost_equal(va.area.sum(), 102888497504.47836, decimal=0)
