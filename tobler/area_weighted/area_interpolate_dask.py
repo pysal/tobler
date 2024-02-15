@@ -54,7 +54,7 @@ def area_interpolate_dask(
     Returns
     -------
     estimates : dask_geopandas.GeoDataFrame
-         new dask-geopandas geodaraframe with interpolated variables and `id_col` as
+         new dask-geopandas geodataframe with interpolated variables and `id_col` as
          columns and target_df geometry as output geometry
 
     """

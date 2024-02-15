@@ -4,6 +4,7 @@ import platform
 
 import geopandas
 import pytest
+import shapely
 from libpysal.examples import load_example
 from numpy.testing import assert_almost_equal
 

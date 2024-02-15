@@ -260,7 +260,7 @@ def _area_interpolate_binning(
     Returns
     -------
     estimates : geopandas.GeoDataFrame
-         new geodaraframe with interpolated variables as columns and target_df geometry
+         new geodataframe with interpolated variables as columns and target_df geometry
          as output geometry
 
     Notes

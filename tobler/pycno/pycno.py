@@ -274,7 +274,7 @@ def pycno_interpolate(
     Returns
     -------
     geopandas.GeoDataFrame
-        new geodaraframe with interpolated variables as columns and target_df geometry
+        new geodataframe with interpolated variables as columns and target_df geometry
         as output geometry
 
     Notes
