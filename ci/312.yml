@@ -2,15 +2,12 @@ name: test
 channels:
   - conda-forge
 dependencies:
-  - python=3.10
+  - python=3.12
   - dask
   - dask-geopandas
-  - distributed
-  - jupyterlab
   - numpy
   - geopandas
   - pandas
-  - numpy
   - rasterio
   - rasterstats
   - statsmodels
@@ -19,12 +16,18 @@ dependencies:
   - libpysal
   - tqdm
   - codecov
-  - quilt3
   - pytest
   - pytest-mpl
   - pytest-cov
   - twine
   - pip
   - h3-py
+  - mapclassify
+  - descartes
+  - sphinx>=1.4.3
+  - sphinxcontrib-bibtex==1.0.0
+  - sphinx_bootstrap_theme
+  - numpydoc
+  - nbsphinx
   - joblib
   - astropy
