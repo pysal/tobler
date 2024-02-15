@@ -178,6 +178,8 @@ def test_area_interpolate_parallel():
 
 def test_area_tables_binning():
     sac1, sac2 = datasets()
+    sac1 = sac1.to_crs(4326)
+    sac2 = sac2.to_crs(4326)
 
     auto = _area_tables_binning(
         source_df=sac1, target_df=sac2, spatial_index="auto"
