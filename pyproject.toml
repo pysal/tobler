@@ -56,7 +56,8 @@ docs = [
     "sphinxcontrib-bibtex",
     "sphinx_bootstrap_theme",
     "mkdocs-jupyter",
-    "myst-parser"
+    "myst-parser",
+    "nbsphinx-link"
 ]
 tests = [
     "codecov",
