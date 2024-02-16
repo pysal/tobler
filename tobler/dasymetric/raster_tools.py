@@ -2,18 +2,19 @@
 
 import ast
 import multiprocessing
+import warnings
 
 import geopandas as gpd
 import numpy as np
 import pandas as pd
 import rasterio as rio
+import rasterstats as rs
 from joblib import Parallel, delayed
 from rasterio import features
-from shapely.geometry import shape
 from rasterio.mask import mask
-import warnings
+from shapely.geometry import shape
+
 from ..util.util import _check_presence_of_crs
-import rasterstats as rs
 
 
 def _chunk_dfs(geoms_to_chunk, n_jobs):
@@ -104,8 +105,7 @@ def extract_raster_features(
     if n_jobs == -1:
         n_jobs = multiprocessing.cpu_count()
     with rio.open(raster_path) as src:
-
-        raster_crs = src.crs.data
+        raster_crs = src.crs.to_dict()
         gdf = gdf.to_crs(raster_crs)
         geomask = [gdf.unary_union.__geo_interface__]
 

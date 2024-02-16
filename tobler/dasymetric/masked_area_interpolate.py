@@ -1,8 +1,9 @@
+from warnings import warn
+
 import geopandas as gpd
 
 from ..area_weighted import area_interpolate
 from .raster_tools import extract_raster_features
-from warnings import warn
 
 
 def masked_area_interpolate(
