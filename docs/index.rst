@@ -10,7 +10,7 @@
     <div class="container-fluid">
       <div class="row equal-height">
         <div class="col-lg-4">
-            <a href="http://nbviewer.jupyter.org/github/pysal/tobler/blob/master/notebooks/01_interpolation_methods_overview.ipynb" class="thumbnail">
+            <a href="http://nbviewer.jupyter.org/github/pysal/tobler/blob/main/notebooks/01_interpolation_methods_overview.ipynb" class="thumbnail">
                 <img src="_static/images/tobler2.png" class="img-responsive center-block">
                 <div class="caption text-center">
                 <h6>Extensive variables</h6>
@@ -18,7 +18,7 @@
             </a>
         </div>
         <div class="col-lg-4">
-            <a href="http://nbviewer.jupyter.org/github/pysal/tobler/blob/master/notebooks/01_interpolation_methods_overview.ipynb" class="thumbnail">
+            <a href="http://nbviewer.jupyter.org/github/pysal/tobler/blob/main/notebooks/01_interpolation_methods_overview.ipynb" class="thumbnail">
                 <img src="_static/images/tobler3.png" class="img-responsive center-block">
                 <div class="caption text-center">
                 <h6>Intensive variables</h6>
@@ -26,7 +26,7 @@
             </a>
         </div>
         <div class="col-lg-4">
-            <a href="http://nbviewer.jupyter.org/github/pysal/tobler/blob/master/notebooks/census_to_hexgrid.ipynb" class="thumbnail">
+            <a href="http://nbviewer.jupyter.org/github/pysal/tobler/blob/main/notebooks/census_to_hexgrid.ipynb" class="thumbnail">
                 <img src="_static/images/notebooks_census_to_hexgrid_25_1.png" class="img-responsive center-block">
                 <div class="caption text-center">
                 <h6>Hexgrid Generation</h6>
