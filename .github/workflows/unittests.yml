@@ -53,14 +53,7 @@
          with:
            environment-file: ${{ matrix.environment-file }}
            micromamba-version: 'latest'
-        
-       ##############################################################################
-       #- name: install pulp via pip
-       #  run: |
-       #    pip install pulp
-       #    pulptest
-       ##############################################################################
-       
+
        - name: environment info
          run: |
            micromamba info

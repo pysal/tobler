@@ -25,7 +25,6 @@ dependencies:
   - pip
   - h3-py
   - mapclassify
-  - descartes
   - sphinx>=1.4.3
   - sphinxcontrib-bibtex==1.0.0
   - sphinx_bootstrap_theme
