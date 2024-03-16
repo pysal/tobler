@@ -2,7 +2,7 @@
 <img src="docs/figs/tobler_long.png" height="200px">
 </p>
 
-![CI Tests](https://github.com/pysal/tobler/workflows/Unit%20Tests/badge.svg)
+[![Continuous Integration](https://github.com/pysal/tobler/actions/workflows/unittests.yml/badge.svg)](https://github.com/pysal/tobler/actions/workflows/unittests.yml)
 [![codecov](https://codecov.io/gh/pysal/tobler/branch/master/graph/badge.svg?token=XO4SilfBEb)](https://codecov.io/gh/pysal/tobler)![PyPI - Python Version](https://img.shields.io/pypi/pyversions/tobler)
 ![PyPI](https://img.shields.io/pypi/v/tobler)
 ![Conda (channel only)](https://img.shields.io/conda/vn/conda-forge/tobler)
