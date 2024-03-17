@@ -40,7 +40,9 @@ extensions = [  #'sphinx_gallery.gen_gallery',
     # 'recommonmark',
     #'sphinx.ext.napoleon',
     "matplotlib.sphinxext.plot_directive",
-    "nbsphinx"]
+    "sphinxcontrib.bibtex",
+    "nbsphinx",
+    "nbsphinx_link"]
 
 
 # sphinx_gallery_conf = {
@@ -80,7 +82,7 @@ release = tobler.__version__
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -107,20 +109,22 @@ html_title = "%s v%s Manual" % (project, version)
 # Path should be relative to the ``_static`` files directory.
 # html_logo = "_static/images/CGS_logo.jpg"
 # html_logo = "_static/images/CGS_logo_green.png"
-html_logo = "figs/tobler.svg"
-html_favicon = "figs/tobler.ico"
+html_logo = "figs/tobler_long.svg"
+#html_favicon = "figs/tobler.ico"
 
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
+bibtex_bibfiles = "_static/references.bib"
+
 html_theme_options = {
     # Navigation bar title. (Default: ``project`` value)
     "navbar_title": "tobler",
     # Render the next and previous page links in navbar. (Default: true)
     "navbar_sidebarrel": False,
-    # Render the current pages TOC in the navbar. (Default: true)
+    # Render the current pages TOC in the navbar. (De fault: true)
     #'navbar_pagenav': True,
     #'navbar_pagenav': False,
     # No sidebar
