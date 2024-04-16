@@ -208,6 +208,8 @@ def _to_hex(source, resolution=6, return_geoms=True, buffer=True):
         lambda hex_id: Polygon(h3.h3_to_geo_boundary(hex_id, geo_json=True)),
     )
 
-    hexs = geopandas.GeoDataFrame(hexids, geometry=polys, crs=4326).set_index("hex_id")
+    hexs = geopandas.GeoDataFrame(hexids, geometry=polys.values, crs=4326).set_index(
+        "hex_id"
+    )
 
     return hexs
