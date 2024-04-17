@@ -9,7 +9,7 @@ import shapely
 from packaging.version import Version
 from shapely.geometry import Polygon
 
-GPD_10 = Version(geopandas.__version__) >= Version("0.99.0")
+GPD_10 = Version(geopandas.__version__) >= Version("1.0.0dev")
 
 
 def circumradius(resolution):

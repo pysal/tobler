@@ -17,7 +17,7 @@ from shapely.geometry import shape
 
 from ..util.util import _check_presence_of_crs
 
-GPD_10 = Version(gpd.__version__) >= Version("0.99.0")
+GPD_10 = Version(gpd.__version__) >= Version("1.0.0dev")
 
 
 def _chunk_dfs(geoms_to_chunk, n_jobs):
