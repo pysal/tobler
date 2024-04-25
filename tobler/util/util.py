@@ -6,7 +6,10 @@ import geopandas
 import numpy as np
 import pandas
 import shapely
+from packaging.version import Version
 from shapely.geometry import Polygon
+
+GPD_10 = Version(geopandas.__version__) >= Version("1.0.0dev")
 
 
 def circumradius(resolution):
@@ -139,7 +142,10 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
         else:
             source = source.to_crs(4326)
 
-    source_unary = shapely.force_2d(source.unary_union)
+    if GPD_10:
+        source_unary = shapely.force_2d(source.union_all())
+    else:
+        source_unary = shapely.force_2d(source.unary_union)
 
     if type(source_unary) == Polygon:
         hexagons = _to_hex(
@@ -208,6 +214,8 @@ def _to_hex(source, resolution=6, return_geoms=True, buffer=True):
         lambda hex_id: Polygon(h3.h3_to_geo_boundary(hex_id, geo_json=True)),
     )
 
-    hexs = geopandas.GeoDataFrame(hexids, geometry=polys, crs=4326).set_index("hex_id")
+    hexs = geopandas.GeoDataFrame(hexids, geometry=polys.values, crs=4326).set_index(
+        "hex_id"
+    )
 
     return hexs

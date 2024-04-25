@@ -84,6 +84,7 @@ def test_area_interpolate_categorical():
     assert_almost_equal(area.animal_capybara.sum(), 20, decimal=0)
 
 
+@pytest.mark.xfail(reason="dask_geopandas is broken with dask-expr backend")
 def test_area_interpolate_categorical_dask():
     sac1, sac2 = datasets()
     sac1["animal"] = sac1["animal"].astype("category")
