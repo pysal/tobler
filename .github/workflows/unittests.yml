@@ -1,5 +1,5 @@
  name: Continuous Integration
- 
+
  on:
    push:
      branches:
@@ -28,6 +28,7 @@
             ci/310.yml,
             ci/311.yml,
             ci/312.yml,
+            ci/312-dev.yml,
          ]
          include:
            - environment-file: ci/312.yml
@@ -47,7 +48,7 @@
          uses: actions/checkout@v4
          with:
            fetch-depth: 0 # Fetch all history for all branches and tags.
-       
+
        - name: setup micromamba
          uses: mamba-org/setup-micromamba@v1
          with:
@@ -58,13 +59,13 @@
          run: |
            micromamba info
            micromamba list
-       
+
        - name: spatial versions
          run: 'python -c "import geopandas; geopandas.show_versions();"'
 
        - name: install package
          run: 'pip install . --no-deps'
-       
+
        - name: run tests
          run: |
            pytest tobler \
@@ -76,7 +77,7 @@
            --cov-append \
            --cov-report term-missing \
            --cov-report xml
-       
+
        - name: codecov
          uses: codecov/codecov-action@v3
          with:

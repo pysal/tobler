@@ -1,0 +1,39 @@
+name: test
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - dask
+  - dask-geopandas
+  - numpy
+  - pandas
+  - rasterio
+  - rasterstats
+  - statsmodels
+  - scipy
+  - libpysal
+  - tqdm
+  - codecov
+  - pytest-xdist
+  - coverage
+  - pytest
+  - pytest-mpl
+  - pytest-cov
+  - twine
+  - h3-py
+  - mapclassify
+  - sphinx>=1.4.3
+  - sphinxcontrib-bibtex==1.0.0
+  - sphinx_bootstrap_theme
+  - numpydoc
+  - nbsphinx
+  - joblib
+  - astropy
+  - pip
+  - pip:
+      # dev versions of packages
+      - --pre --index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple --extra-index-url https://pypi.org/simple
+      - scikit-learn
+      - scipy
+      - git+https://github.com/geopandas/geopandas.git@main
+      - shapely
