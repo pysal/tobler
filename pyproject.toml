@@ -50,6 +50,7 @@ Repository = "https://github.com/pysal/tobler"
 dev = ["pre-commit"]
 docs = [
     "nbsphinx",
+    "nbsphinx_link",
     "numpydoc",
     "pandoc",
     "sphinx",

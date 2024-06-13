@@ -40,7 +40,8 @@ extensions = [  #'sphinx_gallery.gen_gallery',
     # 'recommonmark',
     #'sphinx.ext.napoleon',
     "matplotlib.sphinxext.plot_directive",
-    "nbsphinx"]
+    "nbsphinx",
+    "nbsphinx_link"]
 
 
 # sphinx_gallery_conf = {
