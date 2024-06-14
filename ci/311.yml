@@ -36,3 +36,4 @@ dependencies:
   - nbsphinx
   - joblib
   - astropy
+  - nbsphinx-link
