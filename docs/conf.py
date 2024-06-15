@@ -280,3 +280,6 @@ numpydoc_xref_ignore = {'type', 'optional', 'default', 'shape', 'fitted', 'insta
 # Bib Variables
 bibtex_default_style = 'plain'
 bibtex_reference_style ="author_year"
+
+bibtex_bibfiles = ['_static/references.bib']
+
