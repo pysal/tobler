@@ -32,7 +32,7 @@
          ]
          include:
            - environment-file: ci/312.yml
-             os: macos-latest
+             os: macos-13 # Intel
            - environment-file: ci/312.yml
              os: macos-14 # Apple Silicon
            - environment-file: ci/312.yml
