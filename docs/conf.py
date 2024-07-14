@@ -124,7 +124,7 @@ html_theme_options = {
     "navbar_title": "tobler",
     # Render the next and previous page links in navbar. (Default: true)
     "navbar_sidebarrel": False,
-    # Render the current pages TOC in the navbar. (De fault: true)
+    # Render the current pages TOC in the navbar. (Default: true)
     #'navbar_pagenav': True,
     #'navbar_pagenav': False,
     # No sidebar
