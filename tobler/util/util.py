@@ -103,6 +103,14 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
         if `return_geoms` is True, a geopandas.GeoDataFrame whose rows comprise a hexagonal h3 grid (indexed on h3 hex id).
         if `return_geoms` is False, a pandas.Series of h3 hexagon ids
     """
+    try:
+        import h3
+    except ImportError as err:
+        raise ImportError(
+            "This function requires the `h3` library. "
+            "You can install it with `conda install h3-py` or "
+            "`pip install h3`"
+        ) from err
     # h3 hexes only work on polygons, not multipolygons
     if source.crs is None:
         raise ValueError(
@@ -196,27 +204,29 @@ def _to_hex(source, resolution=6, return_geoms=True, buffer=True):
             "`pip install h3`"
         ) from err
 
-    polyfill = (
-        h3.polygon_to_cells if Version(h3.__version__) > Version("4.0") else h3.polyfill
-    )
+    if Version(h3.__version__) > Version("4.0"):
+        polyfill = h3.geo_to_cells
+        kwargs = {}
+    else:
+        polyfill = h3.polyfill
+        kwargs = dict(geo_json_conformant=True)
 
     hexids = pandas.Series(
-        list(
-            polyfill(
-                source.__geo_interface__,
-                resolution,
-                geo_json_conformant=True,
-            )
-        ),
+        list(polyfill(source, resolution, **kwargs)),
         name="hex_id",
     )
 
     if not return_geoms:
         return hexids
 
-    polys = hexids.apply(
-        lambda hex_id: Polygon(h3.h3_to_geo_boundary(hex_id, geo_json=True)),
-    )
+    if Version(h3.__version__) > Version("4.0"):
+        polys = hexids.apply(
+            lambda hex_id: shapely.geometry.shape(h3.cells_to_geo([hex_id])),
+        )
+    else:
+        polys = hexids.apply(
+            lambda hex_id: Polygon(h3.h3_to_geo_boundary(hex_id, geo_json=True)),
+        )
 
     hexs = geopandas.GeoDataFrame(hexids, geometry=polys.values, crs=4326).set_index(
         "hex_id"
