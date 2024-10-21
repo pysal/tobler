@@ -28,3 +28,4 @@ dependencies:
   - h3-py<4
   - joblib
   - astropy
+  - nbsphinx-link
