@@ -212,7 +212,7 @@ def _to_hex(source, resolution=6, return_geoms=True, buffer=True):
         kwargs = dict(geo_json_conformant=True)
 
     hexids = pandas.Series(
-        list(polyfill(source, resolution, **kwargs)),
+        list(polyfill(source.__geo_interface__, resolution, **kwargs)),
         name="hex_id",
     )
 
