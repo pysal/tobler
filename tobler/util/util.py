@@ -196,7 +196,9 @@ def _to_hex(source, resolution=6, return_geoms=True, buffer=True):
             "`pip install h3`"
         ) from err
 
-    polyfill = h3.polygonToCells if Version(h3.__version__) > 4 else h3.polyfill
+    polyfill = (
+        h3.polygonToCells if Version(h3.__version__) > Version(4) else h3.polyfill
+    )
 
     hexids = pandas.Series(
         list(
