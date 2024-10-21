@@ -189,16 +189,18 @@ def _to_hex(source, resolution=6, return_geoms=True, buffer=True):
     """
     try:
         import h3
-    except ImportError:
+    except ImportError as err:
         raise ImportError(
             "This function requires the `h3` library. "
             "You can install it with `conda install h3-py` or "
             "`pip install h3`"
-        )
+        ) from err
+
+    polyfill = h3.polygonToCells if Version(h3.__version__) > 4 else h3.polyfill
 
     hexids = pandas.Series(
         list(
-            h3.polyfill(
+            polyfill(
                 source.__geo_interface__,
                 resolution,
                 geo_json_conformant=True,
