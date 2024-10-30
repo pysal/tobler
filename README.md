@@ -3,7 +3,7 @@
 </p>
 
 [![Continuous Integration](https://github.com/pysal/tobler/actions/workflows/unittests.yml/badge.svg)](https://github.com/pysal/tobler/actions/workflows/unittests.yml)
-[![codecov](https://codecov.io/gh/pysal/tobler/branch/master/graph/badge.svg?token=XO4SilfBEb)](https://codecov.io/gh/pysal/tobler)![PyPI - Python Version](https://img.shields.io/pypi/pyversions/tobler)
+[![codecov](https://codecov.io/gh/pysal/tobler/branch/main/graph/badge.svg?token=XO4SilfBEb)](https://codecov.io/gh/pysal/tobler)![PyPI - Python Version](https://img.shields.io/pypi/pyversions/tobler)
 ![PyPI](https://img.shields.io/pypi/v/tobler)
 ![Conda (channel only)](https://img.shields.io/conda/vn/conda-forge/tobler)
 ![GitHub commits since latest release (branch)](https://img.shields.io/github/commits-since/pysal/tobler/latest)
@@ -62,7 +62,7 @@ If you have any suggestion, feature request, or bug report, please open a new [i
 
 ## License
 
-The project is licensed under the [BSD license](https://github.com/pysal/tobler/blob/master/LICENSE.txt).
+The project is licensed under the [BSD license](https://github.com/pysal/tobler/blob/main/LICENSE.txt).
 
 ## Funding
 

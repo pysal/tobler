@@ -118,6 +118,12 @@ pygments_style = "sphinx"
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
 
+# Bib Variables
+bibtex_default_style = 'alpha'
+bibtex_reference_style ="author_year"
+bibtex_bibfiles = ["_static/references.bib"]
+
+
 # -- Options for HTML output ----------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -132,7 +138,7 @@ html_title = "%s v%s Manual" % (project, version)
 # Path should be relative to the ``_static`` files directory.
 # html_logo = "_static/images/CGS_logo.jpg"
 # html_logo = "_static/images/CGS_logo_green.png"
-html_logo = "figs/tobler.svg"
+html_logo = "figs/tobler_long.svg"
 html_favicon = "figs/tobler.ico"
 
 
@@ -302,7 +308,3 @@ numpydoc_xref_ignore = {'type', 'optional', 'default', 'shape', 'fitted', 'insta
                         'cluster', 'of', 'or', 'if', 'using', 'otherwise', 'required',
                         'from'}
 
-# Bib Variables
-bibtex_default_style = 'plain'
-bibtex_reference_style ="author_year"
-bibtex_bibfiles = ['references.bib']

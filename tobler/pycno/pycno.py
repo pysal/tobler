@@ -1,7 +1,6 @@
 """Pycnophylactic Interpolation (contributed by @danlewis85)."""
 # https://github.com/danlewis85/pycno/
 
-import geopandas as gpd
 import numpy as np
 import pandas as pd
 import rasterio
@@ -23,6 +22,8 @@ from numpy import (
 from numpy.ma import masked_invalid, masked_where
 from pandas import DataFrame
 from rasterio.features import rasterize
+
+__all__ = ["pycno_interpolate"]
 
 
 def pycno(
