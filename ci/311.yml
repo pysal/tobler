@@ -36,7 +36,6 @@ dependencies:
   - nbsphinx
   - joblib
   - astropy
-  - nbsphinx_link
   - myst-parser
   - sphinx-autodoc2
   - nbsphinx-link
