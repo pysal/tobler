@@ -28,7 +28,7 @@ to the target
 
 Pycnophylactic interpolation is based on
 [Tobler's technique](https://www.tandfonline.com/doi/abs/10.1080/01621459.1979.10481647)
-for generating smooth, volume-preserving contour maps
+for generating smooth, volume-preserving contour maps.
 
 ```{autodoc2-summary}  tobler.pycno.pycno.pycno_interpolate
 ```
