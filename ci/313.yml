@@ -25,6 +25,6 @@ dependencies:
   - coverage
   - twine
   - pip
-  - h3-py<4
+  - h3-py
   - joblib
   - astropy

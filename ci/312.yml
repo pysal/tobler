@@ -23,7 +23,7 @@ dependencies:
   - pytest-cov
   - twine
   - pip
-  - h3-py
+  - h3-py<4
   - mapclassify
   - sphinx>=1.4.3
   - sphinxcontrib-bibtex==1.0.0
