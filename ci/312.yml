@@ -32,3 +32,8 @@ dependencies:
   - nbsphinx
   - joblib
   - astropy
+  - myst-parser
+  - sphinx-autodoc2
+  - nbsphinx-link
+  - pip:
+    - nbsphinx-link>=1.3.1 # not on conda yet
