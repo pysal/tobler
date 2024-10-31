@@ -4,7 +4,7 @@ This is a beta version of the documentation written in [MyST](https://myst-parse
 
 ## Area Weighted Interpolation
 
-Area weighted approaches use the area of overlap between the source and target geometries to weight the variables being assigned to the target
+Area weighted approaches use the area of overlap between the source and target geometries to weight the variables being assigned to the target.
 
 ```{autodoc2-summary}  tobler.area_weighted.area_interpolate.area_interpolate
 ```
