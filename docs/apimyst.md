@@ -16,7 +16,7 @@ Area weighted approaches use the area of overlap between the source and target g
 
 Dasymetric approaches use auxiliary data in addition to use the area of overlap
 between the source and target geometries to weight the variables being assigned
-to the target
+to the target.
 
 ```{autodoc2-summary}  tobler.dasymetric.raster_tools.extract_raster_features
 ```
