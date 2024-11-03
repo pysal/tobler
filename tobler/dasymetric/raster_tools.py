@@ -19,6 +19,8 @@ from ..util.util import _check_presence_of_crs
 
 GPD_10 = Version(gpd.__version__) >= Version("1.0.0dev")
 
+__all__ = ["extract_raster_features"]
+
 
 def _chunk_dfs(geoms_to_chunk, n_jobs):
     chunk_size = geoms_to_chunk.shape[0] // n_jobs + 1

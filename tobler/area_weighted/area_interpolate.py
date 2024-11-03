@@ -12,6 +12,7 @@ from scipy.sparse import coo_matrix, diags
 
 from tobler.util.util import _check_crs, _inf_check, _nan_check
 
+__all__ = ['area_interpolate']
 
 def _chunk_dfs(geoms_to_chunk, geoms_full, n_jobs):
     chunk_size = geoms_to_chunk.shape[0] // n_jobs + 1
@@ -203,7 +204,7 @@ def _area_tables_binning(source_df, target_df, spatial_index):
     return table
 
 
-def _area_interpolate_binning(
+def area_interpolate(
     source_df,
     target_df,
     extensive_variables=None,
@@ -221,36 +222,47 @@ def _area_interpolate_binning(
     Parameters
     ----------
     source_df : geopandas.GeoDataFrame
+
     target_df : geopandas.GeoDataFrame
+
     extensive_variables : list
         [Optional. Default=None] Columns in dataframes for extensive variables
+
     intensive_variables : list
         [Optional. Default=None] Columns in dataframes for intensive variables
+
     table : scipy.sparse.csr_matrix
         [Optional. Default=None] Area allocation source-target correspondence
         table. If not provided, it will be built from `source_df` and
         `target_df` using `tobler.area_interpolate._area_tables_binning`
+
     allocate_total : boolean
         [Optional. Default=True] True if total value of source area should be
         allocated. False if denominator is area of i. Note that the two cases
         would be identical when the area of the source polygon is exhausted by
         intersections. See Notes for more details.
+
     spatial_index : str
         [Optional. Default="auto"] Spatial index to use to build the
         allocation of area from source to target tables. It currently support
         the following values:
-            - "source": build the spatial index on `source_df`
-            - "target": build the spatial index on `target_df`
-            - "auto": attempts to guess the most efficient alternative.
-              Currently, this option uses the largest table to build the
-              index, and performs a `bulk_query` on the shorter table.
+
+        - "source": build the spatial index on `source_df`
+        - "target": build the spatial index on `target_df`
+        - "auto": attempts to guess the most efficient alternative.
+        
+        Currently, this option uses the largest table to build the
+        index, and performs a `bulk_query` on the shorter table.
         This argument is ignored if n_jobs>1 (or n_jobs=-1).
+
     n_jobs : int
         [Optional. Default=1] Number of processes to run in parallel to
         generate the area allocation. If -1, this is set to the number of CPUs
         available. If `table` is passed, this is ignored.
+
     categorical_variables : list
         [Optional. Default=None] Columns in dataframes for categorical variables
+
     categorical_frequency : Boolean
         [Optional. Default=True] If True, `estimates` returns the frequency of each
         value in a categorical variable in every polygon of `target_df` (proportion of
@@ -278,18 +290,16 @@ def _area_interpolate_binning(
     an extensive attribute, then setting allocate_total=False will use the
     following weights:
 
-    .. math::
-     v_j = \\sum_i v_i w_{i,j}
+    $$v_j = \\sum_i v_i w_{i,j}$$
 
-     w_{i,j} = a_{i,j} / a_i
+    $$w_{i,j} = a_{i,j} / a_i$$
 
     where a_i is the total area of source polygon i.
     For an intensive variable, the estimate at target polygon j is:
 
-    .. math::
-     v_j = \\sum_i v_i w_{i,j}
+    $$v_j = \\sum_i v_i w_{i,j}$$
 
-     w_{i,j} = a_{i,j} / \\sum_k a_{k,j}
+    $$w_{i,j} = a_{i,j} / \\sum_k a_{k,j}$$
 
     For categorical variables, the estimate returns ratio of presence of each
     unique category.

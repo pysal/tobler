@@ -11,6 +11,8 @@ from shapely.geometry import Polygon
 
 GPD_10 = Version(geopandas.__version__) >= Version("1.0.0dev")
 
+__all__ = ["h3fy", "circumradius"]
+
 
 def circumradius(resolution):
     """Find the circumradius of an h3 hexagon at given resolution.

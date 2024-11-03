@@ -1,10 +1,13 @@
 """Model-based methods for areal interpolation."""
 
+import numpy as np
 import statsmodels.formula.api as smf
 from statsmodels.genmod.families import Gaussian, NegativeBinomial, Poisson
-from ..util.util import _check_presence_of_crs
+
 from ..dasymetric import _fast_append_profile_in_gdf
-import numpy as np
+from ..util.util import _check_presence_of_crs
+
+__all__ = ["glm"]
 
 
 def glm(

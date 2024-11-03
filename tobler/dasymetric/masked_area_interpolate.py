@@ -5,6 +5,8 @@ import geopandas as gpd
 from ..area_weighted import area_interpolate
 from .raster_tools import extract_raster_features
 
+__all__ = ["masked_area_interpolate"]
+
 
 def masked_area_interpolate(
     source_df,

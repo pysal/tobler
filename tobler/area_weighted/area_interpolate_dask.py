@@ -2,11 +2,13 @@
 Area Weighted Interpolation, out-of-core and parallel through Dask
 """
 
-import pandas
 import geopandas
 import numpy as np
-from .area_interpolate import _area_interpolate_binning as area_interpolate
+import pandas
 
+from .area_interpolate import area_interpolate
+
+__all__ = ['area_interpolate_dask']
 
 def area_interpolate_dask(
     source_dgdf,

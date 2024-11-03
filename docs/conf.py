@@ -37,11 +37,37 @@ extensions = [  #'sphinx_gallery.gen_gallery',
     "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
     "numpydoc",
-    # 'recommonmark',
-    #'sphinx.ext.napoleon',
     "matplotlib.sphinxext.plot_directive",
-    "nbsphinx"]
+    "nbsphinx",
+    "myst_parser",
+    "autodoc2",
+    "nbsphinx_link"]
 
+myst_enable_extensions = [
+    "amsmath",
+    "attrs_inline",
+    "colon_fence",
+    "deflist",
+    "dollarmath",
+    "fieldlist",
+    "html_admonition",
+    "html_image",
+    "linkify",
+    "replacements",
+    "smartquotes",
+    "strikethrough",
+    "substitution",
+    "tasklist",
+]
+
+autodoc2_packages = [
+    "../tobler",
+]
+autodoc2_render_plugin = "myst"
+
+autodoc2_module_all_regexes = [
+    r"tobler\..*",
+]
 
 # sphinx_gallery_conf = {
 #      # path to your examples scripts
@@ -58,8 +84,7 @@ templates_path = ["_templates"]
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
-source_suffix = [".rst", ".md"]
-# The master toctree document.
+{'.rst': 'restructuredtext', '.md': 'markdown'}# The master toctree document.
 master_doc = "index"
 
 # General information about the project.
@@ -80,7 +105,7 @@ release = tobler.__version__
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -92,6 +117,12 @@ pygments_style = "sphinx"
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
+
+# Bib Variables
+bibtex_default_style = 'alpha'
+bibtex_reference_style ="author_year"
+bibtex_bibfiles = ["_static/references.bib"]
+
 
 # -- Options for HTML output ----------------------------------------------
 
@@ -107,7 +138,7 @@ html_title = "%s v%s Manual" % (project, version)
 # Path should be relative to the ``_static`` files directory.
 # html_logo = "_static/images/CGS_logo.jpg"
 # html_logo = "_static/images/CGS_logo_green.png"
-html_logo = "figs/tobler.svg"
+html_logo = "figs/tobler_long.svg"
 html_favicon = "figs/tobler.ico"
 
 
@@ -267,7 +298,7 @@ intersphinx_mapping = {
     'sklearn': ('https://scikit-learn.org/stable/', None),
     'giddy': ('https://giddy.readthedocs.io/en/latest/', None),
     'libpysal': ('https://pysal.org/libpysal/', None),
-    'esda': ('https://esda.readthedocs.io/en/latest/', None),
+    'esda': ('https://pysal.org/esda/', None),
     'region': ('https://region.readthedocs.io/en/latest/', None),
     'hdbscan': ('https://hdbscan.readthedocs.io/en/latest/', None)
 
@@ -277,6 +308,3 @@ numpydoc_xref_ignore = {'type', 'optional', 'default', 'shape', 'fitted', 'insta
                         'cluster', 'of', 'or', 'if', 'using', 'otherwise', 'required',
                         'from'}
 
-# Bib Variables
-bibtex_default_style = 'plain'
-bibtex_reference_style ="author_year"

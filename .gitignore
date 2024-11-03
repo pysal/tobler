@@ -95,3 +95,6 @@ ENV/
 .vscode
 
 nlcd_2011.tif
+
+docs/generated/
+docs/apidocs/
