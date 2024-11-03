@@ -23,7 +23,7 @@ dependencies:
   - h3-py
   - mapclassify
   - sphinx>=1.4.3
-  - sphinxcontrib-bibtex==1.0.0
+  - sphinxcontrib-bibtex
   - sphinx_bootstrap_theme
   - numpydoc
   - nbsphinx
