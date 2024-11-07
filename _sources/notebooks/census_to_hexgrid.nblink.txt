@@ -1,0 +1,3 @@
+{
+    "path": "../../notebooks/census_to_hexgrid.ipynb"
+}
