@@ -12,7 +12,8 @@ from scipy.sparse import coo_matrix, diags
 
 from tobler.util.util import _check_crs, _inf_check, _nan_check
 
-__all__ = ['area_interpolate']
+__all__ = ["area_interpolate"]
+
 
 def _chunk_dfs(geoms_to_chunk, geoms_full, n_jobs):
     chunk_size = geoms_to_chunk.shape[0] // n_jobs + 1
@@ -250,7 +251,7 @@ def area_interpolate(
         - "source": build the spatial index on `source_df`
         - "target": build the spatial index on `target_df`
         - "auto": attempts to guess the most efficient alternative.
-        
+
         Currently, this option uses the largest table to build the
         index, and performs a `bulk_query` on the shorter table.
         This argument is ignored if n_jobs>1 (or n_jobs=-1).
@@ -370,7 +371,7 @@ def area_interpolate(
             for value in unique:
                 mask = source_df[variable] == value
                 categorical[f"{variable}_{value}"] = np.asarray(
-                    table[mask].sum(axis=0)
+                    table[mask.to_numpy()].sum(axis=0)
                 )[0]
 
         categorical = pd.DataFrame(categorical)
