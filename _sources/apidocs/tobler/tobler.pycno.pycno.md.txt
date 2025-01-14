@@ -1,0 +1,31 @@
+# {py:mod}`tobler.pycno.pycno`
+
+```{py:module} tobler.pycno.pycno
+```
+
+```{autodoc2-docstring} tobler.pycno.pycno
+:allowtitles:
+```
+
+## Module Contents
+
+### Functions
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`pycno_interpolate <tobler.pycno.pycno.pycno_interpolate>`
+  - ```{autodoc2-docstring} tobler.pycno.pycno.pycno_interpolate
+    :summary:
+    ```
+````
+
+### API
+
+````{py:function} pycno_interpolate(source_df, target_df, variables, cellsize, r=0.2, handle_null=True, converge=3, verbose=False)
+:canonical: tobler.pycno.pycno.pycno_interpolate
+
+```{autodoc2-docstring} tobler.pycno.pycno.pycno_interpolate
+```
+````

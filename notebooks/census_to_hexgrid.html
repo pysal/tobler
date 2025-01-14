@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Generating h3 Hexgrids from GeoDataFrames &#8212; tobler v0.12.1.dev3+g6b7b13e Manual</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <script src="../_static/documentation_options.js?v=9fca7f0e"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Extracting Urban Features from Raster Data" href="extract_urban_areas.html" />
+    <link rel="prev" title="Estimation Walkthrough" href="03_areal_interpolation_details.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          tobler</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.12.1.dev3+g6b7b13e</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../installation.html">Installation</a></li>
+                <li><a href="../tutorial.html">Tutorial</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-a-released-version">Installing a released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-a-development-from-source">Installing a development from source</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../tutorial.html">Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01_interpolation_methods_overview.html">Overview of <code class="docutils literal notranslate"><span class="pre">tobler</span></code>s Interpolation Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_areal_interpolation_example.html">Areal interpolation: Tracts to Voting Precincts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_areal_interpolation_details.html">Estimation Walkthrough</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Generating h3 Hexgrids from GeoDataFrames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extract_urban_areas.html">Extracting Urban Features from Raster Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binary_dasymetric.html">Implementing Binary Dasymetric Interpolation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#area-weighted">Area Weighted</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#dasymetric">Dasymetric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#model">Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#pycnophylactic">Pycnophylactic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#util">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Generating h3 Hexgrids from GeoDataFrames</a><ul>
+<li><a class="reference internal" href="#Getting-data-from-CenPy">Getting data from CenPy</a></li>
+<li><a class="reference internal" href="#Creating-Hexgrids-with-the-h3fy-function">Creating Hexgrids with the <code class="docutils literal notranslate"><span class="pre">h3fy</span></code> function</a></li>
+<li><a class="reference internal" href="#Interpolating-to-a-hexgrid">Interpolating to a hexgrid</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="Generating-h3-Hexgrids-from-GeoDataFrames">
+<h1>Generating h3 Hexgrids from GeoDataFrames<a class="headerlink" href="#Generating-h3-Hexgrids-from-GeoDataFrames" title="Link to this heading">¶</a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w">  </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">libpysal</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tobler.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">h3fy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tobler.area_weighted</span><span class="w"> </span><span class="kn">import</span> <span class="n">area_interpolate</span>
+<span class="o">%</span><span class="k">load_ext</span> watermark
+<span class="o">%</span><span class="k">watermark</span> -v -a &quot;author: eli knaap&quot; -d -u -p tobler,cenpy,geopandas
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Author: author: eli knaap
+
+Last updated: 2021-01-18
+
+Python implementation: CPython
+Python version       : 3.8.6
+IPython version      : 7.19.0
+
+tobler   : 0.5.4
+cenpy    : 1.0.0.post4
+geopandas: 0.8.1
+
+</pre></div></div>
+</div>
+<p><strong>Note</strong>: This notebook relies on functionality from the <code class="docutils literal notranslate"><span class="pre">`contextily</span></code> &lt;<a class="reference external" href="https://contextily.readthedocs.io/en/latest/">https://contextily.readthedocs.io/en/latest/</a>&gt;`__ package that provides convenient basemaps for geospatial plots, and the <code class="docutils literal notranslate"><span class="pre">`cenpy</span></code> &lt;<a class="reference external" href="https://cenpy-devs.github.io/cenpy/">https://cenpy-devs.github.io/cenpy/</a>&gt;`__ package that provide a convenient interface to the U.S. Census API. These can be installed with</p>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">contextily</span> <span class="pre">cenpy</span></code></div>
+<div class="line">or</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">contextily</span> <span class="pre">cenpy</span> <span class="pre">-c</span> <span class="pre">conda-forge</span></code></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">contextily</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ctx</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">cenpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">products</span>
+</pre></div>
+</div>
+</div>
+<section id="Getting-data-from-CenPy">
+<h2>Getting data from CenPy<a class="headerlink" href="#Getting-data-from-CenPy" title="Link to this heading">¶</a></h2>
+<p>To begin with, we will fetch some data from the 2017 ACS</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">acs</span> <span class="o">=</span> <span class="n">products</span><span class="o">.</span><span class="n">ACS</span><span class="p">(</span><span class="mi">2017</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>We’re looking for median home value, so first we will filter the ACS tables by those containing “value” in the description so we can find the correct variable code</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">acs</span><span class="o">.</span><span class="n">filter_tables</span><span class="p">(</span><span class="s1">&#39;VALUE&#39;</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="s1">&#39;description&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>description</th>
+      <th>columns</th>
+    </tr>
+    <tr>
+      <th>table_name</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>B25075</th>
+      <td>VALUE</td>
+      <td>[B25075_001E, B25075_002E, B25075_003E, B25075...</td>
+    </tr>
+    <tr>
+      <th>B25076</th>
+      <td>LOWER VALUE QUARTILE (DOLLARS)</td>
+      <td>[B25076_001E]</td>
+    </tr>
+    <tr>
+      <th>B25077</th>
+      <td>MEDIAN VALUE (DOLLARS)</td>
+      <td>[B25077_001E]</td>
+    </tr>
+    <tr>
+      <th>B25078</th>
+      <td>UPPER VALUE QUARTILE (DOLLARS)</td>
+      <td>[B25078_001E]</td>
+    </tr>
+    <tr>
+      <th>B25079</th>
+      <td>AGGREGATE VALUE (DOLLARS) BY AGE OF HOUSEHOLDER</td>
+      <td>[B25079_001E, B25079_002E, B25079_003E, B25079...</td>
+    </tr>
+    <tr>
+      <th>B25080</th>
+      <td>AGGREGATE VALUE (DOLLARS) BY UNITS IN STRUCTURE</td>
+      <td>[B25080_001E, B25080_002E, B25080_003E, B25080...</td>
+    </tr>
+    <tr>
+      <th>B25082</th>
+      <td>AGGREGATE VALUE (DOLLARS) BY MORTGAGE STATUS</td>
+      <td>[B25082_001E, B25082_002E, B25082_003E]</td>
+    </tr>
+    <tr>
+      <th>B25083</th>
+      <td>MEDIAN VALUE (DOLLARS) FOR MOBILE HOMES</td>
+      <td>[B25083_001E]</td>
+    </tr>
+    <tr>
+      <th>B25096</th>
+      <td>MORTGAGE STATUS BY VALUE</td>
+      <td>[B25096_001E, B25096_002E, B25096_003E, B25096...</td>
+    </tr>
+    <tr>
+      <th>B25097</th>
+      <td>MORTGAGE STATUS BY MEDIAN VALUE (DOLLARS)</td>
+      <td>[B25097_001E, B25097_002E, B25097_003E]</td>
+    </tr>
+    <tr>
+      <th>B25100</th>
+      <td>MORTGAGE STATUS BY RATIO OF VALUE TO HOUSEHOLD...</td>
+      <td>[B25100_001E, B25100_002E, B25100_003E, B25100...</td>
+    </tr>
+    <tr>
+      <th>B25107</th>
+      <td>MEDIAN VALUE BY YEAR STRUCTURE BUILT</td>
+      <td>[B25107_001E, B25107_002E, B25107_003E, B25107...</td>
+    </tr>
+    <tr>
+      <th>B25108</th>
+      <td>AGGREGATE VALUE (DOLLARS) BY YEAR STRUCTURE BUILT</td>
+      <td>[B25108_001E, B25108_002E, B25108_003E, B25108...</td>
+    </tr>
+    <tr>
+      <th>B25109</th>
+      <td>MEDIAN VALUE BY YEAR HOUSEHOLDER MOVED INTO UNIT</td>
+      <td>[B25109_001E, B25109_002E, B25109_003E, B25109...</td>
+    </tr>
+    <tr>
+      <th>B25110</th>
+      <td>AGGREGATE VALUE (DOLLARS) BY YEAR HOUSEHOLDER ...</td>
+      <td>[B25110_001E, B25110_002E, B25110_003E, B25110...</td>
+    </tr>
+    <tr>
+      <th>B25121</th>
+      <td>HOUSEHOLD INCOME IN THE PAST 12 MONTHS (IN 201...</td>
+      <td>[B25121_001E, B25121_002E, B25121_003E, B25121...</td>
+    </tr>
+    <tr>
+      <th>B992519</th>
+      <td>ALLOCATION OF VALUE</td>
+      <td>[B992519_001E, B992519_002E, B992519_003E]</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>The variable we’re looking for is <code class="docutils literal notranslate"><span class="pre">B25077_001E</span></code>, the median home value of each. Lets collect that data for the Washington DC metropolitan region. The next cell can take a minute or two to run, depending on the speed of your connection.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dc</span> <span class="o">=</span> <span class="n">acs</span><span class="o">.</span><span class="n">from_msa</span><span class="p">(</span><span class="s1">&#39;Washington-Arlington&#39;</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;B25077_001E&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/Users/knaaptime/anaconda3/envs/tobler/lib/python3.8/site-packages/pyproj/crs/crs.py:53: FutureWarning: &#39;+init=&lt;authority&gt;:&lt;code&gt;&#39; syntax is deprecated. &#39;&lt;authority&gt;:&lt;code&gt;&#39; is the preferred initialization method. When making the change, be mindful of axis order changes: https://pyproj4.github.io/pyproj/stable/gotchas.html#axis-order-changes-in-proj-6
+  return _prepare_from_string(&#34; &#34;.join(pjargs))
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dc</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>GEOID</th>
+      <th>geometry</th>
+      <th>B25077_001E</th>
+      <th>NAME</th>
+      <th>state</th>
+      <th>county</th>
+      <th>tract</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>51047930501</td>
+      <td>POLYGON ((-8697543.430 4642311.970, -8697525.0...</td>
+      <td>277000.0</td>
+      <td>Census Tract 9305.01, Culpeper County, Virginia</td>
+      <td>51</td>
+      <td>047</td>
+      <td>930501</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>51043010100</td>
+      <td>POLYGON ((-8692606.860 4745175.960, -8692597.2...</td>
+      <td>319600.0</td>
+      <td>Census Tract 101, Clarke County, Virginia</td>
+      <td>51</td>
+      <td>043</td>
+      <td>010100</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>51107610701</td>
+      <td>POLYGON ((-8656718.120 4739943.880, -8656659.1...</td>
+      <td>461500.0</td>
+      <td>Census Tract 6107.01, Loudoun County, Virginia</td>
+      <td>51</td>
+      <td>107</td>
+      <td>610701</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>51177020408</td>
+      <td>POLYGON ((-8654861.430 4622579.010, -8654714.2...</td>
+      <td>241500.0</td>
+      <td>Census Tract 204.08, Spotsylvania County, Virg...</td>
+      <td>51</td>
+      <td>177</td>
+      <td>020408</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>51061930402</td>
+      <td>POLYGON ((-8657404.180 4678713.200, -8657386.4...</td>
+      <td>402000.0</td>
+      <td>Census Tract 9304.02, Fauquier County, Virginia</td>
+      <td>51</td>
+      <td>061</td>
+      <td>930402</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="Creating-Hexgrids-with-the-h3fy-function">
+<h2>Creating Hexgrids with the <code class="docutils literal notranslate"><span class="pre">h3fy</span></code> function<a class="headerlink" href="#Creating-Hexgrids-with-the-h3fy-function" title="Link to this heading">¶</a></h2>
+<p>Using the <code class="docutils literal notranslate"><span class="pre">h3fy</span></code> function from the <code class="docutils literal notranslate"><span class="pre">tobler.util</span></code> module, we can easily generate a hexgrid covering the face of the DC Metropolitan region</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dc_hex</span> <span class="o">=</span> <span class="n">h3fy</span><span class="p">(</span><span class="n">dc</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">axs</span><span class="o">=</span><span class="n">axs</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">dc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.6</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+<span class="n">dc_hex</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.6</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Original Tract Data&#39;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Hex Grid&#39;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axs</span><span class="p">):</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">add_basemap</span><span class="p">(</span><span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">source</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">providers</span><span class="o">.</span><span class="n">Stamen</span><span class="o">.</span><span class="n">TonerLite</span><span class="p">)</span>
+    <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_census_to_hexgrid_15_0.png" class="no-scaled-link" src="../_images/notebooks_census_to_hexgrid_15_0.png" style="width: 1018px; height: 519px;" />
+</div>
+</div>
+<p>By altering the <code class="docutils literal notranslate"><span class="pre">resolution</span></code> parameter, we can generate grids using hexes of various sizes</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dc_hex_large</span> <span class="o">=</span> <span class="n">h3fy</span><span class="p">(</span><span class="n">dc</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">dc_hex_small</span> <span class="o">=</span> <span class="n">h3fy</span><span class="p">(</span><span class="n">dc</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+
+<span class="n">dc_hex_large</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.6</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+<span class="n">dc_hex_small</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.6</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axs</span><span class="p">:</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">add_basemap</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">providers</span><span class="o">.</span><span class="n">Stamen</span><span class="o">.</span><span class="n">TonerLite</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_census_to_hexgrid_18_0.png" class="no-scaled-link" src="../_images/notebooks_census_to_hexgrid_18_0.png" style="width: 1018px; height: 509px;" />
+</div>
+</div>
+<p>and by using the <code class="docutils literal notranslate"><span class="pre">clip</span></code> parameter, we can ensure that the hexgrid is does not extend beyond the borders of the input geodataframe</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dc_hex_clipped</span> <span class="o">=</span> <span class="n">h3fy</span><span class="p">(</span><span class="n">dc</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">clip</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+
+<span class="n">dc_hex_clipped</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.6</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+<span class="n">ctx</span><span class="o">.</span><span class="n">add_basemap</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">providers</span><span class="o">.</span><span class="n">Stamen</span><span class="o">.</span><span class="n">TonerLite</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(-8738395.66, -8484578.799999999, 4575391.257202434, 4837245.453466552)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_census_to_hexgrid_21_1.png" class="no-scaled-link" src="../_images/notebooks_census_to_hexgrid_21_1.png" style="width: 541px; height: 558px;" />
+</div>
+</div>
+</section>
+<section id="Interpolating-to-a-hexgrid">
+<h2>Interpolating to a hexgrid<a class="headerlink" href="#Interpolating-to-a-hexgrid" title="Link to this heading">¶</a></h2>
+<p>Thus, in just a few lines of code, we can estimate the value of census variables represented by a regular hexgrid</p>
+<p>here, we will estimate the median home value of each hex in the DC region using simple areal interpolation</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dc_hex_interpolated</span> <span class="o">=</span> <span class="n">area_interpolate</span><span class="p">(</span><span class="n">source_df</span><span class="o">=</span><span class="n">dc</span><span class="p">,</span> <span class="n">target_df</span><span class="o">=</span><span class="n">dc_hex</span><span class="p">,</span> <span class="n">intensive_variables</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;B25077_001E&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/Users/knaaptime/Dropbox/projects/tobler/tobler/util/util.py:32: UserWarning: nan values in variable: B25077_001E, replacing with 0
+  warn(f&#34;nan values in variable: {column}, replacing with 0&#34;)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">dc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">&#39;B25077_001E&#39;</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s1">&#39;quantiles&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="n">dc_hex_interpolated</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">&#39;B25077_001E&#39;</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s1">&#39;quantiles&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Original Data&#39;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Interpolated Data&#39;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axs</span><span class="p">:</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">add_basemap</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">providers</span><span class="o">.</span><span class="n">Stamen</span><span class="o">.</span><span class="n">TonerLite</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;Spatial Interpolation with the PySAL $\mathtt</span><span class="si">{tobler}</span><span class="s1">$ package&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Text(0.5, 0.98, &#39;Spatial Interpolation with the PySAL $\\mathtt{tobler}$ package&#39;)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_census_to_hexgrid_26_1.png" class="no-scaled-link" src="../_images/notebooks_census_to_hexgrid_26_1.png" style="width: 1123px; height: 629px;" />
+</div>
+</div>
+<script type="application/vnd.jupyter.widget-state+json">
+{"state": {}, "version_major": 2, "version_minor": 0}
+</script></section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="../_sources/notebooks/census_to_hexgrid.nblink.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018-, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.1.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
