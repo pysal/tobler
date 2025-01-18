@@ -66,6 +66,14 @@
        - name: install package
          run: 'pip install . --no-deps'
 
+       - name: Download test files
+         run: |
+           python -c '
+           import libpysal
+
+           libpysal.examples.fetch_all()
+           '
+
        - name: run tests
          run: |
            pytest tobler \
