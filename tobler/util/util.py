@@ -35,8 +35,7 @@ def circumradius(resolution):
             "You can install it with `conda install h3-py` or "
             "`pip install h3`"
         )
-    h3ver = int(h3.__version__[0])
-    if h3ver < 4:
+    if Version(h3.__version__) < Version("4.0"):
         return h3.edge_length(resolution, "m")
     return h3.average_hexagon_edge_length(resolution, "m")
 
