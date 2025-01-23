@@ -38,7 +38,7 @@ def circumradius(resolution):
     h3ver = int(h3.__version__[0])
     if h3ver < 4:
         return h3.edge_length(resolution, "m")
-    return h3.average_edge_length(resolution, "m")
+    return h3.average_hexagon_edge_length(resolution, "m")
 
 
 def _check_crs(source_df, target_df):
