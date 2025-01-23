@@ -35,8 +35,10 @@ def circumradius(resolution):
             "You can install it with `conda install h3-py` or "
             "`pip install h3`"
         )
-
-    return h3.edge_length(resolution, "m")
+    h3ver = h3.__version__
+    if h3ver < 4:
+        return h3.edge_length(resolution, "m")
+    return h3.average_edge_length(resolution, "m")
 
 
 def _check_crs(source_df, target_df):
