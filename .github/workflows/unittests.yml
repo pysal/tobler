@@ -64,7 +64,7 @@
          run: 'python -c "import geopandas; geopandas.show_versions();"'
 
        - name: install package
-         run: 'pip install . --no-deps'
+         run: 'pip install -e . --no-deps'
 
        - name: Download test files
          run: |
@@ -84,14 +84,12 @@
            --cov tobler \
            --cov-append \
            --cov-report term-missing \
-           --cov-report xml
+           --cov-report xml .
 
        - name: codecov
          uses: codecov/codecov-action@v4
          with:
            token: ${{ secrets.CODECOV_TOKEN }}
-           file: ./coverage.xml
-           name: tobler-codecov
 
        - name: Generate and publish the report
          if: |
