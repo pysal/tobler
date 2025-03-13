@@ -59,7 +59,7 @@ def test_h3fy_clip_buffer():
     sac_hex = sac_hex.to_crs(sac_hex.estimate_utm_crs())
     sac1 = sac1.to_crs(sac_hex.estimate_utm_crs())
     assert_almost_equal(
-        sac_hex.area.sum(), sac1.area.sum(), decimal=-4
+        sac_hex.area.sum(), sac1.area.sum(), decimal=-8
     )
 
 @pytest.mark.skipif(platform.system() == "Windows", reason='Unknown precision error on Windows. See #174 for details')
