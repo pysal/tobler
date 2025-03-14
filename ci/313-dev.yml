@@ -4,7 +4,6 @@ channels:
 dependencies:
   - python=3.13
   - dask
-  - dask-geopandas
   - numpy
   - pandas
   - rasterio
@@ -37,4 +36,5 @@ dependencies:
       - scikit-learn
       - scipy
       - git+https://github.com/geopandas/geopandas.git@main
+      - git+https://github.com/geopandas/dask-geopandas.git@main
       - shapely
