@@ -7,7 +7,7 @@
 ![PyPI](https://img.shields.io/pypi/v/tobler)
 ![Conda (channel only)](https://img.shields.io/conda/vn/conda-forge/tobler)
 ![GitHub commits since latest release (branch)](https://img.shields.io/github/commits-since/pysal/tobler/latest)
-[![DOI](https://zenodo.org/badge/202220824.svg)](https://zenodo.org/badge/latestdoi/202220824)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3386576.svg)](https://doi.org/10.5281/zenodo.3386576)
 
 # PySAL `tobler`
 
