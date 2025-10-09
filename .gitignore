@@ -98,3 +98,6 @@ nlcd_2011.tif
 
 docs/generated/
 docs/apidocs/
+
+# macOS
+*.DS_Store

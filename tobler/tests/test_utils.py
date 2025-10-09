@@ -48,9 +48,8 @@ def test_h3fy_clip():
     sac1 = geopandas.read_file(sac1.get_path("sacramentot2.shp"))
     sac_hex = h3fy(sac1, clip=True)
     sac_hex = sac_hex.to_crs(sac_hex.estimate_utm_crs())
-    assert_almost_equal(
-        sac_hex.area.sum(), 13131736346.537422, decimal=0
-    )
+    assert_almost_equal(sac_hex.area.sum(), 13131736346.537422, decimal=0)
+
 
 def test_h3fy_clip_buffer():
     sac1 = load_example("Sacramento1")
@@ -58,11 +57,13 @@ def test_h3fy_clip_buffer():
     sac_hex = h3fy(sac1, clip=True, buffer=True)
     sac_hex = sac_hex.to_crs(sac_hex.estimate_utm_crs())
     sac1 = sac1.to_crs(sac_hex.estimate_utm_crs())
-    assert_almost_equal(
-        sac_hex.area.sum(), sac1.area.sum(), decimal=-8
-    )
+    assert_almost_equal(sac_hex.area.sum(), sac1.area.sum(), decimal=-8)
 
-@pytest.mark.skipif(platform.system() == "Windows", reason='Unknown precision error on Windows. See #174 for details')
+
+@pytest.mark.skipif(
+    platform.system() == "Windows",
+    reason="Unknown precision error on Windows. See #174 for details",
+)
 def test_h3_multipoly():
     va = geopandas.read_file(load_example("virginia").get_path("virginia.shp"))
     va = va.to_crs(va.estimate_utm_crs())
