@@ -30,7 +30,6 @@
             ci/312.yml,
             ci/313.yml,
             ci/313-dev.yml,
-            ci/314.yml,
          ]
          include:
            - environment-file: ci/312.yml
