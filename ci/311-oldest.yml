@@ -14,7 +14,7 @@ dependencies:
   - rasterstats=0.20
   - statsmodels=0.14
   - scikit-learn
-  - scipy=1.12
+  - scipy=1.13
   - libpysal=4.10
   - tqdm=4.67
   - codecov
