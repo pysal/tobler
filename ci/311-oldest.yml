@@ -1,0 +1,31 @@
+name: test
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - jupyterlab
+  - dask
+  - dask-geopandas
+  - numpy=2.0
+  - geopandas=1.0
+  - pandas=2.2
+  - numpy
+  - rasterio=1.4
+  - rasterstats=0.20
+  - statsmodels=0.14
+  - scikit-learn
+  - scipy=1.13
+  - libpysal=4.10
+  - tqdm=4.67
+  - codecov
+  - pytest
+  - pytest-mpl
+  - pytest-cov
+  - pytest-xdist
+  - coverage
+  - twine
+  - pip
+  - h3-py
+  - joblib=1.4
+  - astropy
+  - mapclassify
