@@ -1,4 +1,5 @@
 """test interpolation functions."""
+
 import geopandas
 
 from libpysal.examples import load_example
@@ -14,9 +15,7 @@ def datasets():
     sac2 = sac2.to_crs(sac2.estimate_utm_crs())
     sac1["pct_poverty"] = sac1.POV_POP / sac1.POV_TOT
     categories = ["cat", "dog", "donkey", "wombat", "capybara"]
-    sac1["animal"] = (categories * ((len(sac1) // len(categories)) + 1))[
-        : len(sac1)
-    ]
+    sac1["animal"] = (categories * ((len(sac1) // len(categories)) + 1))[: len(sac1)]
     return sac1, sac2
 
 

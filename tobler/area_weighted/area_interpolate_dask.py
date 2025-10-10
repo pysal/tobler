@@ -8,7 +8,8 @@ import pandas
 
 from .area_interpolate import area_interpolate
 
-__all__ = ['area_interpolate_dask']
+__all__ = ["area_interpolate_dask"]
+
 
 def area_interpolate_dask(
     source_dgdf,

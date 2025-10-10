@@ -287,9 +287,9 @@ def pycno_interpolate(
 
     References: :cite:`tobler_smooth_1979`
     """
-    assert source_df.crs.equals(
-        target_df.crs
-    ), "source_df CRS and target_df CRS are not the same. Reproject into consistent systems before proceeding"
+    assert source_df.crs.equals(target_df.crs), (
+        "source_df CRS and target_df CRS are not the same. Reproject into consistent systems before proceeding"
+    )
     output_vars = target_df.copy()[[target_df.geometry.name]]
     for variable in variables:
         pyc, trans, _ = pycno(

@@ -64,9 +64,9 @@ def masked_area_interpolate(
         )
         pixel_values = codes
     source_df = source_df.copy()
-    assert not any(
-        source_df.index.duplicated()
-    ), "The index of the source_df cannot contain duplicates."
+    assert not any(source_df.index.duplicated()), (
+        "The index of the source_df cannot contain duplicates."
+    )
 
     #  create a vector mask from the raster data
     raster_mask = extract_raster_features(

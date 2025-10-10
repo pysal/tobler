@@ -73,13 +73,10 @@ tests = [
 [tool.setuptools.packages.find]
 include = ["tobler", "tobler.*"]
 
-[tool.black]
-line-length = 88
-
 [tool.ruff]
 line-length = 88
-select = ["E", "F", "W", "I", "UP", "N", "B", "A", "C4", "SIM", "ARG"]
-ignore = [
+lint.select = ["E", "F", "W", "I", "UP", "N", "B", "A", "C4", "SIM", "ARG"]
+lint.ignore = [
     "B006",
     "B008",
     "B009",
@@ -93,6 +90,7 @@ ignore = [
     "N999",
     "UP007"
 ]
+include = ["*.ipynb"]
 exclude = ["tobler/tests/*", "docs/*"]
 
 [tool.coverage.run]

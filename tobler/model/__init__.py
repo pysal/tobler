@@ -1,3 +1,3 @@
 from .glm import glm
 
-__all__ = ['glm']
+__all__ = ["glm"]
