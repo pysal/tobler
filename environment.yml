@@ -6,7 +6,7 @@ dependencies:
   - dask
   - jupyterlab
   - numpy
-  - geopandas >=0.13
+  - geopandas
   - pandas
   - numpy
   - rasterio
