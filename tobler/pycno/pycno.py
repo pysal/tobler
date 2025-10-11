@@ -16,7 +16,7 @@ from numpy import (
     nansum,
     pad,
     power,
-    round,
+    round,  # noqa: A004 Import `round` is shadowing a Python builtin
     unique,
 )
 from numpy.ma import masked_invalid, masked_where
@@ -36,7 +36,8 @@ def pycno(
     value_field (str): Field name of values to be used to produce pycnophylactic surface
     cellsize (int): Pixel size of raster in planar units (i.e. metres, feet)
     r (float, optional): Relaxation parameter, default of 0.2 is generally fine.
-    handle_null (boolean, optional): Changes how nodata values are smoothed. Default True.
+    handle_null (boolean, optional): Changes how nodata values are smoothed.
+        Default True.
     converge (int, optional): Index for stopping value, default 3 is generally fine.
     verbose (boolean, optional): Print out progress at each iteration.
 
@@ -57,17 +58,20 @@ def pycno(
     trans = rasterio.Affine.from_gdal(xmin, cellsize, 0, ymax, 0, -cellsize)
 
     # First make a zone array
-    # NB using index values as ids can often be too large/alphanumeric. Limit is int32 polygon features.
+    # NB using index values as ids can often be too large/alphanumeric.
+    # Limit is int32 polygon features.
     # create a generator of geom, index pairs to use in rasterizing
-    shapes = ((geom, value) for geom, value in zip(gdf.geometry, gdf.index))
+    shapes = (
+        (geom, value) for geom, value in zip(gdf.geometry, gdf.index, strict=True)
+    )
     # burn the features into a raster array
     feature_array = rasterize(
         shapes=shapes, fill=nodata, out_shape=(yres, xres), transform=trans
     )
 
     # Get cell counts per index value (feature)
-    unique, count = np.unique(feature_array, return_counts=True)
-    cellcounts = asarray((unique, count)).T
+    _unique, count = np.unique(feature_array, return_counts=True)
+    cellcounts = asarray((_unique, count)).T
     # Lose the nodata counts
     cellcounts = cellcounts[cellcounts[:, 0] != nodata, :]
     # Adjust value totals by cells
@@ -79,7 +83,9 @@ def pycno(
     gdf["cellvalues"] = gdf[value_field] / gdf["cellcount"]
 
     # create a generator of geom, cellvalue pairs to use in rasterizing
-    shapes = ((geom, value) for geom, value in zip(gdf.geometry, gdf.cellvalues))
+    shapes = (
+        (geom, value) for geom, value in zip(gdf.geometry, gdf.cellvalues, strict=True)
+    )
     # Now burn the initial value raster
     value_array = rasterize(
         shapes=shapes, fill=nodata, out_shape=(yres, xres), transform=trans
@@ -92,7 +98,7 @@ def pycno(
     stopper = nanmax(value_array) * power(10.0, -converge)
 
     # The basic numpy convolve function doesn't handle nulls.
-    def smooth2D(data):
+    def smooth2d(data):
         # Create function that calls a 1 dimensionsal smoother.
         s1d = lambda s: convolve(s, [0.5, 0.0, 0.5], mode="same")
         # pad the data array with the mean value
@@ -110,7 +116,7 @@ def pycno(
         return padarray[1:-1, 1:-1]
 
     # The convolution function from astropy handles nulls.
-    def astroSmooth2d(data):
+    def astro_smooth2d(data):
         try:
             from astropy.convolution import convolve as astro_convolve
         except (ImportError, ModuleNotFoundError) as err:
@@ -127,7 +133,7 @@ def pycno(
         ) / 2
         return padarray[1:-1, 1:-1]
 
-    def correct2Da(data):
+    def correct2da(data):
         for idx, val in gdf[value_field].items():
             # Create zone mask from feature_array
             mask = masked_where(feature_array == idx, feature_array).mask
@@ -138,7 +144,7 @@ def pycno(
 
         return data
 
-    def correct2Dm(data):
+    def correct2dm(data):
         for idx, val in gdf[value_field].items():
             # Create zone mask from feature_array
             mask = masked_where(feature_array == idx, feature_array).mask
@@ -155,22 +161,19 @@ def pycno(
         old = copy(value_array)
 
         # Smooth the value_array
-        if handle_null:
-            sm = astroSmooth2d(value_array)
-        else:
-            sm = smooth2D(value_array)
+        sm = astro_smooth2d(value_array) if handle_null else smooth2d(value_array)
 
         # Relaxation to prevent overcompensation in the smoothing step
         value_array = value_array * r + (1.0 - r) * sm
 
         # Perform correction
-        value_array = correct2Da(value_array)
+        value_array = correct2da(value_array)
 
         # Reset any negative values to zero.
         value_array[value_array < 0] = 0.0
 
         # Perform correction
-        value_array = correct2Dm(value_array)
+        value_array = correct2dm(value_array)
 
         if verbose:
             print(
@@ -217,22 +220,24 @@ def save_pycno(pycno_array, transform, crs, filestring, driver="GTiff"):
     return None
 
 
-def extract_values(pycno_array, gdf, transform, fieldname="Estimate"):
+def extract_values(pycno_array, gdf, transform, fieldname="Estimate"):  # noqa: ARG001 Unused function argument: `fieldname`
     """Extract raster value sums according to a provided polygon geodataframe
     Args:
         pycno_array (numpy array): 2D numpy array of pycnophylactic surface.
         gdf (geopandas.geodataframe.GeoDataFrame): Target GeoDataFrame.
         transform (rasterio geotransform): Relevant transform from pycno()
-        fieldname (str, optional): New gdf field to save estimates in. Default name: 'Estimate'.
+        fieldname (str, optional): New gdf field to save estimates in.
+            Default name: 'Estimate'.
     Returns:
-        geopandas.geodataframe.GeoDataFrame: Target GeoDataFrame with appended estimates.
+        geopandas.geodataframe.GeoDataFrame:
+            Target GeoDataFrame with appended estimates.
     """
     from numpy import nansum
     from rasterio.features import geometry_mask
 
     estimates = []
     # Iterate through geodataframe and extract values
-    for idx, geom in gdf["geometry"].items():
+    for _, geom in gdf["geometry"].items():
         mask = geometry_mask(
             [geom], pycno_array.shape, transform=transform, invert=True
         )
@@ -280,15 +285,21 @@ def pycno_interpolate(
 
     Notes
     -----
-    The formula is based on Tobler, W. R. (1979). Smooth pycnophylactic interpolation for geographical regions. Journal of the American Statistical Association, 74(367), 519–529. https://doi.org/10.1080/01621459.1979.10481647
+    The formula is based on Tobler, W. R. (1979).
+        Smooth pycnophylactic interpolation for geographical regions.
+        Journal of the American Statistical Association, 74(367), 519–529.
+        https://doi.org/10.1080/01621459.1979.10481647
 
-    Original implementation written by @danlewis85 at <https://github.com/danlewis85/pycno/>
-    and based in part on the R pycno package by Chris Brusndon (<https://cran.r-project.org/web/packages/pycno/index.html>)
+    Original implementation written by @danlewis85 at
+    <https://github.com/danlewis85/pycno/>
+    and based in part on the R pycno package by Chris Brusndon
+    (<https://cran.r-project.org/web/packages/pycno/index.html>)
 
     References: :cite:`tobler_smooth_1979`
     """
     assert source_df.crs.equals(target_df.crs), (
-        "source_df CRS and target_df CRS are not the same. Reproject into consistent systems before proceeding"
+        "source_df CRS and target_df CRS are not the same. "
+        "Reproject into consistent systems before proceeding"
     )
     output_vars = target_df.copy()[[target_df.geometry.name]]
     for variable in variables:
