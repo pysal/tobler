@@ -94,7 +94,10 @@ include = ["*.py", "*.ipynb"]
 exclude = ["tobler/tests/*", "docs/*"]
 
 [tool.ruff.lint.per-file-ignores]
-"*__init__.py" = ["F403"]
+"*__init__.py" = [
+    "F403",
+    "F405",
+]
 
 [tool.coverage.run]
 source = ["./tobler"]
