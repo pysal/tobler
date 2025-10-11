@@ -17,7 +17,7 @@ __all__ = ["h3fy", "circumradius"]
 def circumradius(resolution):
     """Find the circumradius of an h3 hexagon at given resolution.
 
-     Parameters
+    Parameters
     ----------
     resolution : int
         h3 grid resolution
@@ -29,12 +29,12 @@ def circumradius(resolution):
     """
     try:
         import h3
-    except ImportError:
+    except ImportError as err:
         raise ImportError(
             "This function requires the `h3` library. "
             "You can install it with `conda install h3-py` or "
             "`pip install h3`"
-        )
+        ) from err
     if Version(h3.__version__) < Version("4.0"):
         return h3.edge_length(resolution, "m")
     return h3.average_hexagon_edge_length(resolution, "m")
@@ -42,7 +42,7 @@ def circumradius(resolution):
 
 def _check_crs(source_df, target_df):
     """check if crs is identical"""
-    if not (source_df.crs == target_df.crs):
+    if source_df.crs != target_df.crs:
         print("Source and target dataframes have different crs. Please correct.")
         return False
     return True
@@ -57,7 +57,7 @@ def _nan_check(df, column):
     if np.any(np.isnan(values)) or np.any(np.isinf(values)):
         wherenan = np.isnan(values)
         values[wherenan] = 0.0
-        warn(f"nan values in variable: {column}, replacing with 0")
+        warn(f"nan values in variable: {column}, replacing with 0", stacklevel=2)
     return values
 
 
@@ -70,7 +70,7 @@ def _inf_check(df, column):
     if np.any(np.isinf(values)):
         wherenan = np.isinf(values)
         values[wherenan] = 0.0
-        warn(f"inf values in variable: {column}, replacing with 0")
+        warn(f"inf values in variable: {column}, replacing with 0", stacklevel=2)
     return values
 
 
@@ -103,7 +103,8 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
     Returns
     -------
     pandas.Series or geopandas.GeoDataFrame
-        if `return_geoms` is True, a geopandas.GeoDataFrame whose rows comprise a hexagonal h3 grid (indexed on h3 hex id).
+        if `return_geoms` is True, a geopandas.GeoDataFrame whose rows comprise a
+        hexagonal h3 grid (indexed on h3 hex id).
         if `return_geoms` is False, a pandas.Series of h3 hexagon ids
     """
     try:
@@ -126,9 +127,11 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
     if source.crs.is_geographic:
         if buffer:  # if CRS is geographic but user wants a buffer, we need to estimate
             warn(
-                "The source geodataframe is stored in a geographic CRS. Falling back to estimated UTM zone "
-                "to generate desired buffer. If this produces unexpected results, reproject the input data "
-                "prior to using this function"
+                "The source geodataframe is stored in a geographic CRS. "
+                "Falling back to estimated UTM zone to generate desired buffer. "
+                "If this produces unexpected results, reproject the input data "
+                "prior to using this function",
+                stacklevel=2
             )
             source = (
                 source.to_crs(source.estimate_utm_crs())
@@ -139,11 +142,12 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
     else:  # if CRS is projected, we need lat/long
         crs_units = source.crs.to_dict()["units"]
         if buffer:  #  we can only convert between units we know
-            if not crs_units in ["m", "us-ft"]:
+            if crs_units not in ["m", "us-ft"]:
                 raise ValueError(
-                    f"The CRS of source geodataframe uses an unknown measurement unit: `{crs_units}`. "
-                    "The `buffer` argument requires either a geographic CRS or a projected one measured "
-                    "in meters or feet (U.S.)"
+                    "The CRS of source geodataframe uses an unknown "
+                    f"measurement unit: `{crs_units}`. The `buffer` "
+                    "argument requires either a geographic CRS or a projected "
+                    "one measured in meters or feet (U.S.)"
                 )
             clipper = source.to_crs(4326)
             distance = circumradius(resolution)
@@ -158,7 +162,7 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
     else:
         source_unary = shapely.force_2d(source.unary_union)
 
-    if type(source_unary) == Polygon:
+    if isinstance(source_unary, Polygon):
         hexagons = _to_hex(
             source_unary, resolution=resolution, return_geoms=return_geoms
         )
@@ -178,7 +182,7 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
     return hexagons
 
 
-def _to_hex(source, resolution=6, return_geoms=True, buffer=True):
+def _to_hex(source, resolution=6, return_geoms=True, buffer=True):  # noqa: ARG001 Unused function argument: `buffer`
     """Generate a hexgrid geodataframe that covers the face of a source geometry.
 
     Parameters
@@ -195,7 +199,8 @@ def _to_hex(source, resolution=6, return_geoms=True, buffer=True):
     Returns
     -------
     pandas.Series or geopandas.GeoDataFrame
-        if `return_geoms` is True, a geopandas.GeoDataFrame whose rows comprise a hexagonal h3 grid (indexed on h3 hex id).
+        if `return_geoms` is True, a geopandas.GeoDataFrame whose rows comprise
+        a hexagonal h3 grid (indexed on h3 hex id).
         if `return_geoms` is False, a pandas.Series of h3 hexagon ids
     """
     try:

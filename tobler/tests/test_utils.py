@@ -28,10 +28,8 @@ def test_h3fy_nocrs():
     sac1 = load_example("Sacramento1")
     sac1 = geopandas.read_file(sac1.get_path("sacramentot2.shp"))
     sac1.crs = None
-    try:
-        sac_hex = h3fy(sac1, return_geoms=True)
-    except ValueError:
-        pass
+    with pytest.raises(ValueError, match="source geodataframe must have a valid CRS"):
+        h3fy(sac1, return_geoms=True)
 
 
 def test_h3fy_diff_crs():
