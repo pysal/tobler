@@ -90,8 +90,14 @@ lint.ignore = [
     "N999",
     "UP007"
 ]
-include = ["*.ipynb"]
+include = ["*.py", "*.ipynb"]
 exclude = ["tobler/tests/*", "docs/*"]
+
+[tool.ruff.lint.per-file-ignores]
+"*__init__.py" = [
+    "F403",
+    "F405",
+]
 
 [tool.coverage.run]
 source = ["./tobler"]

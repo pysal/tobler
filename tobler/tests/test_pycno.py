@@ -1,9 +1,9 @@
 """test interpolation functions."""
 
 import geopandas
-
 from libpysal.examples import load_example
 from numpy.testing import assert_almost_equal
+
 from tobler.pycno import pycno_interpolate
 
 
