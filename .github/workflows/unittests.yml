@@ -33,9 +33,9 @@
          ]
          include:
            - environment-file: ci/312.yml
-             os: macos-13 # Intel
+             os: macos-15-intel # Intel
            - environment-file: ci/312.yml
-             os: macos-14 # Apple Silicon
+             os: macos-latest # Apple Silicon
            - environment-file: ci/312.yml
              os: windows-latest
        fail-fast: false
