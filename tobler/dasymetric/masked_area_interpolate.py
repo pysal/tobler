@@ -21,7 +21,8 @@ def masked_area_interpolate(
     n_jobs=-1,
     codes=None,
 ):
-    """Interpolate data between two polygonal datasets using an auxiliary raster to mask out uninhabited land.
+    """Interpolate data between two polygonal datasets using an
+    auxiliary raster to mask out uninhabited land.
 
     Parameters
     ----------
@@ -34,7 +35,8 @@ def masked_area_interpolate(
     pixel_values : list of ints
         list of pixel values that should be considered part of the mask. For example if
         using data from NLCD Land Cover Database <https://www.mrlc.gov/data>, a common
-        input might be [21,22,23,24], which match the "developed" land types in that dataset
+        input might be [21,22,23,24], which match the "developed" land types in
+        that dataset
     extensive_variables : list
         Columns of the input dataframe containing extensive variables to interpolate
     intensive_variables : list
@@ -60,7 +62,10 @@ def masked_area_interpolate(
     """
     if codes:
         warn(
-            "The `codes` keyword is deprecated and will be removed shortly. Please use `pixel_values` instead"
+            "The `codes` keyword is deprecated and will be removed shortly. "
+            "Please use `pixel_values` instead",
+            UserWarning,
+            stacklevel=2,
         )
         pixel_values = codes
     source_df = source_df.copy()
