@@ -28,13 +28,15 @@ def area_interpolate_dask(
     source_dgdf : dask_geopandas.GeoDataFrame
         Dask-geopandas GeoDataFrame
         IMPORTANT: the table needs to be spatially shuffled and with spatial partitions.
-        This is required so only overlapping partitions are checked for interpolation. See
-        more on spatial shuffling at: https://dask-geopandas.readthedocs.io/en/stable/guide/spatial-partitioning.html
+        This is required so only overlapping partitions are checked for interpolation.
+        See more on spatial shuffling at:
+        https://dask-geopandas.readthedocs.io/en/stable/guide/spatial-partitioning.html
     target_dgdf : dask_geopandas.GeoDataFrame
         Dask-geopandas GeoDataFrame
         IMPORTANT: the table needs to be spatially shuffled and with spatial partitions.
-        This is required so only overlapping partitions are checked for interpolation. See
-        more on spatial shuffling at: https://dask-geopandas.readthedocs.io/en/stable/guide/spatial-partitioning.html
+        This is required so only overlapping partitions are checked for interpolation.
+        See more on spatial shuffling at:
+        https://dask-geopandas.readthedocs.io/en/stable/guide/spatial-partitioning.html
     id_col : str
         Name of the column in `target_dgdf` with unique IDs to be used in output table
     extensive_variables : list
@@ -53,13 +55,11 @@ def area_interpolate_dask(
         area). If False, `estimates` contains the area in every polygon of `target_df`
         that is occupied by each value of the categorical
 
-
     Returns
     -------
     estimates : dask_geopandas.GeoDataFrame
          new dask-geopandas geodataframe with interpolated variables and `id_col` as
          columns and target_df geometry as output geometry
-
     """
     try:
         import dask_geopandas
@@ -70,23 +70,19 @@ def area_interpolate_dask(
             "Area interpolation with Dask requires `dask` and "
             "`dask_geopandas` installed to run. Please install them "
             "before importing this functionality."
-        )
+        ) from None
 
     if intensive_variables is not None:
         raise NotImplementedError(
-            (
-                "Dask-based interpolation of intensive variables is "
-                "not implemented yet. Please remove intensive variables to "
-                "be able to run the rest."
-            )
+            "Dask-based interpolation of intensive variables is "
+            "not implemented yet. Please remove intensive variables to "
+            "be able to run the rest."
         )
     if extensive_variables is not None:
         raise NotImplementedError(
-            (
-                "Dask-based interpolation of extensive variables is "
-                "not implemented yet. Please remove intensive variables to "
-                "be able to run the rest."
-            )
+            "Dask-based interpolation of extensive variables is "
+            "not implemented yet. Please remove intensive variables to "
+            "be able to run the rest."
         )
     # Categoricals must be Dask's known categorical
     if categorical_variables is not None:
@@ -108,10 +104,10 @@ def area_interpolate_dask(
     parts_left = np.asarray(parts.index)
     parts_right = np.asarray(parts["index_right"].values)
     name = "area_interpolate-" + tokenize(target_dgdf, source_dgdf)
-    for i, (l, r) in enumerate(zip(parts_left, parts_right)):
+    for i, (l_, r) in enumerate(zip(parts_left, parts_right, strict=True)):
         dsk[(name, i)] = (
             id_area_interpolate,
-            (source_dgdf._name, l),
+            (source_dgdf._name, l_),
             (target_dgdf._name, r),
             id_col,
             extensive_variables,
@@ -123,7 +119,7 @@ def area_interpolate_dask(
             categorical_variables,
             category_vars,
         )
-        lr = source_dgdf.spatial_partitions.iloc[l]
+        lr = source_dgdf.spatial_partitions.iloc[l_]
         rr = target_dgdf.spatial_partitions.iloc[r]
         extent = lr.intersection(rr)
         new_spatial_partitions.append(extent)
@@ -173,7 +169,7 @@ def area_interpolate_dask(
             transferred[category_vars]
             .astype(float)
             .groupby(transferred[id_col])
-            .agg({v: "sum" for v in category_vars})
+            .agg(dict.fromkeys(category_vars, "sum"))
         )
         out = out.join(out_categorical, on=id_col)
         if categorical_frequency is True:
@@ -242,7 +238,6 @@ def id_area_interpolate(
     estimates : geopandas.GeoDataFrame
          new geodaraframe with interpolated variables as columns and target_df geometry
          as output geometry
-
     """
     estimates = area_interpolate(
         source_df,

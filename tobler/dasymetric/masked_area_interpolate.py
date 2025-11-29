@@ -52,13 +52,11 @@ def masked_area_interpolate(
         generate the area allocation. If -1, this is set to the number of CPUs
         available.
 
-
     Returns
     -------
     geopandas.GeoDataFrame
         GeoDataFrame with geometries matching the target_df and extensive and intensive
         variables as the columns
-
     """
     if codes:
         warn(
