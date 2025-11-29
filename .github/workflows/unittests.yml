@@ -33,11 +33,11 @@
             ci/314-dev.yml,
          ]
          include:
-           - environment-file: ci/314.yml
+           - environment-file: ci/314-latest.yml
              os: macos-15-intel # Intel
-           - environment-file: ci/314.yml
+           - environment-file: ci/314-latest.yml
              os: macos-latest # Apple Silicon
-           - environment-file: ci/314.yml
+           - environment-file: ci/314-latest.yml
              os: windows-latest
        fail-fast: false
 
