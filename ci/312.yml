@@ -3,28 +3,30 @@ channels:
   - conda-forge
 dependencies:
   - python=3.12
+  - astropy
   - dask
   - dask-geopandas
-  - numpy
   - geopandas
+  - h3-py<4
+  - joblib
+  - jupyterlab
+  - libpysal
+  - numpy
   - pandas
   - rasterio
   - rasterstats
-  - statsmodels
   - scikit-learn
   - scipy
-  - libpysal
+  - statsmodels
   - tqdm
   - codecov
-  - pytest-xdist
   - coverage
-  - pytest
-  - pytest-mpl
-  - pytest-cov
-  - twine
   - pip
-  - h3-py<4
-  - mapclassify
+  - pytest
+  - pytest-cov
+  - pytest-mpl
+  - pytest-xdist
+  # docs
   - sphinx>=1.4.3
   - sphinxcontrib-bibtex
   - sphinx_bootstrap_theme
