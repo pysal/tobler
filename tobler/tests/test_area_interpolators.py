@@ -1,15 +1,14 @@
 """test interpolation functions."""
 
-import geopandas
 import dask_geopandas
-
+import geopandas
+import pytest
+from geopandas.testing import assert_geodataframe_equal
 from libpysal.examples import load_example
 from numpy.testing import assert_almost_equal
-from tobler.area_weighted import area_interpolate
-from tobler.area_weighted import area_interpolate_dask
+
+from tobler.area_weighted import area_interpolate, area_interpolate_dask
 from tobler.area_weighted.area_interpolate import _area_tables_binning
-from geopandas.testing import assert_geodataframe_equal
-import pytest
 
 
 def datasets():
