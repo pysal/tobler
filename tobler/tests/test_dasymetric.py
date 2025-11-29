@@ -1,8 +1,8 @@
 """test interpolation functions."""
 
 import geopandas
-
 from libpysal.examples import load_example
+
 from tobler.dasymetric import masked_area_interpolate
 
 

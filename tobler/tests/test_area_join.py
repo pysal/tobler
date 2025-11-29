@@ -1,8 +1,7 @@
 import geopandas as gpd
 import numpy as np
-from shapely.geometry import Point
-
 import pytest
+from shapely.geometry import Point
 
 from tobler.area_weighted import area_join
 
@@ -37,14 +36,14 @@ class TestAreaJoin:
         assert (result.columns == ["geometry", "ints"]).all()
         np.testing.assert_almost_equal(result.ints.mean(), 60.5, 3)
         assert result.ints.dtype == object
-        assert type(result.ints.iloc[0]) == int
+        assert isinstance(result.ints.iloc[0], int)
         assert result.ints.isna().sum() == 20
 
     def test_area_join_strings(self):
         result = area_join(self.source, self.target, "strings")
         assert (result.columns == ["geometry", "strings"]).all()
         assert result.strings.dtype == object
-        assert type(result.strings.iloc[0]) == str
+        assert isinstance(result.strings.iloc[0], str)
         assert result.strings.isna().sum() == 20
 
     def test_area_join_array(self):
@@ -57,10 +56,10 @@ class TestAreaJoin:
         assert result.floats.isna().sum() == 20
         np.testing.assert_almost_equal(result.ints.mean(), 60.5, 3)
         assert result.ints.dtype == object
-        assert type(result.ints.iloc[0]) == int
+        assert isinstance(result.ints.iloc[0], int)
         assert result.ints.isna().sum() == 20
         assert result.strings.dtype == object
-        assert type(result.strings.iloc[0]) == str
+        assert isinstance(result.strings.iloc[0], str)
         assert result.strings.isna().sum() == 20
 
     def test_area_join_error(self):
