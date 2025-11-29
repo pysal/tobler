@@ -2,7 +2,7 @@ name: test
 channels:
   - conda-forge
 dependencies:
-  - python=3.11
+  - python=3.14
   - astropy
   - dask
   - dask-geopandas
@@ -21,8 +21,19 @@ dependencies:
   - tqdm
   - codecov
   - coverage
-  - pip
   - pytest
   - pytest-cov
   - pytest-mpl
   - pytest-xdist
+  # docs
+  - sphinx>=1.4.3
+  - sphinxcontrib-bibtex
+  - sphinx_bootstrap_theme
+  - numpydoc
+  - nbsphinx
+  - joblib
+  - astropy
+  - myst-parser
+  - sphinx-autodoc2
+  - nbsphinx-link
+  - linkify-it-py
