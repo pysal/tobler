@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-#
-# giddy documentation build configuration file, created by
-# sphinx-quickstart on Wed Jun  6 15:54:22 2018.
-#
 # This file is execfile()d with the current directory set to its
 # containing dir.
 #
@@ -17,8 +12,8 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import sphinx_bootstrap_theme
-import tobler
 
+import tobler
 
 # -- General configuration ------------------------------------------------
 
@@ -41,7 +36,8 @@ extensions = [  #'sphinx_gallery.gen_gallery',
     "nbsphinx",
     "myst_parser",
     "autodoc2",
-    "nbsphinx_link"]
+    "nbsphinx_link",
+]
 
 myst_enable_extensions = [
     "amsmath",
@@ -83,13 +79,13 @@ templates_path = ["_templates"]
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
-#
-{'.rst': 'restructuredtext', '.md': 'markdown'}# The master toctree document.
+# The master toctree document.
+{".rst": "restructuredtext", ".md": "markdown"}  # noqa: B018 - useless expression
 master_doc = "index"
 
 # General information about the project.
 project = "tobler"
-copyright = "2018-, pysal developers"
+copyright = "2018-, pysal developers"  # noqa: A001 – shadowing a Python builtin
 author = "pysal developers"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -105,7 +101,7 @@ release = tobler.__version__
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = 'en'
+language = "en"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -119,8 +115,8 @@ pygments_style = "sphinx"
 todo_include_todos = False
 
 # Bib Variables
-bibtex_default_style = 'alpha'
-bibtex_reference_style ="author_year"
+bibtex_default_style = "alpha"
+bibtex_reference_style = "author_year"
 bibtex_bibfiles = ["_static/references.bib"]
 
 
@@ -132,7 +128,7 @@ bibtex_bibfiles = ["_static/references.bib"]
 # html_theme = 'alabaster'
 html_theme = "bootstrap"
 html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
-html_title = "%s v%s Manual" % (project, version)
+html_title = f"{project} v{version} Manual"
 
 # (Optional) Logo. Should be small enough to fit the navbar (ideally 24x24).
 # Path should be relative to the ``_static`` files directory.
@@ -234,8 +230,8 @@ latex_documents = [
     (
         master_doc,
         "toblerdoc.tex",
-        u"tobler Documentation",
-        u"tobler developers",
+        "tobler Documentation",
+        "tobler developers",
         "manual",
     )
 ]
@@ -245,7 +241,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "tobler", u"tobler Documentation", [author], 1)]
+man_pages = [(master_doc, "tobler", "tobler Documentation", [author], 1)]
 
 
 # -- Options for Texinfo output -------------------------------------------
@@ -257,7 +253,7 @@ texinfo_documents = [
     (
         master_doc,
         "tobler",
-        u"tobler Documentation",
+        "tobler Documentation",
         author,
         "tobler",
         "One line description of project.",
@@ -283,28 +279,39 @@ numpydoc_show_class_members = False
 class_members_toctree = True
 numpydoc_show_inherited_class_members = True
 numpydoc_use_plots = True
-numpydoc_xref_param_type=True
+numpydoc_xref_param_type = True
 # display the source code for Plot directive
 plot_include_source = True
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/3/', None),
-    'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None),
-    'numpy': ('https://docs.scipy.org/doc/numpy', None),
-    'pandas': ('https://pandas.pydata.org/pandas-docs/stable/', None),
-    'geopandas': ('https://geopandas.readthedocs.io/en/latest/', None),
-    'sklearn': ('https://scikit-learn.org/stable/', None),
-    'giddy': ('https://giddy.readthedocs.io/en/latest/', None),
-    'libpysal': ('https://pysal.org/libpysal/', None),
-    'esda': ('https://pysal.org/esda/', None),
-    'region': ('https://region.readthedocs.io/en/latest/', None),
-    'hdbscan': ('https://hdbscan.readthedocs.io/en/latest/', None)
-
+    "python": ("https://docs.python.org/3/", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy/reference/", None),
+    "numpy": ("https://docs.scipy.org/doc/numpy", None),
+    "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
+    "geopandas": ("https://geopandas.readthedocs.io/en/latest/", None),
+    "sklearn": ("https://scikit-learn.org/stable/", None),
+    "giddy": ("https://giddy.readthedocs.io/en/latest/", None),
+    "libpysal": ("https://pysal.org/libpysal/", None),
+    "esda": ("https://pysal.org/esda/", None),
+    "region": ("https://region.readthedocs.io/en/latest/", None),
+    "hdbscan": ("https://hdbscan.readthedocs.io/en/latest/", None),
 }
 
-numpydoc_xref_ignore = {'type', 'optional', 'default', 'shape', 'fitted', 'instance',
-                        'cluster', 'of', 'or', 'if', 'using', 'otherwise', 'required',
-                        'from'}
-
+numpydoc_xref_ignore = {
+    "type",
+    "optional",
+    "default",
+    "shape",
+    "fitted",
+    "instance",
+    "cluster",
+    "of",
+    "or",
+    "if",
+    "using",
+    "otherwise",
+    "required",
+    "from",
+}
