@@ -47,6 +47,11 @@ Home = "https://github.com/pysal/tobler/"
 Repository = "https://github.com/pysal/tobler"
 
 [project.optional-dependencies]
+plus = [
+    "astropy",
+    "dask-geopandas",
+    "h3",
+]
 dev = ["pre-commit"]
 docs = [
     "nbsphinx",
@@ -66,9 +71,9 @@ tests = [
     "pytest-cov",
     "pytest-xdist",
     "watermark",
-    "h3",
-    "astropy"
+
 ]
+all = ["tobler[plus,dev,docs,tests]"]
 
 [tool.setuptools.packages.find]
 include = ["tobler", "tobler.*"]

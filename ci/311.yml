@@ -3,29 +3,26 @@ channels:
   - conda-forge
 dependencies:
   - python=3.11
-  - jupyterlab
+  - astropy
   - dask
   - dask-geopandas
-  - numpy
   - geopandas
-  - pandas
-  - numpy
-  - rasterio
-  - rasterstats
-  - statsmodels
-  - scikit-learn
-  - scipy
-  - libpysal
-  - tqdm
-  - codecov
-  - pytest
-  - pytest-mpl
-  - pytest-cov
-  - pytest-xdist
-  - coverage
-  - twine
-  - pip
   - h3-py
   - joblib
-  - astropy
-  - mapclassify
+  - jupyterlab
+  - libpysal
+  - numpy
+  - pandas
+  - rasterio
+  - rasterstats
+  - scikit-learn
+  - scipy
+  - statsmodels
+  - tqdm
+  - codecov
+  - coverage
+  - pip
+  - pytest
+  - pytest-cov
+  - pytest-mpl
+  - pytest-xdist

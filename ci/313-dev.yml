@@ -3,38 +3,41 @@ channels:
   - conda-forge
 dependencies:
   - python=3.13
+  - astropy
   - dask
+  - h3-py
+  - joblib
+  - libpysal
+  - mapclassify
   - numpy
   - pandas
   - rasterio
   - rasterstats
   - statsmodels
   - scipy
-  - libpysal
   - tqdm
   - codecov
-  - pytest-xdist
   - coverage
   - pytest
-  - pytest-mpl
   - pytest-cov
+  - pytest-mpl
+  - pytest-xdist
+  # docs
   - twine
-  - h3-py
-  - mapclassify
   - sphinx>=1.4.3
   - sphinxcontrib-bibtex
   - sphinx_bootstrap_theme
   - linkify-it-py
   - numpydoc
   - nbsphinx
-  - joblib
-  - astropy
   - pip
   - pip:
       # dev versions of packages
-      - --pre --index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple --extra-index-url https://pypi.org/simple
+      - --pre \
+        --index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple \
+        --extra-index-url https://pypi.org/simple
       - scikit-learn
       - scipy
+      - shapely
       - git+https://github.com/geopandas/geopandas.git@main
       - git+https://github.com/geopandas/dask-geopandas.git@main
-      - shapely
