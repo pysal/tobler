@@ -117,3 +117,9 @@ exclude_lines = [
 ]
 ignore_errors = true
 omit = ["tobler/tests/*", "docs/conf.py"]
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    # this is an internal warning thrown within ``pyogrio/__init__.py``
+    "ignore:The 'shapely.geos' module is deprecated*:DeprecationWarning",
+]
