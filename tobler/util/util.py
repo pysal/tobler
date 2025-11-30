@@ -131,7 +131,7 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
                 "Falling back to estimated UTM zone to generate desired buffer. "
                 "If this produces unexpected results, reproject the input data "
                 "prior to using this function",
-                stacklevel=2
+                stacklevel=2,
             )
             source = (
                 source.to_crs(source.estimate_utm_crs())

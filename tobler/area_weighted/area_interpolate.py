@@ -78,7 +78,6 @@ def _area_tables_binning_parallel(source_df, target_df, n_jobs=-1):
     Returns
     -------
     tables : scipy.sparse.csr_matrix
-
     """
     from joblib import Parallel, delayed, parallel_backend
 
@@ -140,7 +139,8 @@ def _area_tables_binning_parallel(source_df, target_df, n_jobs=-1):
 
 
 def _area_tables_binning(source_df, target_df, spatial_index):
-    """Construct area allocation and source-target correspondence tables using a spatial indexing approach
+    """Construct area allocation and source-target correspondence
+    tables using a spatial indexing approach
     ...
 
     NOTE: this currently relies on Geopandas' spatial index machinery
@@ -163,7 +163,6 @@ def _area_tables_binning(source_df, target_df, spatial_index):
     Returns
     -------
     tables : scipy.sparse.csr_matrix
-
     """
     if _check_crs(source_df, target_df):
         pass
@@ -175,18 +174,15 @@ def _area_tables_binning(source_df, target_df, spatial_index):
 
     # it is generally more performant to use the longer df as spatial index
     if spatial_index == "auto":
-        if df1.shape[0] > df2.shape[0]:
-            spatial_index = "source"
-        else:
-            spatial_index = "target"
-
+        spatial_index = "source" if df1.shape[0] > df2.shape[0] else "target"
     if spatial_index == "source":
         ids_tgt, ids_src = df1.sindex.query(df2.geometry, predicate="intersects")
     elif spatial_index == "target":
         ids_src, ids_tgt = df2.sindex.query(df1.geometry, predicate="intersects")
     else:
         raise ValueError(
-            f"'{spatial_index}' is not a valid option. Use 'auto', 'source' or 'target'."
+            f"'{spatial_index}' is not a valid option. "
+            "Use 'auto', 'source' or 'target'."
         )
 
     areas = df1.geometry.values[ids_src].intersection(df2.geometry.values[ids_tgt]).area
@@ -223,26 +219,20 @@ def area_interpolate(
     Parameters
     ----------
     source_df : geopandas.GeoDataFrame
-
     target_df : geopandas.GeoDataFrame
-
     extensive_variables : list
         [Optional. Default=None] Columns in dataframes for extensive variables
-
     intensive_variables : list
         [Optional. Default=None] Columns in dataframes for intensive variables
-
     table : scipy.sparse.csr_matrix
         [Optional. Default=None] Area allocation source-target correspondence
         table. If not provided, it will be built from `source_df` and
         `target_df` using `tobler.area_interpolate._area_tables_binning`
-
     allocate_total : boolean
         [Optional. Default=True] True if total value of source area should be
         allocated. False if denominator is area of i. Note that the two cases
         would be identical when the area of the source polygon is exhausted by
         intersections. See Notes for more details.
-
     spatial_index : str
         [Optional. Default="auto"] Spatial index to use to build the
         allocation of area from source to target tables. It currently support
@@ -255,15 +245,12 @@ def area_interpolate(
         Currently, this option uses the largest table to build the
         index, and performs a `bulk_query` on the shorter table.
         This argument is ignored if n_jobs>1 (or n_jobs=-1).
-
     n_jobs : int
         [Optional. Default=1] Number of processes to run in parallel to
         generate the area allocation. If -1, this is set to the number of CPUs
         available. If `table` is passed, this is ignored.
-
     categorical_variables : list
         [Optional. Default=None] Columns in dataframes for categorical variables
-
     categorical_frequency : Boolean
         [Optional. Default=True] If True, `estimates` returns the frequency of each
         value in a categorical variable in every polygon of `target_df` (proportion of

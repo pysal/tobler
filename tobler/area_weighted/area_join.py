@@ -1,6 +1,7 @@
+import warnings
+
 import numpy as np
 import pandas as pd
-import warnings
 
 __author__ = "Martin Fleischmann <martin@martinfleischmann.net>"
 
@@ -9,7 +10,8 @@ __all__ = ["area_join"]
 
 def area_join(source_df, target_df, variables):
     """
-    Join variables from source_df based on the largest intersection. In case of a tie it picks the first one.
+    Join variables from source_df based on the largest intersection.
+    In case of a tie it picks the first one.
 
     Parameters
     ----------
@@ -24,7 +26,6 @@ def area_join(source_df, target_df, variables):
     -------
     joined : geopandas.GeoDataFrame
          target_df GeoDataFrame with joined variables as additional columns
-
     """
     if not pd.api.types.is_list_like(variables):
         variables = [variables]
@@ -62,6 +63,8 @@ def area_join(source_df, target_df, variables):
         except TypeError:
             warnings.warn(
                 f"Cannot preserve dtype of '{v}'. Falling back to `dtype=object`.",
+                UserWarning,
+                stacklevel=2,
             )
         target_df[v] = arr
 
