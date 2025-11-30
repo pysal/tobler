@@ -1,0 +1,31 @@
+# {py:mod}`tobler.model.glm`
+
+```{py:module} tobler.model.glm
+```
+
+```{autodoc2-docstring} tobler.model.glm
+:allowtitles:
+```
+
+## Module Contents
+
+### Functions
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`glm <tobler.model.glm.glm>`
+  - ```{autodoc2-docstring} tobler.model.glm.glm
+    :summary:
+    ```
+````
+
+### API
+
+````{py:function} glm(source_df=None, target_df=None, raster='nlcd_2011', raster_codes=None, variable=None, formula=None, likelihood='poisson', force_crs_match=True, return_model=False)
+:canonical: tobler.model.glm.glm
+
+```{autodoc2-docstring} tobler.model.glm.glm
+```
+````

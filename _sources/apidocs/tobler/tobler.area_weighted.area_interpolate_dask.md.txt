@@ -1,0 +1,31 @@
+# {py:mod}`tobler.area_weighted.area_interpolate_dask`
+
+```{py:module} tobler.area_weighted.area_interpolate_dask
+```
+
+```{autodoc2-docstring} tobler.area_weighted.area_interpolate_dask
+:allowtitles:
+```
+
+## Module Contents
+
+### Functions
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`area_interpolate_dask <tobler.area_weighted.area_interpolate_dask.area_interpolate_dask>`
+  - ```{autodoc2-docstring} tobler.area_weighted.area_interpolate_dask.area_interpolate_dask
+    :summary:
+    ```
+````
+
+### API
+
+````{py:function} area_interpolate_dask(source_dgdf, target_dgdf, id_col, extensive_variables=None, intensive_variables=None, categorical_variables=None, categorical_frequency=True)
+:canonical: tobler.area_weighted.area_interpolate_dask.area_interpolate_dask
+
+```{autodoc2-docstring} tobler.area_weighted.area_interpolate_dask.area_interpolate_dask
+```
+````

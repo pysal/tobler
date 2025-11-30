@@ -1,0 +1,42 @@
+# {py:mod}`tobler.util`
+
+```{py:module} tobler.util
+```
+
+```{autodoc2-docstring} tobler.util
+:allowtitles:
+```
+
+## Package Contents
+
+### Functions
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`h3fy <tobler.util.util.h3fy>`
+  - ```{autodoc2-docstring} tobler.util.util.h3fy
+    :summary:
+    ```
+* - {py:obj}`circumradius <tobler.util.util.circumradius>`
+  - ```{autodoc2-docstring} tobler.util.util.circumradius
+    :summary:
+    ```
+````
+
+### API
+
+````{py:function} h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True)
+:canonical: tobler.util.util.h3fy
+
+```{autodoc2-docstring} tobler.util.util.h3fy
+```
+````
+
+````{py:function} circumradius(resolution)
+:canonical: tobler.util.util.circumradius
+
+```{autodoc2-docstring} tobler.util.util.circumradius
+```
+````
