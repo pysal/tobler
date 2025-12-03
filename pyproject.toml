@@ -120,6 +120,8 @@ omit = ["tobler/tests/*", "docs/conf.py"]
 
 [tool.pytest.ini_options]
 filterwarnings = [
-    # this is an internal warning thrown within ``pyogrio/__init__.py``
+    # internal warning thrown from ``pyogrio/__init__.py``
     "ignore:The 'shapely.geos' module is deprecated*:DeprecationWarning",
+    # thrown in testing and can be ignored -- user's responsibility to ensure CRS
+    "ignore:Geometry is in a geographic CRS*:UserWarning",
 ]
