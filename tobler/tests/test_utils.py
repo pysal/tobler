@@ -27,7 +27,8 @@ def test_h3fy_nogeoms():
 def test_h3fy_nocrs():
     sac1 = load_example("Sacramento1")
     sac1 = geopandas.read_file(sac1.get_path("sacramentot2.shp"))
-    sac1.crs = None
+    with pytest.warns(DeprecationWarning, match="Overriding the CRS of a GeoDataFrame"):
+        sac1.crs = None
     with pytest.raises(ValueError, match="source geodataframe must have a valid CRS"):
         h3fy(sac1, return_geoms=True)
 
@@ -52,7 +53,10 @@ def test_h3fy_clip():
 def test_h3fy_clip_buffer():
     sac1 = load_example("Sacramento1")
     sac1 = geopandas.read_file(sac1.get_path("sacramentot2.shp"))
-    sac_hex = h3fy(sac1, clip=True, buffer=True)
+    with pytest.warns(
+        UserWarning, match="The source geodataframe is stored in a geographic CRS",
+    ):
+        sac_hex = h3fy(sac1, clip=True, buffer=True)
     sac_hex = sac_hex.to_crs(sac_hex.estimate_utm_crs())
     sac1 = sac1.to_crs(sac_hex.estimate_utm_crs())
     assert_almost_equal(sac_hex.area.sum(), sac1.area.sum(), decimal=-8)

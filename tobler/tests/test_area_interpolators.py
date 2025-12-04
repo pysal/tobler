@@ -27,14 +27,15 @@ def datasets():
 
 def test_area_interpolate_singlecore():
     sac1, sac2 = datasets()
-    area = area_interpolate(
-        source_df=sac1,
-        target_df=sac2,
-        extensive_variables=["TOT_POP"],
-        intensive_variables=["pct_poverty"],
-        categorical_variables=["animal"],
-        n_jobs=1,
-    )
+    with (pytest.WARN_VAR_VALS_NAN, pytest.WARN_VAR_VALS_INF):
+        area = area_interpolate(
+            source_df=sac1,
+            target_df=sac2,
+            extensive_variables=["TOT_POP"],
+            intensive_variables=["pct_poverty"],
+            categorical_variables=["animal"],
+            n_jobs=1,
+        )
     assert_almost_equal(area.TOT_POP.sum(), 1796856, decimal=0)
     assert_almost_equal(area.pct_poverty.sum(), 2140, decimal=0)
     assert_almost_equal(area.animal_cat.sum(), 32, decimal=0)
@@ -57,25 +58,27 @@ def test_area_interpolate_extensive():
 
 def test_area_interpolate_intensive():
     sac1, sac2 = datasets()
-    area = area_interpolate(
-        source_df=sac1,
-        target_df=sac2,
-        intensive_variables=["pct_poverty"],
-        n_jobs=1,
-    )
+    with (pytest.WARN_VAR_VALS_NAN, pytest.WARN_VAR_VALS_INF):
+        area = area_interpolate(
+            source_df=sac1,
+            target_df=sac2,
+            intensive_variables=["pct_poverty"],
+            n_jobs=1,
+        )
     assert_almost_equal(area.pct_poverty.sum(), 2140, decimal=0)
 
 
 def test_area_interpolate_categorical():
     sac1, sac2 = datasets()
-    area = area_interpolate(
-        source_df=sac1,
-        target_df=sac2,
-        extensive_variables=["TOT_POP"],
-        intensive_variables=["pct_poverty"],
-        categorical_variables=["animal"],
-        n_jobs=1,
-    )
+    with (pytest.WARN_VAR_VALS_NAN, pytest.WARN_VAR_VALS_INF):
+        area = area_interpolate(
+            source_df=sac1,
+            target_df=sac2,
+            extensive_variables=["TOT_POP"],
+            intensive_variables=["pct_poverty"],
+            categorical_variables=["animal"],
+            n_jobs=1,
+        )
     assert_almost_equal(area.animal_cat.sum(), 32, decimal=0)
     assert_almost_equal(area.animal_dog.sum(), 19, decimal=0)
     assert_almost_equal(area.animal_donkey.sum(), 22, decimal=0)
@@ -93,12 +96,13 @@ def test_area_interpolate_categorical_dask():
     dsac2 = dask_geopandas.from_geopandas(sac2, npartitions=2).spatial_shuffle(
         by="hilbert", shuffle="tasks"
     )
-    area = area_interpolate_dask(
-        source_dgdf=dsac1,
-        target_dgdf=dsac2,
-        id_col="ZIP",
-        categorical_variables=["animal"],
-    ).compute()
+    with (pytest.WARN_VAR_VALS_NAN, pytest.WARN_VAR_VALS_INF):
+        area = area_interpolate_dask(
+            source_dgdf=dsac1,
+            target_dgdf=dsac2,
+            id_col="ZIP",
+            categorical_variables=["animal"],
+        ).compute()
     assert_almost_equal(area.animal_cat.sum(), 32, decimal=0)
     assert_almost_equal(area.animal_dog.sum(), 19, decimal=0)
     assert_almost_equal(area.animal_donkey.sum(), 22, decimal=0)
@@ -110,13 +114,14 @@ def test_area_interpolate_custom_index():
     sac1, sac2 = datasets()
     sac1.index = sac1.index * 2
     sac2.index = sac2.index * 13
-    area = area_interpolate(
-        source_df=sac1,
-        target_df=sac2,
-        extensive_variables=["TOT_POP"],
-        intensive_variables=["pct_poverty"],
-        categorical_variables=["animal"],
-    )
+    with (pytest.WARN_VAR_VALS_NAN, pytest.WARN_VAR_VALS_INF):
+        area = area_interpolate(
+            source_df=sac1,
+            target_df=sac2,
+            extensive_variables=["TOT_POP"],
+            intensive_variables=["pct_poverty"],
+            categorical_variables=["animal"],
+        )
     assert_almost_equal(area.TOT_POP.sum(), 1796856, decimal=0)
     assert_almost_equal(area.pct_poverty.sum(), 2140, decimal=0)
     assert_almost_equal(area.animal_cat.sum(), 32, decimal=0)
@@ -129,26 +134,29 @@ def test_area_interpolate_custom_index():
 
 def test_area_interpolate_sindex_options():
     sac1, sac2 = datasets()
-    auto = area_interpolate(
-        source_df=sac1,
-        target_df=sac2,
-        extensive_variables=["TOT_POP"],
-        intensive_variables=["pct_poverty"],
-    )
-    source = area_interpolate(
-        source_df=sac1,
-        target_df=sac2,
-        extensive_variables=["TOT_POP"],
-        intensive_variables=["pct_poverty"],
-        spatial_index="source",
-    )
-    target = area_interpolate(
-        source_df=sac1,
-        target_df=sac2,
-        extensive_variables=["TOT_POP"],
-        intensive_variables=["pct_poverty"],
-        spatial_index="target",
-    )
+    with (pytest.WARN_VAR_VALS_NAN, pytest.WARN_VAR_VALS_INF):
+        auto = area_interpolate(
+            source_df=sac1,
+            target_df=sac2,
+            extensive_variables=["TOT_POP"],
+            intensive_variables=["pct_poverty"],
+        )
+    with (pytest.WARN_VAR_VALS_NAN, pytest.WARN_VAR_VALS_INF):
+        source = area_interpolate(
+            source_df=sac1,
+            target_df=sac2,
+            extensive_variables=["TOT_POP"],
+            intensive_variables=["pct_poverty"],
+            spatial_index="source",
+        )
+    with (pytest.WARN_VAR_VALS_NAN, pytest.WARN_VAR_VALS_INF):
+        target = area_interpolate(
+            source_df=sac1,
+            target_df=sac2,
+            extensive_variables=["TOT_POP"],
+            intensive_variables=["pct_poverty"],
+            spatial_index="target",
+        )
 
     assert_geodataframe_equal(auto, source)
     assert_geodataframe_equal(auto, target)
@@ -165,13 +173,14 @@ def test_area_interpolate_sindex_options():
 
 def test_area_interpolate_parallel():
     sac1, sac2 = datasets()
-    area = area_interpolate(
-        source_df=sac1,
-        target_df=sac2,
-        extensive_variables=["TOT_POP"],
-        intensive_variables=["pct_poverty"],
-        n_jobs=-1,
-    )
+    with (pytest.WARN_VAR_VALS_NAN, pytest.WARN_VAR_VALS_INF):
+        area = area_interpolate(
+            source_df=sac1,
+            target_df=sac2,
+            extensive_variables=["TOT_POP"],
+            intensive_variables=["pct_poverty"],
+            n_jobs=-1,
+        )
     assert_almost_equal(area.TOT_POP.sum(), 1796856, decimal=0)
     assert_almost_equal(area.pct_poverty.sum(), 2140, decimal=0)
 
@@ -202,24 +211,26 @@ def test_passed_table():
     sac1, sac2 = datasets()
     csr = _area_tables_binning(source_df=sac1, target_df=sac2, spatial_index="auto")
 
-    area = area_interpolate(
-        source_df=sac1,
-        target_df=sac2,
-        extensive_variables=["TOT_POP"],
-        intensive_variables=["pct_poverty"],
-        table=csr,
-    )
+    with (pytest.WARN_VAR_VALS_NAN, pytest.WARN_VAR_VALS_INF):
+        area = area_interpolate(
+            source_df=sac1,
+            target_df=sac2,
+            extensive_variables=["TOT_POP"],
+            intensive_variables=["pct_poverty"],
+            table=csr,
+        )
     assert_almost_equal(area.TOT_POP.sum(), 1796856, decimal=0)
     assert_almost_equal(area.pct_poverty.sum(), 2140, decimal=0)
 
     dok = csr.todok()
 
-    area = area_interpolate(
-        source_df=sac1,
-        target_df=sac2,
-        extensive_variables=["TOT_POP"],
-        intensive_variables=["pct_poverty"],
-        table=dok,
-    )
+    with (pytest.WARN_VAR_VALS_NAN, pytest.WARN_VAR_VALS_INF):
+        area = area_interpolate(
+            source_df=sac1,
+            target_df=sac2,
+            extensive_variables=["TOT_POP"],
+            intensive_variables=["pct_poverty"],
+            table=dok,
+        )
     assert_almost_equal(area.TOT_POP.sum(), 1796856, decimal=0)
     assert_almost_equal(area.pct_poverty.sum(), 2140, decimal=0)
