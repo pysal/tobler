@@ -1,0 +1,8 @@
+# {py:mod}`tobler.dasymetric`
+
+```{py:module} tobler.dasymetric
+```
+
+```{autodoc2-docstring} tobler.dasymetric
+:allowtitles:
+```
