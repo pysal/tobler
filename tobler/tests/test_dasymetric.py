@@ -1,6 +1,7 @@
 """test interpolation functions."""
 
 import geopandas
+import pytest
 from libpysal.examples import load_example
 
 from tobler.dasymetric import masked_area_interpolate
@@ -21,13 +22,17 @@ def datasets():
 
 def test_masked_area_interpolate():
     sac1, sac2 = datasets()
-    masked = masked_area_interpolate(
-        source_df=sac1,
-        target_df=sac2,
-        extensive_variables=["TOT_POP"],
-        intensive_variables=["pct_poverty"],
-        raster="https://spatial-ucr.s3.amazonaws.com/nlcd/landcover/nlcd_landcover_2011.tif",
-        pixel_values=[21, 22, 23, 24],
-    )
+    with (pytest.WARN_VAR_VALS_NAN, pytest.WARN_VAR_VALS_INF):
+        masked = masked_area_interpolate(
+            source_df=sac1,
+            target_df=sac2,
+            extensive_variables=["TOT_POP"],
+            intensive_variables=["pct_poverty"],
+            raster=(
+                "https://spatial-ucr.s3.amazonaws.com/nlcd/"
+                "landcover/nlcd_landcover_2011.tif"
+            ),
+            pixel_values=[21, 22, 23, 24],
+        )
     assert masked.TOT_POP.sum().round(0) == sac1.TOT_POP.sum()
     assert masked.pct_poverty.sum() > 2000
