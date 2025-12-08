@@ -26,9 +26,9 @@ def test_h3fy_nogeoms():
 
 def test_h3fy_nocrs():
     sac1 = load_example("Sacramento1")
-    sac1 = geopandas.read_file(sac1.get_path("sacramentot2.shp"))
-    with pytest.warns(DeprecationWarning, match="Overriding the CRS of a GeoDataFrame"):
-        sac1.crs = None
+    sac1 = geopandas.read_file(sac1.get_path("sacramentot2.shp")).set_crs(
+        None, allow_override=True
+    )
     with pytest.raises(ValueError, match="source geodataframe must have a valid CRS"):
         h3fy(sac1, return_geoms=True)
 
