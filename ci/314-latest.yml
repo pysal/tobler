@@ -6,7 +6,7 @@ dependencies:
   - astropy
   - dask
   - dask-geopandas
-  - geopandas
+  - geopandas>=1
   - h3-py
   - joblib
   - jupyterlab
