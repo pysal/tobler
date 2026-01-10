@@ -3,6 +3,8 @@ import geopandas as gpd
 import numpy as np
 from pandas.api.types import is_list_like
 from shapely.geometry import MultiPoint
+from warnings import warn
+from geopandas.tools._random import uniform
 
 
 def poly_to_dots(
@@ -24,7 +26,7 @@ def poly_to_dots(
     else:
         pts = (
             gdf.apply(
-                lambda row: _draw_pointpats(row, category, method, method_kwargs),
+                lambda row: _draw_pointpats(row, category, method, rng, method_kwargs),
                 axis=1,
             )
             .explode()
@@ -33,6 +35,8 @@ def poly_to_dots(
         pts = pts.rename(columns={0: "sampled_points"})
         pts = pts.set_geometry("sampled_points")
         pts = pts.set_crs(gdf.crs)
+        pts = pts.explode()
+        pts = pts[~pts.is_empty]
 
     if pts.index.name is None:
         pts.index.name = "poly_id"
@@ -104,7 +108,35 @@ def poly_to_multidots(
     return pts
 
 
-def _draw_pointpats(row, column, method, method_kwargs):
+def _draw_pointpats(row, column, method, rng, method_kwargs):
+    try:
+        import pointpats as pps
+    except:
+        raise ImportError(
+            "you must have `pointpats` installed to draw from other distributions"
+        )
+    sample_function = getattr(pps.random, method)
+    pts = []
+    if row[column] == 1:
+        warn("drawing size=1, resorting to uniform for single draw")
+        pts.append(uniform(row["geometry"], 1, rng))
+    elif not (
+        row.geometry.is_empty
+        or row["geometry"] is None
+        or "Polygon" not in row["geometry"].geom_type
+        or row[column] < 1
+    ):
+        pts.append(
+            gpd.points_from_xy(
+                *sample_function(row.geometry, size=int(row[column]), **method_kwargs).T
+            ).union_all()
+        )
+    else:
+        pts.append(MultiPoint())
+    return pts
+
+
+def _draw_pointpats_orig(row, column, method, method_kwargs):
     try:
         import pointpats as pps
     except:
