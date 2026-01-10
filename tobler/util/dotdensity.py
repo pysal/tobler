@@ -134,26 +134,3 @@ def _draw_pointpats(row, column, method, rng, method_kwargs):
     else:
         pts.append(MultiPoint())
     return pts
-
-
-def _draw_pointpats_orig(row, column, method, method_kwargs):
-    try:
-        import pointpats as pps
-    except:
-        raise ImportError(
-            "you must have `pointpats` installed to draw from other distributions"
-        )
-    sample_function = getattr(pps.random, method)
-    pts = (
-        gpd.points_from_xy(
-            *sample_function(row.geometry, size=int(row[column]), **method_kwargs).T
-        ).union_all()
-        if not (
-            row.geometry.is_empty
-            or row["geometry"] is None
-            or "Polygon" not in row["geometry"].geom_type
-            or row[column] < 1
-        )
-        else MultiPoint()
-    )
-    return pts
