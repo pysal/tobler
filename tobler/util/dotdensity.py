@@ -90,8 +90,6 @@ def poly_to_multidots(
     """
     if not is_list_like(categories):
         raise ValueError("`categories` should be a list of columns")
-    if not set(categories).issubset(set(gdf.columns)):
-        raise ValueError(f"{categories} not in gdf columns")
     pts = []
     for cat in categories:
         dots = poly_to_dots(
@@ -132,7 +130,7 @@ def _draw_pointpats(row, column, scale, method, rng, method_kwargs):
             ).union_all()
         )
     elif val == 1:
-        warn(f"drawing size=1, resorting to uniform for single draw in {row.index}")
+        warn(f"drawing size=1, resorting to uniform for single draw")
         pts.append(uniform(row["geometry"], 1, rng))
     else:
         pts.append(MultiPoint())

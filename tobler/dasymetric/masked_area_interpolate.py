@@ -155,7 +155,8 @@ def masked_dot_density(
         a geodataframe with simulated points in the geometry column, with each row containing the index
         of the containing polygon, and the category to which the point belongs.
     """
-
+    if categories is None:
+        raise ValueError("must provide a set of categories to draw from")
     source_df = source_df.copy()
     assert not any(source_df.index.duplicated()), (
         "The index of the source_df cannot contain duplicates."
