@@ -26,7 +26,9 @@ def poly_to_dots(
     else:
         pts = (
             gdf.apply(
-                lambda row: _draw_pointpats(row, category, method, rng, method_kwargs),
+                lambda row: _draw_pointpats(
+                    row, category, scale, method, rng, method_kwargs
+                ),
                 axis=1,
             )
             .explode()
@@ -34,9 +36,9 @@ def poly_to_dots(
         )
         pts = pts.rename(columns={0: "sampled_points"})
         pts = pts.set_geometry("sampled_points")
+        pts = pts[~pts.is_empty]
         pts = pts.set_crs(gdf.crs)
         pts = pts.explode()
-        pts = pts[~pts.is_empty]
 
     if pts.index.name is None:
         pts.index.name = "poly_id"
@@ -108,7 +110,7 @@ def poly_to_multidots(
     return pts
 
 
-def _draw_pointpats(row, column, method, rng, method_kwargs):
+def _draw_pointpats(row, column, scale, method, rng, method_kwargs):
     try:
         import pointpats as pps
     except:
@@ -117,20 +119,21 @@ def _draw_pointpats(row, column, method, rng, method_kwargs):
         )
     sample_function = getattr(pps.random, method)
     pts = []
-    if row[column] == 1:
-        warn("drawing size=1, resorting to uniform for single draw")
-        pts.append(uniform(row["geometry"], 1, rng))
-    elif not (
+    val = int(round(row[column] * scale, 0))
+    if not (
         row.geometry.is_empty
         or row["geometry"] is None
         or "Polygon" not in row["geometry"].geom_type
-        or row[column] < 1
+        or val <= 1
     ):
         pts.append(
             gpd.points_from_xy(
-                *sample_function(row.geometry, size=int(row[column]), **method_kwargs).T
+                *sample_function(row.geometry, size=val, **method_kwargs).T
             ).union_all()
         )
+    elif val == 1:
+        warn(f"drawing size=1, resorting to uniform for single draw in {row.index}")
+        pts.append(uniform(row["geometry"], 1, rng))
     else:
         pts.append(MultiPoint())
     return pts
