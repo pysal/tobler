@@ -8,7 +8,7 @@ from shapely.geometry import Point
 
 from tobler.area_weighted import area_join
 
-LTPD3 = Version(pd.__version__) < Version("v3.0.0")
+PDLT3 = Version(pd.__version__) < Version("v3.0.0")
 
 class TestAreaJoin:
     def setup_method(self):
@@ -46,7 +46,7 @@ class TestAreaJoin:
     def test_area_join_strings(self):
         result = area_join(self.source, self.target, "strings")
         assert (result.columns == ["geometry", "strings"]).all()
-        assert result.strings.dtype.name == ("object" if LTPD3 else "str")
+        assert result.strings.dtype.name == ("object" if PDLT3 else "str")
         assert isinstance(result.strings.iloc[0], str)
         assert result.strings.isna().sum() == 20
 
@@ -62,7 +62,7 @@ class TestAreaJoin:
         assert result.ints.dtype == object
         assert isinstance(result.ints.iloc[0], int)
         assert result.ints.isna().sum() == 20
-        assert result.strings.dtype.name == ("object" if LTPD3 else "str")
+        assert result.strings.dtype.name == ("object" if PDLT3 else "str")
         assert isinstance(result.strings.iloc[0], str)
         assert result.strings.isna().sum() == 20
 
