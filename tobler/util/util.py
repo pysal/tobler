@@ -183,7 +183,7 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
     return hexagons
 
 
-def _to_hex(source, resolution=6, return_geoms=True, buffer=True):  # noqa: ARG001 Unused function argument: `buffer`
+def _to_hex(source, resolution=6, return_geoms=True):
     """Generate a hexgrid geodataframe that covers the face of a source geometry.
 
     Parameters
