@@ -19,7 +19,6 @@ def masked_area_interpolate(
     allocate_total=True,
     nodata=255,
     n_jobs=-1,
-    codes=None,
 ):
     """Interpolate data between two polygonal datasets using an
     auxiliary raster to mask out uninhabited land.
@@ -58,14 +57,7 @@ def masked_area_interpolate(
         GeoDataFrame with geometries matching the target_df and extensive and intensive
         variables as the columns
     """
-    if codes:
-        warn(
-            "The `codes` keyword is deprecated and will be removed shortly. "
-            "Please use `pixel_values` instead",
-            UserWarning,
-            stacklevel=2,
-        )
-        pixel_values = codes
+
     source_df = source_df.copy()
     assert not any(source_df.index.duplicated()), (
         "The index of the source_df cannot contain duplicates."
