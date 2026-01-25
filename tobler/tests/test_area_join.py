@@ -42,7 +42,7 @@ class TestAreaJoin:
     def test_area_join_strings(self):
         result = area_join(self.source, self.target, "strings")
         assert (result.columns == ["geometry", "strings"]).all()
-        assert result.strings.dtype == object
+        assert result.strings.dtype.name == "str"
         assert isinstance(result.strings.iloc[0], str)
         assert result.strings.isna().sum() == 20
 
@@ -58,7 +58,7 @@ class TestAreaJoin:
         assert result.ints.dtype == object
         assert isinstance(result.ints.iloc[0], int)
         assert result.ints.isna().sum() == 20
-        assert result.strings.dtype == object
+        assert result.strings.dtype.name == "str"
         assert isinstance(result.strings.iloc[0], str)
         assert result.strings.isna().sum() == 20
 
