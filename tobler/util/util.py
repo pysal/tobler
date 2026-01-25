@@ -214,11 +214,11 @@ def _to_hex(source, resolution=6, return_geoms=True, buffer=True):  # noqa: ARG0
         ) from err
 
     if _h3lt4(h3):
-        polyfill = h3.geo_to_cells
-        kwargs = {}
-    else:
         polyfill = h3.polyfill
         kwargs = dict(geo_json_conformant=True)
+    else:
+        polyfill = h3.geo_to_cells
+        kwargs = {}
 
     hexids = pandas.Series(
         list(polyfill(source.__geo_interface__, resolution, **kwargs)),
@@ -230,11 +230,11 @@ def _to_hex(source, resolution=6, return_geoms=True, buffer=True):  # noqa: ARG0
 
     if _h3lt4(h3):
         polys = hexids.apply(
-            lambda hex_id: shapely.geometry.shape(h3.cells_to_geo([hex_id])),
+            lambda hex_id: Polygon(h3.h3_to_geo_boundary(hex_id, geo_json=True)),
         )
     else:
         polys = hexids.apply(
-            lambda hex_id: Polygon(h3.h3_to_geo_boundary(hex_id, geo_json=True)),
+            lambda hex_id: shapely.geometry.shape(h3.cells_to_geo([hex_id])),
         )
 
     hexs = geopandas.GeoDataFrame(hexids, geometry=polys.values, crs=4326).set_index(
