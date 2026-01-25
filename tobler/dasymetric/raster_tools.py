@@ -10,14 +10,11 @@ import pandas as pd
 import rasterio as rio
 import rasterstats as rs
 from joblib import Parallel, delayed
-from packaging.version import Version
 from rasterio import features
 from rasterio.mask import mask
 from shapely.geometry import shape
 
 from ..util.util import _check_presence_of_crs
-
-GPD_10 = Version(gpd.__version__) >= Version("1.0.0dev")
 
 __all__ = ["extract_raster_features"]
 
@@ -121,11 +118,7 @@ def extract_raster_features(
     with rio.open(raster_path) as src:
         raster_crs = src.crs.to_dict()
         gdf = gdf.to_crs(raster_crs)
-        if GPD_10:
-            geomask = [gdf.union_all().__geo_interface__]
-        else:
-            geomask = [gdf.unary_union.__geo_interface__]
-
+        geomask = [gdf.union_all().__geo_interface__]
         out_image, out_transform = mask(
             src, geomask, nodata=nodata, crop=True
         )  # clip to AoI using a vector layer

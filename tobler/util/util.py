@@ -9,9 +9,13 @@ import shapely
 from packaging.version import Version
 from shapely.geometry import Polygon
 
-GPD_10 = Version(geopandas.__version__) >= Version("1.0.0dev")
-
 __all__ = ["h3fy", "circumradius"]
+
+
+def _h3lt4(p) -> bool:
+    """Helper to isolate h3 version without importing globally."""
+
+    return Version(p.__version__) < Version("4.0")
 
 
 def circumradius(resolution):
@@ -35,7 +39,7 @@ def circumradius(resolution):
             "You can install it with `conda install h3-py` or "
             "`pip install h3`"
         ) from err
-    if Version(h3.__version__) < Version("4.0"):
+    if _h3lt4(h3):
         return h3.edge_length(resolution, "m")
     return h3.average_hexagon_edge_length(resolution, "m")
 
@@ -157,10 +161,7 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
         else:
             source = source.to_crs(4326)
 
-    if GPD_10:
-        source_unary = shapely.force_2d(source.union_all())
-    else:
-        source_unary = shapely.force_2d(source.unary_union)
+    source_unary = shapely.force_2d(source.union_all())
 
     if isinstance(source_unary, Polygon):
         hexagons = _to_hex(
@@ -212,7 +213,7 @@ def _to_hex(source, resolution=6, return_geoms=True, buffer=True):  # noqa: ARG0
             "`pip install h3`"
         ) from err
 
-    if Version(h3.__version__) > Version("4.0"):
+    if _h3lt4(h3):
         polyfill = h3.geo_to_cells
         kwargs = {}
     else:
@@ -227,7 +228,7 @@ def _to_hex(source, resolution=6, return_geoms=True, buffer=True):  # noqa: ARG0
     if not return_geoms:
         return hexids
 
-    if Version(h3.__version__) > Version("4.0"):
+    if _h3lt4(h3):
         polys = hexids.apply(
             lambda hex_id: shapely.geometry.shape(h3.cells_to_geo([hex_id])),
         )
