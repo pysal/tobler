@@ -57,7 +57,7 @@ def _nan_check(df, column):
 
     Warn and replace nan with 0.0.
     """
-    values = df[column].values
+    values = df[column].values.copy()
     if np.any(np.isnan(values)) or np.any(np.isinf(values)):
         wherenan = np.isnan(values)
         values[wherenan] = 0.0
@@ -70,7 +70,7 @@ def _inf_check(df, column):
 
     Warn and replace inf with 0.0.
     """
-    values = df[column].values
+    values = df[column].values.copy()
     if np.any(np.isinf(values)):
         wherenan = np.isinf(values)
         values[wherenan] = 0.0
