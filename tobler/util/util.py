@@ -1,6 +1,6 @@
 """Useful functions to support tobler's interpolation methods."""
 
-from warnings import warn
+import warnings
 
 import geopandas
 import numpy as np
@@ -61,7 +61,9 @@ def _nan_check(df, column):
     if np.any(np.isnan(values)) or np.any(np.isinf(values)):
         wherenan = np.isnan(values)
         values[wherenan] = 0.0
-        warn(f"nan values in variable: {column}, replacing with 0", stacklevel=2)
+        warnings.warn(
+            f"nan values in variable: {column}, replacing with 0", stacklevel=2
+        )
     return values
 
 
@@ -74,7 +76,9 @@ def _inf_check(df, column):
     if np.any(np.isinf(values)):
         wherenan = np.isinf(values)
         values[wherenan] = 0.0
-        warn(f"inf values in variable: {column}, replacing with 0", stacklevel=2)
+        warnings.warn(
+            f"inf values in variable: {column}, replacing with 0", stacklevel=2
+        )
     return values
 
 
@@ -130,7 +134,7 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
 
     if source.crs.is_geographic:
         if buffer:  # if CRS is geographic but user wants a buffer, we need to estimate
-            warn(
+            warnings.warn(
                 "The source geodataframe is stored in a geographic CRS. "
                 "Falling back to estimated UTM zone to generate desired buffer. "
                 "If this produces unexpected results, reproject the input data "
@@ -144,7 +148,16 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
             )
 
     else:  # if CRS is projected, we need lat/long
-        crs_units = source.crs.to_dict()["units"]
+        with warnings.catch_warnings():
+            warnings.filterwarnings(
+                "ignore",
+                category=UserWarning,
+                message=(
+                    "You will likely lose important projection information "
+                    "when converting to a PROJ string from another format"
+                ),
+            )
+            crs_units = source.crs.to_dict()["units"]
         if buffer:  #  we can only convert between units we know
             if crs_units not in ["m", "us-ft"]:
                 raise ValueError(
@@ -155,8 +168,6 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
                 )
             clipper = source.to_crs(4326)
             distance = circumradius(resolution)
-            if crs_units == "ft-us":
-                distance = distance * 3.281
             source = source.buffer(distance).to_crs(4326)
         else:
             source = source.to_crs(4326)
