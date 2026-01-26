@@ -220,17 +220,22 @@ def save_pycno(pycno_array, transform, crs, filestring, driver="GTiff"):
     return None
 
 
-def extract_values(pycno_array, gdf, transform, fieldname="Estimate"):  # noqa: ARG001 Unused function argument: `fieldname`
-    """Extract raster value sums according to a provided polygon geodataframe
-    Args:
-        pycno_array (numpy array): 2D numpy array of pycnophylactic surface.
-        gdf (geopandas.geodataframe.GeoDataFrame): Target GeoDataFrame.
-        transform (rasterio geotransform): Relevant transform from pycno()
-        fieldname (str, optional): New gdf field to save estimates in.
-            Default name: 'Estimate'.
-    Returns:
-        geopandas.geodataframe.GeoDataFrame:
-            Target GeoDataFrame with appended estimates.
+def extract_values(pycno_array, gdf, transform):
+    """Extract raster value sums according to a provided polygon geodataframe.
+
+    Parameters
+    ----------
+    pycno_array : numpy.ndarray
+        2D numpy array of pycnophylactic surface.
+    gdf : geopandas.GeoDataFrame
+        Target GeoDataFrame.
+    transform : rasterio.Affine
+        Relevant transform from ``pycno()``.
+
+    Returns
+    -------
+    pandas.Series
+        Target estimates.
     """
     from numpy import nansum
     from rasterio.features import geometry_mask
