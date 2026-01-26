@@ -48,10 +48,10 @@ class TestAreaJoin:
 
     def test_area_join_strings(self):
         if PDLT3:
+            result = area_join(self.source, self.target, "strings")
+        else:
             with x_preserve_dtype_warning:
                 result = area_join(self.source, self.target, "strings")
-        else:
-            result = area_join(self.source, self.target, "strings")
 
         assert (result.columns == ["geometry", "strings"]).all()
         assert result.strings.dtype.name == ("object" if PDLT3 else "str")
