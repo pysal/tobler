@@ -322,7 +322,7 @@ def area_interpolate(
         for variable in extensive_variables:
             vals = _nan_check(source_df, variable)
             vals = _inf_check(source_df, variable)
-            estimates = diags([vals], [0]).dot(weights)
+            estimates = diags([vals], [0], dtype=None).dot(weights)
             estimates = estimates.sum(axis=0)
             extensive.append(estimates.tolist()[0])
 
