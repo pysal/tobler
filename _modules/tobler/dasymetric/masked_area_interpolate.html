@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>tobler.dasymetric.masked_area_interpolate &#8212; tobler v0.13.1.dev29+gbbadbd264 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <script src="../../../_static/documentation_options.js?v=8aad6bdc"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../../../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../../../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          tobler</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.13.1.dev29+gbbadbd264</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../../../installation.html">Installation</a></li>
+                <li><a href="../../../tutorial.html">Tutorial</a></li>
+                <li><a href="../../../api.html">API</a></li>
+                <li><a href="../../../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#installing-a-released-version">Installing a released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#installing-a-development-from-source">Installing a development from source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api.html#area-weighted">Area Weighted</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api.html#dasymetric">Dasymetric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api.html#model">Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api.html#pycnophylactic">Pycnophylactic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api.html#util">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <h1>Source code for tobler.dasymetric.masked_area_interpolate</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">warnings</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..area_weighted</span><span class="w"> </span><span class="kn">import</span> <span class="n">area_interpolate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.raster_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">extract_raster_features</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;masked_area_interpolate&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="masked_area_interpolate">
+<a class="viewcode-back" href="../../../generated/tobler.dasymetric.masked_area_interpolate.html#tobler.dasymetric.masked_area_interpolate.masked_area_interpolate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">masked_area_interpolate</span><span class="p">(</span>
+    <span class="n">source_df</span><span class="p">,</span>
+    <span class="n">target_df</span><span class="p">,</span>
+    <span class="n">raster</span><span class="p">,</span>
+    <span class="n">pixel_values</span><span class="p">,</span>
+    <span class="n">extensive_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">intensive_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">categorical_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">allocate_total</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">nodata</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Interpolate data between two polygonal datasets using an</span>
+<span class="sd">    auxiliary raster to mask out uninhabited land.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    source_df : geopandas.GeoDataFrame</span>
+<span class="sd">        source data to be converted to another geometric representation.</span>
+<span class="sd">    target_df : geopandas.GeoDataFrame</span>
+<span class="sd">        target geometries that will form the new representation of the input data</span>
+<span class="sd">    raster : str</span>
+<span class="sd">        path to raster file that contains ancillary data</span>
+<span class="sd">    pixel_values : list of ints</span>
+<span class="sd">        list of pixel values that should be considered part of the mask. For example if</span>
+<span class="sd">        using data from NLCD Land Cover Database &lt;https://www.mrlc.gov/data&gt;, a common</span>
+<span class="sd">        input might be [21,22,23,24], which match the &quot;developed&quot; land types in</span>
+<span class="sd">        that dataset</span>
+<span class="sd">    extensive_variables : list</span>
+<span class="sd">        Columns of the input dataframe containing extensive variables to interpolate</span>
+<span class="sd">    intensive_variables : list</span>
+<span class="sd">        Columns of the input dataframe containing intensive variables to interpolate</span>
+<span class="sd">    categorical_variables : list</span>
+<span class="sd">        [Optional. Default=None] Columns in dataframes for categorical variables</span>
+<span class="sd">    allocate_total : bool</span>
+<span class="sd">        whether to allocate the total from the source geometries (the default is True).</span>
+<span class="sd">    nodata : int</span>
+<span class="sd">        value in raster that indicates null or missing values. Default is 255</span>
+<span class="sd">    n_jobs : int</span>
+<span class="sd">        [Optional. Default=-1] Number of processes to run in parallel to</span>
+<span class="sd">        generate the area allocation. If -1, this is set to the number of CPUs</span>
+<span class="sd">        available.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    geopandas.GeoDataFrame</span>
+<span class="sd">        GeoDataFrame with geometries matching the target_df and extensive and intensive</span>
+<span class="sd">        variables as the columns</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">source_df</span> <span class="o">=</span> <span class="n">source_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">source_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()),</span> <span class="p">(</span>
+        <span class="s2">&quot;The index of the source_df cannot contain duplicates.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1">#  create a vector mask from the raster data</span>
+    <span class="n">raster_mask</span> <span class="o">=</span> <span class="n">extract_raster_features</span><span class="p">(</span>
+        <span class="n">source_df</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">pixel_values</span><span class="p">,</span> <span class="n">nodata</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">,</span> <span class="n">collapse_values</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="c1">#  create a column in the source_df to dissolve on</span>
+    <span class="n">idx_name</span> <span class="o">=</span> <span class="n">source_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">source_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="k">else</span> <span class="s2">&quot;idx&quot;</span>
+    <span class="n">source_df</span><span class="p">[</span><span class="n">idx_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">source_df</span><span class="o">.</span><span class="n">index</span>
+
+    <span class="c1">#  clip source_df by its mask (overlay/dissolve is faster than gpd.clip here)</span>
+    <span class="n">source_df</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">overlay</span><span class="p">(</span>
+        <span class="n">source_df</span><span class="p">,</span> <span class="n">raster_mask</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">source_df</span><span class="o">.</span><span class="n">crs</span><span class="p">),</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;intersection&quot;</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">dissolve</span><span class="p">(</span><span class="n">idx_name</span><span class="p">)</span>
+
+    <span class="c1">#  continue with standard areal interpolation using the clipped source</span>
+    <span class="n">interpolation</span> <span class="o">=</span> <span class="n">area_interpolate</span><span class="p">(</span>
+        <span class="n">source_df</span><span class="p">,</span>
+        <span class="n">target_df</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+        <span class="n">extensive_variables</span><span class="o">=</span><span class="n">extensive_variables</span><span class="p">,</span>
+        <span class="n">intensive_variables</span><span class="o">=</span><span class="n">intensive_variables</span><span class="p">,</span>
+        <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span>
+        <span class="n">categorical_variables</span><span class="o">=</span><span class="n">categorical_variables</span><span class="p">,</span>
+        <span class="n">allocate_total</span><span class="o">=</span><span class="n">allocate_total</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">interpolation</span></div>
+
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2018-, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 9.1.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

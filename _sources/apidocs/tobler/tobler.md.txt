@@ -1,0 +1,21 @@
+# {py:mod}`tobler`
+
+```{py:module} tobler
+```
+
+```{autodoc2-docstring} tobler
+:allowtitles:
+```
+
+## Subpackages
+
+```{toctree}
+:titlesonly:
+:maxdepth: 3
+
+tobler.area_weighted
+tobler.model
+tobler.dasymetric
+tobler.util
+tobler.pycno
+```

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>API reference &#8212; tobler v0.13.1.dev29+gbbadbd264 Manual</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
+    <script src="_static/documentation_options.js?v=8aad6bdc"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="tobler.area_weighted.area_interpolate" href="generated/tobler.area_weighted.area_interpolate.html" />
+    <link rel="prev" title="Tobler Tutorial" href="tutorial.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          tobler</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.13.1.dev29+gbbadbd264</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="installation.html">Installation</a></li>
+                <li><a href="tutorial.html">Tutorial</a></li>
+                <li><a href="#">API</a></li>
+                <li><a href="references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#installing-a-released-version">Installing a released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#installing-a-development-from-source">Installing a development from source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#area-weighted">Area Weighted</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dasymetric">Dasymetric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#model">Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pycnophylactic">Pycnophylactic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#util">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">API reference</a><ul>
+<li><a class="reference internal" href="#area-weighted">Area Weighted</a></li>
+<li><a class="reference internal" href="#dasymetric">Dasymetric</a></li>
+<li><a class="reference internal" href="#model">Model</a></li>
+<li><a class="reference internal" href="#pycnophylactic">Pycnophylactic</a></li>
+<li><a class="reference internal" href="#util">Util</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="api-reference">
+<span id="api-ref"></span><h1>API reference<a class="headerlink" href="#api-reference" title="Link to this heading">¶</a></h1>
+<section id="area-weighted">
+<span id="data-api"></span><h2>Area Weighted<a class="headerlink" href="#area-weighted" title="Link to this heading">¶</a></h2>
+<p>Area weighted approaches use the area of overlap between the source and target geometries to weight the
+variables being assigned to the target</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/tobler.area_weighted.area_interpolate.html#tobler.area_weighted.area_interpolate" title="tobler.area_weighted.area_interpolate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">area_interpolate</span></code></a>(source_df, target_df[, ...])</p></td>
+<td><p>Area interpolation for extensive, intensive and categorical variables.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/tobler.area_weighted.area_join.html#tobler.area_weighted.area_join" title="tobler.area_weighted.area_join"><code class="xref py py-obj docutils literal notranslate"><span class="pre">area_join</span></code></a>(source_df, target_df, variables)</p></td>
+<td><p>Join variables from source_df based on the largest intersection.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="dasymetric">
+<h2>Dasymetric<a class="headerlink" href="#dasymetric" title="Link to this heading">¶</a></h2>
+<p>Dasymetric approaches use auxiliary data in addition to use the area of overlap between the source and target geometries to weight the
+variables being assigned to the target</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/tobler.dasymetric.extract_raster_features.html#tobler.dasymetric.extract_raster_features" title="tobler.dasymetric.extract_raster_features"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_raster_features</span></code></a>(gdf, raster_path[, ...])</p></td>
+<td><p>Generate a geodataframe from raster data by polygonizing contiguous pixels with the same value using rasterio's features module.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/tobler.dasymetric.masked_area_interpolate.html#tobler.dasymetric.masked_area_interpolate" title="tobler.dasymetric.masked_area_interpolate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_area_interpolate</span></code></a>(source_df, ...[, ...])</p></td>
+<td><p>Interpolate data between two polygonal datasets using an auxiliary raster to mask out uninhabited land.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="model">
+<h2>Model<a class="headerlink" href="#model" title="Link to this heading">¶</a></h2>
+<p>Model based approaches use additional spatial data, such as a land cover raster, to estimate the relationships between population
+and the auxiliary data. It then uses that model to predict population levels at different scales</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/tobler.model.glm.html#tobler.model.glm" title="tobler.model.glm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">glm</span></code></a>([source_df, target_df, raster, ...])</p></td>
+<td><p>Train a generalized linear model to predict polygon attributes based on the collection of pixel values they contain.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="pycnophylactic">
+<h2>Pycnophylactic<a class="headerlink" href="#pycnophylactic" title="Link to this heading">¶</a></h2>
+<p>Pycnophylactic interpolation is based on <a class="reference external" href="https://www.tandfonline.com/doi/abs/10.1080/01621459.1979.10481647">Tobler’s technique</a>
+for generating smooth, volume-preserving contour maps</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/tobler.pycno.pycno_interpolate.html#tobler.pycno.pycno_interpolate" title="tobler.pycno.pycno_interpolate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pycno_interpolate</span></code></a>(source_df, target_df, ...)</p></td>
+<td><p>Pycnophylactic Inerpolation.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="util">
+<h2>Util<a class="headerlink" href="#util" title="Link to this heading">¶</a></h2>
+<p>Utility Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/tobler.util.h3fy.html#tobler.util.h3fy" title="tobler.util.h3fy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">h3fy</span></code></a>(source[, resolution, clip, buffer, ...])</p></td>
+<td><p>Generate a hexgrid geodataframe that covers the face of a source geodataframe.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="_sources/api.rst.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018-, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 9.1.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

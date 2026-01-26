@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>tobler.util.util &#8212; tobler v0.13.1.dev29+gbbadbd264 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <script src="../../../_static/documentation_options.js?v=8aad6bdc"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../../../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../../../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          tobler</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.13.1.dev29+gbbadbd264</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../../../installation.html">Installation</a></li>
+                <li><a href="../../../tutorial.html">Tutorial</a></li>
+                <li><a href="../../../api.html">API</a></li>
+                <li><a href="../../../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#installing-a-released-version">Installing a released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#installing-a-development-from-source">Installing a development from source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api.html#area-weighted">Area Weighted</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api.html#dasymetric">Dasymetric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api.html#model">Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api.html#pycnophylactic">Pycnophylactic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api.html#util">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <h1>Source code for tobler.util.util</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Useful functions to support tobler&#39;s interpolation methods.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shapely</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">packaging.version</span><span class="w"> </span><span class="kn">import</span> <span class="n">Version</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Polygon</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;h3fy&quot;</span><span class="p">,</span> <span class="s2">&quot;circumradius&quot;</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_h3lt4</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper to isolate h3 version without importing globally.&quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">Version</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">Version</span><span class="p">(</span><span class="s2">&quot;4.0&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="circumradius">
+<a class="viewcode-back" href="../../../apidocs/tobler/tobler.util.util.html#tobler.util.circumradius">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">circumradius</span><span class="p">(</span><span class="n">resolution</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find the circumradius of an h3 hexagon at given resolution.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    resolution : int</span>
+<span class="sd">        h3 grid resolution</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    circumradius : float</span>
+<span class="sd">        circumradius in meters</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">h3</span>
+    <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+            <span class="s2">&quot;This function requires the `h3` library. &quot;</span>
+            <span class="s2">&quot;You can install it with `conda install h3-py` or &quot;</span>
+            <span class="s2">&quot;`pip install h3`&quot;</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span>
+    <span class="k">if</span> <span class="n">_h3lt4</span><span class="p">(</span><span class="n">h3</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">h3</span><span class="o">.</span><span class="n">edge_length</span><span class="p">(</span><span class="n">resolution</span><span class="p">,</span> <span class="s2">&quot;m&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">h3</span><span class="o">.</span><span class="n">average_hexagon_edge_length</span><span class="p">(</span><span class="n">resolution</span><span class="p">,</span> <span class="s2">&quot;m&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_crs</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">target_df</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;check if crs is identical&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">source_df</span><span class="o">.</span><span class="n">crs</span> <span class="o">!=</span> <span class="n">target_df</span><span class="o">.</span><span class="n">crs</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Source and target dataframes have different crs. Please correct.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_nan_check</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if variable has nan values.</span>
+
+<span class="sd">    Warn and replace nan with 0.0.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">values</span><span class="p">))</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">values</span><span class="p">)):</span>
+        <span class="n">wherenan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">values</span><span class="p">[</span><span class="n">wherenan</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;nan values in variable: </span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">, replacing with 0&quot;</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">values</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_inf_check</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if variable has nan values.</span>
+
+<span class="sd">    Warn and replace inf with 0.0.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">values</span><span class="p">)):</span>
+        <span class="n">wherenan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">values</span><span class="p">[</span><span class="n">wherenan</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;inf values in variable: </span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">, replacing with 0&quot;</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">values</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_presence_of_crs</span><span class="p">(</span><span class="n">geoinput</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;check if there is crs in the polygon/geodataframe&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">geoinput</span><span class="o">.</span><span class="n">crs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Geodataframe must have a CRS set before using this function.&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="h3fy">
+<a class="viewcode-back" href="../../../generated/tobler.util.h3fy.html#tobler.util.h3fy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">h3fy</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">clip</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">buffer</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_geoms</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a hexgrid geodataframe that covers the face of a source geodataframe.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    source : geopandas.GeoDataFrame</span>
+<span class="sd">        GeoDataFrame to transform into a hexagonal grid</span>
+<span class="sd">    resolution : int, optional (default is 6)</span>
+<span class="sd">        resolution of output h3 hexgrid.</span>
+<span class="sd">        See &lt;https://h3geo.org/docs/core-library/restable&gt; for more information</span>
+<span class="sd">    clip : bool, optional (default is False)</span>
+<span class="sd">        if True, hexagons are clipped by the boundary of the source gdf. Otherwise,</span>
+<span class="sd">        heaxgons along the boundary will be left intact.</span>
+<span class="sd">    buffer : bool, optional (default is False)</span>
+<span class="sd">        if True, force hexagons to completely fill the interior of the source area.</span>
+<span class="sd">        if False, (h3 default) may result in empty areas within the source area.</span>
+<span class="sd">    return_geoms: bool, optional (default is True)</span>
+<span class="sd">        whether to generate hexagon geometries as a geodataframe or simply return</span>
+<span class="sd">        hex ids as a pandas.Series</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pandas.Series or geopandas.GeoDataFrame</span>
+<span class="sd">        if `return_geoms` is True, a geopandas.GeoDataFrame whose rows comprise a</span>
+<span class="sd">        hexagonal h3 grid (indexed on h3 hex id).</span>
+<span class="sd">        if `return_geoms` is False, a pandas.Series of h3 hexagon ids</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">h3</span>
+    <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+            <span class="s2">&quot;This function requires the `h3` library. &quot;</span>
+            <span class="s2">&quot;You can install it with `conda install h3-py` or &quot;</span>
+            <span class="s2">&quot;`pip install h3`&quot;</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span>
+    <span class="c1"># h3 hexes only work on polygons, not multipolygons</span>
+    <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">crs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;source geodataframe must have a valid CRS set before using this function&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">orig_crs</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">crs</span>
+    <span class="n">clipper</span> <span class="o">=</span> <span class="n">source</span>
+
+    <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">is_geographic</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">buffer</span><span class="p">:</span>  <span class="c1"># if CRS is geographic but user wants a buffer, we need to estimate</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;The source geodataframe is stored in a geographic CRS. &quot;</span>
+                <span class="s2">&quot;Falling back to estimated UTM zone to generate desired buffer. &quot;</span>
+                <span class="s2">&quot;If this produces unexpected results, reproject the input data &quot;</span>
+                <span class="s2">&quot;prior to using this function&quot;</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">source</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">estimate_utm_crs</span><span class="p">())</span>
+                <span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="n">circumradius</span><span class="p">(</span><span class="n">resolution</span><span class="p">))</span>
+                <span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="mi">4326</span><span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># if CRS is projected, we need lat/long</span>
+        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span>
+                <span class="s2">&quot;ignore&quot;</span><span class="p">,</span>
+                <span class="n">category</span><span class="o">=</span><span class="ne">UserWarning</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="p">(</span>
+                    <span class="s2">&quot;You will likely lose important projection information &quot;</span>
+                    <span class="s2">&quot;when converting to a PROJ string from another format&quot;</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">crs_units</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()[</span><span class="s2">&quot;units&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">buffer</span><span class="p">:</span>  <span class="c1">#  we can only convert between units we know</span>
+            <span class="k">if</span> <span class="n">crs_units</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;m&quot;</span><span class="p">,</span> <span class="s2">&quot;us-ft&quot;</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;The CRS of source geodataframe uses an unknown &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;measurement unit: `</span><span class="si">{</span><span class="n">crs_units</span><span class="si">}</span><span class="s2">`. The `buffer` &quot;</span>
+                    <span class="s2">&quot;argument requires either a geographic CRS or a projected &quot;</span>
+                    <span class="s2">&quot;one measured in meters or feet (U.S.)&quot;</span>
+                <span class="p">)</span>
+            <span class="n">clipper</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="mi">4326</span><span class="p">)</span>
+            <span class="n">distance</span> <span class="o">=</span> <span class="n">circumradius</span><span class="p">(</span><span class="n">resolution</span><span class="p">)</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="n">distance</span><span class="p">)</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="mi">4326</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="mi">4326</span><span class="p">)</span>
+
+    <span class="n">source_unary</span> <span class="o">=</span> <span class="n">shapely</span><span class="o">.</span><span class="n">force_2d</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">union_all</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source_unary</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">):</span>
+        <span class="n">hexagons</span> <span class="o">=</span> <span class="n">_to_hex</span><span class="p">(</span>
+            <span class="n">source_unary</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="n">resolution</span><span class="p">,</span> <span class="n">return_geoms</span><span class="o">=</span><span class="n">return_geoms</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">geom</span> <span class="ow">in</span> <span class="n">source_unary</span><span class="o">.</span><span class="n">geoms</span><span class="p">:</span>
+            <span class="n">hexes</span> <span class="o">=</span> <span class="n">_to_hex</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="n">resolution</span><span class="p">,</span> <span class="n">return_geoms</span><span class="o">=</span><span class="n">return_geoms</span><span class="p">)</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hexes</span><span class="p">)</span>
+        <span class="n">hexagons</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">return_geoms</span> <span class="ow">and</span> <span class="n">clip</span><span class="p">:</span>
+        <span class="n">hexagons</span> <span class="o">=</span> <span class="n">geopandas</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">hexagons</span><span class="p">,</span> <span class="n">clipper</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">return_geoms</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">hexagons</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">orig_crs</span><span class="p">):</span>
+        <span class="n">hexagons</span> <span class="o">=</span> <span class="n">hexagons</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">orig_crs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">hexagons</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_to_hex</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">return_geoms</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a hexgrid geodataframe that covers the face of a source geometry.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    source : geometry</span>
+<span class="sd">        geometry to transform into a hexagonal grid (needs to support __geo_interface__)</span>
+<span class="sd">    resolution : int, optional (default is 6)</span>
+<span class="sd">        resolution of output h3 hexgrid.</span>
+<span class="sd">        See &lt;https://h3geo.org/docs/core-library/restable&gt; for more information</span>
+<span class="sd">    return_geoms: bool, optional (default is True)</span>
+<span class="sd">        whether to generate hexagon geometries as a geodataframe or simply return</span>
+<span class="sd">        hex ids as a pandas.Series</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pandas.Series or geopandas.GeoDataFrame</span>
+<span class="sd">        if `return_geoms` is True, a geopandas.GeoDataFrame whose rows comprise</span>
+<span class="sd">        a hexagonal h3 grid (indexed on h3 hex id).</span>
+<span class="sd">        if `return_geoms` is False, a pandas.Series of h3 hexagon ids</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">h3</span>
+    <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+            <span class="s2">&quot;This function requires the `h3` library. &quot;</span>
+            <span class="s2">&quot;You can install it with `conda install h3-py` or &quot;</span>
+            <span class="s2">&quot;`pip install h3`&quot;</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span>
+
+    <span class="k">if</span> <span class="n">_h3lt4</span><span class="p">(</span><span class="n">h3</span><span class="p">):</span>
+        <span class="n">polyfill</span> <span class="o">=</span> <span class="n">h3</span><span class="o">.</span><span class="n">polyfill</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">geo_json_conformant</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">polyfill</span> <span class="o">=</span> <span class="n">h3</span><span class="o">.</span><span class="n">geo_to_cells</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">hexids</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+        <span class="nb">list</span><span class="p">(</span><span class="n">polyfill</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">__geo_interface__</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)),</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;hex_id&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">return_geoms</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">hexids</span>
+
+    <span class="k">if</span> <span class="n">_h3lt4</span><span class="p">(</span><span class="n">h3</span><span class="p">):</span>
+        <span class="n">polys</span> <span class="o">=</span> <span class="n">hexids</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">hex_id</span><span class="p">:</span> <span class="n">Polygon</span><span class="p">(</span><span class="n">h3</span><span class="o">.</span><span class="n">h3_to_geo_boundary</span><span class="p">(</span><span class="n">hex_id</span><span class="p">,</span> <span class="n">geo_json</span><span class="o">=</span><span class="kc">True</span><span class="p">)),</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">polys</span> <span class="o">=</span> <span class="n">hexids</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">hex_id</span><span class="p">:</span> <span class="n">shapely</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">h3</span><span class="o">.</span><span class="n">cells_to_geo</span><span class="p">([</span><span class="n">hex_id</span><span class="p">])),</span>
+        <span class="p">)</span>
+
+    <span class="n">hexs</span> <span class="o">=</span> <span class="n">geopandas</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">hexids</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="n">polys</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="mi">4326</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span>
+        <span class="s2">&quot;hex_id&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">hexs</span>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2018-, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 9.1.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

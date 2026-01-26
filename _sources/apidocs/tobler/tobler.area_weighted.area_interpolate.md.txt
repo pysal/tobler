@@ -1,0 +1,31 @@
+# {py:mod}`tobler.area_weighted.area_interpolate`
+
+```{py:module} tobler.area_weighted.area_interpolate
+```
+
+```{autodoc2-docstring} tobler.area_weighted.area_interpolate
+:allowtitles:
+```
+
+## Module Contents
+
+### Functions
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`area_interpolate <tobler.area_weighted.area_interpolate.area_interpolate>`
+  - ```{autodoc2-docstring} tobler.area_weighted.area_interpolate.area_interpolate
+    :summary:
+    ```
+````
+
+### API
+
+````{py:function} area_interpolate(source_df, target_df, extensive_variables=None, intensive_variables=None, table=None, allocate_total=True, spatial_index='auto', n_jobs=1, categorical_variables=None, categorical_frequency=True)
+:canonical: tobler.area_weighted.area_interpolate.area_interpolate
+
+```{autodoc2-docstring} tobler.area_weighted.area_interpolate.area_interpolate
+```
+````

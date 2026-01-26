@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>tobler.pycno.pycno &#8212; tobler v0.13.1.dev29+gbbadbd264 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <script src="../../../_static/documentation_options.js?v=8aad6bdc"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../../../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../../../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          tobler</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.13.1.dev29+gbbadbd264</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../../../installation.html">Installation</a></li>
+                <li><a href="../../../tutorial.html">Tutorial</a></li>
+                <li><a href="../../../api.html">API</a></li>
+                <li><a href="../../../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#installing-a-released-version">Installing a released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#installing-a-development-from-source">Installing a development from source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api.html#area-weighted">Area Weighted</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api.html#dasymetric">Dasymetric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api.html#model">Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api.html#pycnophylactic">Pycnophylactic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api.html#util">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <h1>Source code for tobler.pycno.pycno</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Pycnophylactic Interpolation (contributed by @danlewis85).&quot;&quot;&quot;</span>
+<span class="c1"># https://github.com/danlewis85/pycno/</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rasterio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">absolute</span><span class="p">,</span>
+    <span class="n">apply_along_axis</span><span class="p">,</span>
+    <span class="n">asarray</span><span class="p">,</span>
+    <span class="n">convolve</span><span class="p">,</span>
+    <span class="n">copy</span><span class="p">,</span>
+    <span class="n">nan</span><span class="p">,</span>
+    <span class="n">nanmax</span><span class="p">,</span>
+    <span class="n">nanmean</span><span class="p">,</span>
+    <span class="n">nansum</span><span class="p">,</span>
+    <span class="n">pad</span><span class="p">,</span>
+    <span class="n">power</span><span class="p">,</span>
+    <span class="nb">round</span><span class="p">,</span>  <span class="c1"># noqa: A004 Import `round` is shadowing a Python builtin</span>
+    <span class="n">unique</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy.ma</span><span class="w"> </span><span class="kn">import</span> <span class="n">masked_invalid</span><span class="p">,</span> <span class="n">masked_where</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataFrame</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rasterio.features</span><span class="w"> </span><span class="kn">import</span> <span class="n">rasterize</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;pycno_interpolate&quot;</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">pycno</span><span class="p">(</span>
+    <span class="n">gdf</span><span class="p">,</span> <span class="n">value_field</span><span class="p">,</span> <span class="n">cellsize</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">handle_null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">converge</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a smooth pycnophylactic interpolation raster for a given geodataframe</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">    gdf (geopandas.geodataframe.GeoDataFrame): Input GeoDataFrame.</span>
+<span class="sd">    value_field (str): Field name of values to be used to produce pycnophylactic surface</span>
+<span class="sd">    cellsize (int): Pixel size of raster in planar units (i.e. metres, feet)</span>
+<span class="sd">    r (float, optional): Relaxation parameter, default of 0.2 is generally fine.</span>
+<span class="sd">    handle_null (boolean, optional): Changes how nodata values are smoothed.</span>
+<span class="sd">        Default True.</span>
+<span class="sd">    converge (int, optional): Index for stopping value, default 3 is generally fine.</span>
+<span class="sd">    verbose (boolean, optional): Print out progress at each iteration.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    Numpy Array: Smooth pycnophylactic interpolation.</span>
+<span class="sd">    Rasterio geotransform</span>
+<span class="sd">    GeoPandas crs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># set nodata value</span>
+    <span class="n">nodata</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9999</span>
+
+    <span class="c1"># work out raster rows and columns based on gdf extent and cellsize</span>
+    <span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">total_bounds</span>
+    <span class="n">xres</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">xmax</span> <span class="o">-</span> <span class="n">xmin</span><span class="p">)</span> <span class="o">/</span> <span class="n">cellsize</span><span class="p">)</span>
+    <span class="n">yres</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">ymax</span> <span class="o">-</span> <span class="n">ymin</span><span class="p">)</span> <span class="o">/</span> <span class="n">cellsize</span><span class="p">)</span>
+
+    <span class="c1"># Work out transform so that we rasterize the area where the data are!</span>
+    <span class="n">trans</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">Affine</span><span class="o">.</span><span class="n">from_gdal</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">cellsize</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">cellsize</span><span class="p">)</span>
+
+    <span class="c1"># First make a zone array</span>
+    <span class="c1"># NB using index values as ids can often be too large/alphanumeric.</span>
+    <span class="c1"># Limit is int32 polygon features.</span>
+    <span class="c1"># create a generator of geom, index pairs to use in rasterizing</span>
+    <span class="n">shapes</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">geom</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">geom</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">gdf</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span> <span class="n">gdf</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="c1"># burn the features into a raster array</span>
+    <span class="n">feature_array</span> <span class="o">=</span> <span class="n">rasterize</span><span class="p">(</span>
+        <span class="n">shapes</span><span class="o">=</span><span class="n">shapes</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="n">nodata</span><span class="p">,</span> <span class="n">out_shape</span><span class="o">=</span><span class="p">(</span><span class="n">yres</span><span class="p">,</span> <span class="n">xres</span><span class="p">),</span> <span class="n">transform</span><span class="o">=</span><span class="n">trans</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Get cell counts per index value (feature)</span>
+    <span class="n">_unique</span><span class="p">,</span> <span class="n">count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">feature_array</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">cellcounts</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">((</span><span class="n">_unique</span><span class="p">,</span> <span class="n">count</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+    <span class="c1"># Lose the nodata counts</span>
+    <span class="n">cellcounts</span> <span class="o">=</span> <span class="n">cellcounts</span><span class="p">[</span><span class="n">cellcounts</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">nodata</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="c1"># Adjust value totals by cells</span>
+    <span class="c1"># Make cell counts dataframe</span>
+    <span class="n">celldf</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">cellcounts</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">cellcounts</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;cellcount&quot;</span><span class="p">])</span>
+    <span class="c1"># Merge cell counts</span>
+    <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">celldf</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># Calculate cell values</span>
+    <span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;cellvalues&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[</span><span class="n">value_field</span><span class="p">]</span> <span class="o">/</span> <span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;cellcount&quot;</span><span class="p">]</span>
+
+    <span class="c1"># create a generator of geom, cellvalue pairs to use in rasterizing</span>
+    <span class="n">shapes</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">geom</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">geom</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">gdf</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span> <span class="n">gdf</span><span class="o">.</span><span class="n">cellvalues</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="c1"># Now burn the initial value raster</span>
+    <span class="n">value_array</span> <span class="o">=</span> <span class="n">rasterize</span><span class="p">(</span>
+        <span class="n">shapes</span><span class="o">=</span><span class="n">shapes</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="n">nodata</span><span class="p">,</span> <span class="n">out_shape</span><span class="o">=</span><span class="p">(</span><span class="n">yres</span><span class="p">,</span> <span class="n">xres</span><span class="p">),</span> <span class="n">transform</span><span class="o">=</span><span class="n">trans</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Set nodata in value array to np.nan</span>
+    <span class="n">value_array</span><span class="p">[</span><span class="n">value_array</span> <span class="o">==</span> <span class="o">-</span><span class="mi">9999</span><span class="p">]</span> <span class="o">=</span> <span class="n">nan</span>
+
+    <span class="c1"># Set stopper value based on converge parameter</span>
+    <span class="n">stopper</span> <span class="o">=</span> <span class="n">nanmax</span><span class="p">(</span><span class="n">value_array</span><span class="p">)</span> <span class="o">*</span> <span class="n">power</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="o">-</span><span class="n">converge</span><span class="p">)</span>
+
+    <span class="c1"># The basic numpy convolve function doesn&#39;t handle nulls.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">smooth2d</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+        <span class="c1"># Create function that calls a 1 dimensionsal smoother.</span>
+        <span class="n">s1d</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">convolve</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">)</span>
+        <span class="c1"># pad the data array with the mean value</span>
+        <span class="n">padarray</span> <span class="o">=</span> <span class="n">pad</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="n">constant_values</span><span class="o">=</span><span class="n">nanmean</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="c1"># make nodata mask</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">masked_invalid</span><span class="p">(</span><span class="n">padarray</span><span class="p">)</span><span class="o">.</span><span class="n">mask</span>
+        <span class="c1"># set nodata as zero to avoid eroding the raster</span>
+        <span class="n">padarray</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="c1"># Apply the convolution along each axis of the data and average</span>
+        <span class="n">padarray</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">apply_along_axis</span><span class="p">(</span><span class="n">s1d</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">padarray</span><span class="p">)</span> <span class="o">+</span> <span class="n">apply_along_axis</span><span class="p">(</span><span class="n">s1d</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">padarray</span><span class="p">)</span>
+        <span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="c1"># Reinstate nodata</span>
+        <span class="n">padarray</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">nan</span>
+        <span class="k">return</span> <span class="n">padarray</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># The convolution function from astropy handles nulls.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">astro_smooth2d</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.convolution</span><span class="w"> </span><span class="kn">import</span> <span class="n">convolve</span> <span class="k">as</span> <span class="n">astro_convolve</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">)</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="s2">&quot;Pycnophylactic interpolation with handle_null=True &quot;</span>
+                <span class="s2">&quot;requires the astropy package&quot;</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span>
+        <span class="n">s1d</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">astro_convolve</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+        <span class="c1"># pad the data array with the mean value</span>
+        <span class="n">padarray</span> <span class="o">=</span> <span class="n">pad</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="n">constant_values</span><span class="o">=</span><span class="n">nanmean</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="c1"># Apply the convolution along each axis of the data and average</span>
+        <span class="n">padarray</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">apply_along_axis</span><span class="p">(</span><span class="n">s1d</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">padarray</span><span class="p">)</span> <span class="o">+</span> <span class="n">apply_along_axis</span><span class="p">(</span><span class="n">s1d</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">padarray</span><span class="p">)</span>
+        <span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="k">return</span> <span class="n">padarray</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">correct2da</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">gdf</span><span class="p">[</span><span class="n">value_field</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Create zone mask from feature_array</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">masked_where</span><span class="p">(</span><span class="n">feature_array</span> <span class="o">==</span> <span class="n">idx</span><span class="p">,</span> <span class="n">feature_array</span><span class="p">)</span><span class="o">.</span><span class="n">mask</span>
+            <span class="c1"># Work out the correction factor</span>
+            <span class="n">correct</span> <span class="o">=</span> <span class="p">(</span><span class="n">val</span> <span class="o">-</span> <span class="n">nansum</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">mask</span><span class="p">]))</span> <span class="o">/</span> <span class="n">mask</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="c1"># Apply correction</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">+=</span> <span class="n">correct</span>
+
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">correct2dm</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">gdf</span><span class="p">[</span><span class="n">value_field</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Create zone mask from feature_array</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">masked_where</span><span class="p">(</span><span class="n">feature_array</span> <span class="o">==</span> <span class="n">idx</span><span class="p">,</span> <span class="n">feature_array</span><span class="p">)</span><span class="o">.</span><span class="n">mask</span>
+            <span class="c1"># Work out the correction factor</span>
+            <span class="n">correct</span> <span class="o">=</span> <span class="n">val</span> <span class="o">/</span> <span class="n">nansum</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">correct</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="c1"># Apply correction</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">*=</span> <span class="n">correct</span>
+
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># Store the current iteration</span>
+        <span class="n">old</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">value_array</span><span class="p">)</span>
+
+        <span class="c1"># Smooth the value_array</span>
+        <span class="n">sm</span> <span class="o">=</span> <span class="n">astro_smooth2d</span><span class="p">(</span><span class="n">value_array</span><span class="p">)</span> <span class="k">if</span> <span class="n">handle_null</span> <span class="k">else</span> <span class="n">smooth2d</span><span class="p">(</span><span class="n">value_array</span><span class="p">)</span>
+
+        <span class="c1"># Relaxation to prevent overcompensation in the smoothing step</span>
+        <span class="n">value_array</span> <span class="o">=</span> <span class="n">value_array</span> <span class="o">*</span> <span class="n">r</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">r</span><span class="p">)</span> <span class="o">*</span> <span class="n">sm</span>
+
+        <span class="c1"># Perform correction</span>
+        <span class="n">value_array</span> <span class="o">=</span> <span class="n">correct2da</span><span class="p">(</span><span class="n">value_array</span><span class="p">)</span>
+
+        <span class="c1"># Reset any negative values to zero.</span>
+        <span class="n">value_array</span><span class="p">[</span><span class="n">value_array</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="c1"># Perform correction</span>
+        <span class="n">value_array</span> <span class="o">=</span> <span class="n">correct2dm</span><span class="p">(</span><span class="n">value_array</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;Maximum Change: &quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">nanmax</span><span class="p">(</span><span class="n">absolute</span><span class="p">(</span><span class="n">old</span> <span class="o">-</span> <span class="n">value_array</span><span class="p">)),</span> <span class="mi">4</span><span class="p">))</span>
+                <span class="o">+</span> <span class="s2">&quot; - will stop at &quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">stopper</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">nanmax</span><span class="p">(</span><span class="n">absolute</span><span class="p">(</span><span class="n">old</span> <span class="o">-</span> <span class="n">value_array</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">stopper</span><span class="p">:</span>
+            <span class="k">break</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">value_array</span><span class="p">,</span> <span class="n">trans</span><span class="p">,</span> <span class="n">gdf</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">save_pycno</span><span class="p">(</span><span class="n">pycno_array</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="n">crs</span><span class="p">,</span> <span class="n">filestring</span><span class="p">,</span> <span class="n">driver</span><span class="o">=</span><span class="s2">&quot;GTiff&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Saves a numpy array as a raster, largely a helper function for pycno</span>
+<span class="sd">    Args:</span>
+<span class="sd">        pycno_array (numpy array): 2D numpy array of pycnophylactic surface</span>
+<span class="sd">        transform (rasterio geotransform): Relevant transform from pycno()</span>
+<span class="sd">        crs (GeoPandas crs): Coordinate reference system of GeoDataFrame used in pycno()</span>
+<span class="sd">        filestring (str): File path to save raster</span>
+<span class="sd">        driver (str, optional): Format for output raster, default: geoTiff.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">rasterio</span>
+
+    <span class="c1"># Save raster</span>
+    <span class="n">new_dataset</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span>
+        <span class="n">filestring</span><span class="p">,</span>
+        <span class="s2">&quot;w&quot;</span><span class="p">,</span>
+        <span class="n">driver</span><span class="o">=</span><span class="n">driver</span><span class="p">,</span>
+        <span class="n">height</span><span class="o">=</span><span class="n">pycno_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">width</span><span class="o">=</span><span class="n">pycno_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float64&quot;</span><span class="p">,</span>
+        <span class="n">crs</span><span class="o">=</span><span class="n">crs</span><span class="p">,</span>
+        <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">new_dataset</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">pycno_array</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float64&quot;</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">new_dataset</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_values</span><span class="p">(</span><span class="n">pycno_array</span><span class="p">,</span> <span class="n">gdf</span><span class="p">,</span> <span class="n">transform</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract raster value sums according to a provided polygon geodataframe.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pycno_array : numpy.ndarray</span>
+<span class="sd">        2D numpy array of pycnophylactic surface.</span>
+<span class="sd">    gdf : geopandas.GeoDataFrame</span>
+<span class="sd">        Target GeoDataFrame.</span>
+<span class="sd">    transform : rasterio.Affine</span>
+<span class="sd">        Relevant transform from ``pycno()``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pandas.Series</span>
+<span class="sd">        Target estimates.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">nansum</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">rasterio.features</span><span class="w"> </span><span class="kn">import</span> <span class="n">geometry_mask</span>
+
+    <span class="n">estimates</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Iterate through geodataframe and extract values</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">geom</span> <span class="ow">in</span> <span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">geometry_mask</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">geom</span><span class="p">],</span> <span class="n">pycno_array</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span> <span class="n">invert</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="n">estimates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nansum</span><span class="p">(</span><span class="n">pycno_array</span><span class="p">[</span><span class="n">mask</span><span class="p">]))</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">estimates</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">gdf</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+
+<div class="viewcode-block" id="pycno_interpolate">
+<a class="viewcode-back" href="../../../generated/tobler.pycno.pycno_interpolate.html#tobler.pycno.pycno_interpolate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pycno_interpolate</span><span class="p">(</span>
+    <span class="n">source_df</span><span class="p">,</span>
+    <span class="n">target_df</span><span class="p">,</span>
+    <span class="n">variables</span><span class="p">,</span>
+    <span class="n">cellsize</span><span class="p">,</span>
+    <span class="n">r</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+    <span class="n">handle_null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">converge</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pycnophylactic Inerpolation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    source_df : geopandas.GeoDataFrame (required)</span>
+<span class="sd">        geodataframe with polygon geometries and data to transfer</span>
+<span class="sd">    target_df : geopandas.GeoDataFrame (required)</span>
+<span class="sd">        geodataframe with polygon geometries to receive new data</span>
+<span class="sd">    variables : list</span>
+<span class="sd">        columns on the source_df containing data to transfer</span>
+<span class="sd">    cellsize : int</span>
+<span class="sd">        Pixel size of intermediate raster in planar units (i.e. metres, feet)</span>
+<span class="sd">    r : float, optional</span>
+<span class="sd">        Relaxation parameter, default of 0.2 is generally fine</span>
+<span class="sd">    handle_null : bool, optional</span>
+<span class="sd">        Changes how nodata values are smoothed. Default True.</span>
+<span class="sd">    converge : int, optional</span>
+<span class="sd">        Index for stopping value, default 3 is generally fine.</span>
+<span class="sd">    verbose : bool, optional</span>
+<span class="sd">        Print out progress at each iteration.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    geopandas.GeoDataFrame</span>
+<span class="sd">        new geodataframe with interpolated variables as columns and target_df geometry</span>
+<span class="sd">        as output geometry</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The formula is based on Tobler, W. R. (1979).</span>
+<span class="sd">        Smooth pycnophylactic interpolation for geographical regions.</span>
+<span class="sd">        Journal of the American Statistical Association, 74(367), 519–529.</span>
+<span class="sd">        https://doi.org/10.1080/01621459.1979.10481647</span>
+
+<span class="sd">    Original implementation written by @danlewis85 at</span>
+<span class="sd">    &lt;https://github.com/danlewis85/pycno/&gt;</span>
+<span class="sd">    and based in part on the R pycno package by Chris Brusndon</span>
+<span class="sd">    (&lt;https://cran.r-project.org/web/packages/pycno/index.html&gt;)</span>
+
+<span class="sd">    References: :cite:`tobler_smooth_1979`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">source_df</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">target_df</span><span class="o">.</span><span class="n">crs</span><span class="p">),</span> <span class="p">(</span>
+        <span class="s2">&quot;source_df CRS and target_df CRS are not the same. &quot;</span>
+        <span class="s2">&quot;Reproject into consistent systems before proceeding&quot;</span>
+    <span class="p">)</span>
+    <span class="n">output_vars</span> <span class="o">=</span> <span class="n">target_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()[[</span><span class="n">target_df</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="p">]]</span>
+    <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+        <span class="n">pyc</span><span class="p">,</span> <span class="n">trans</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">pycno</span><span class="p">(</span>
+            <span class="n">source_df</span><span class="p">,</span>
+            <span class="n">variable</span><span class="p">,</span>
+            <span class="n">cellsize</span><span class="o">=</span><span class="n">cellsize</span><span class="p">,</span>
+            <span class="n">r</span><span class="o">=</span><span class="n">r</span><span class="p">,</span>
+            <span class="n">handle_null</span><span class="o">=</span><span class="n">handle_null</span><span class="p">,</span>
+            <span class="n">converge</span><span class="o">=</span><span class="n">converge</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">vals</span> <span class="o">=</span> <span class="n">extract_values</span><span class="p">(</span><span class="n">pyc</span><span class="p">,</span> <span class="n">target_df</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">trans</span><span class="p">)</span>
+        <span class="n">output_vars</span><span class="p">[</span><span class="n">variable</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span>
+
+    <span class="k">return</span> <span class="n">output_vars</span></div>
+
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2018-, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 9.1.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

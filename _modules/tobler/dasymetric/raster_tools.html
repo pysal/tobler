@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>tobler.dasymetric.raster_tools &#8212; tobler v0.13.1.dev29+gbbadbd264 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <script src="../../../_static/documentation_options.js?v=8aad6bdc"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../../../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../../../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          tobler</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.13.1.dev29+gbbadbd264</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../../../installation.html">Installation</a></li>
+                <li><a href="../../../tutorial.html">Tutorial</a></li>
+                <li><a href="../../../api.html">API</a></li>
+                <li><a href="../../../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#installing-a-released-version">Installing a released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#installing-a-development-from-source">Installing a development from source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api.html#area-weighted">Area Weighted</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api.html#dasymetric">Dasymetric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api.html#model">Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api.html#pycnophylactic">Pycnophylactic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api.html#util">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <h1>Source code for tobler.dasymetric.raster_tools</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;tools for working with rasters.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ast</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">multiprocessing</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rasterio</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">rio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rasterstats</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">rs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">joblib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rasterio</span><span class="w"> </span><span class="kn">import</span> <span class="n">features</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rasterio.mask</span><span class="w"> </span><span class="kn">import</span> <span class="n">mask</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">shape</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..util.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">_check_presence_of_crs</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;extract_raster_features&quot;</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_chunk_dfs</span><span class="p">(</span><span class="n">geoms_to_chunk</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">):</span>
+    <span class="n">chunk_size</span> <span class="o">=</span> <span class="n">geoms_to_chunk</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="n">n_jobs</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_jobs</span><span class="p">):</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="n">chunk_size</span>
+        <span class="k">yield</span> <span class="n">geoms_to_chunk</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">start</span> <span class="p">:</span> <span class="n">start</span> <span class="o">+</span> <span class="n">chunk_size</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parse_geom</span><span class="p">(</span><span class="n">geom_str</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">shape</span><span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">geom_str</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_apply_parser</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">_parse_geom</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_fast_append_profile_in_gdf</span><span class="p">(</span><span class="n">geodataframe</span><span class="p">,</span> <span class="n">raster_path</span><span class="p">,</span> <span class="n">force_crs_match</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Append categorical zonal statistics (counts by pixel type)</span>
+<span class="sd">    as columns to an input geodataframe.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geodataframe : geopandas.GeoDataFrame</span>
+<span class="sd">        geodataframe that has overlay with the raster. If some polygon do</span>
+<span class="sd">        not overlay the raster, consider a preprocessing step using the function</span>
+<span class="sd">        subset_gdf_polygons_from_raster.</span>
+<span class="sd">    raster_path : str</span>
+<span class="sd">        path to the raster image.</span>
+<span class="sd">    force_crs_match : bool, Default is True.</span>
+<span class="sd">        Whether the Coordinate Reference System (CRS) of the polygon will be reprojected</span>
+<span class="sd">        to the CRS of the raster file. It is recommended to let this argument as True.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The generated geodataframe will input the value 0 for each Type that</span>
+<span class="sd">    is not present in the raster for each polygon.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_check_presence_of_crs</span><span class="p">(</span><span class="n">geodataframe</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">force_crs_match</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">rio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">raster_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">raster</span><span class="p">:</span>
+            <span class="n">geodataframe</span> <span class="o">=</span> <span class="n">geodataframe</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">crs</span><span class="o">=</span><span class="n">raster</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;The GeoDataFrame is not being reprojected. &quot;</span>
+            <span class="s2">&quot;The clipping might be being performing on &quot;</span>
+            <span class="s2">&quot;unmatching polygon to the raster.&quot;</span><span class="p">,</span>
+            <span class="ne">UserWarning</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">zonal_gjson</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="n">zonal_stats</span><span class="p">(</span>
+        <span class="n">geodataframe</span><span class="p">,</span> <span class="n">raster_path</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;Type_&quot;</span><span class="p">,</span> <span class="n">geojson_out</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">categorical</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+    <span class="n">zonal_ppt_gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="o">.</span><span class="n">from_features</span><span class="p">(</span><span class="n">zonal_gjson</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">zonal_ppt_gdf</span>
+
+
+<div class="viewcode-block" id="extract_raster_features">
+<a class="viewcode-back" href="../../../generated/tobler.dasymetric.extract_raster_features.html#tobler.dasymetric.raster_tools.extract_raster_features">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_raster_features</span><span class="p">(</span>
+    <span class="n">gdf</span><span class="p">,</span> <span class="n">raster_path</span><span class="p">,</span> <span class="n">pixel_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">collapse_values</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a geodataframe from raster data by polygonizing contiguous</span>
+<span class="sd">    pixels with the same value using rasterio&#39;s features module.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    gdf : geopandas.GeoDataFrame</span>
+<span class="sd">        geodataframe  defining the area of interest. The input raster will be</span>
+<span class="sd">        clipped to the extent of the geodataframe</span>
+<span class="sd">    raster_path : str</span>
+<span class="sd">        path to raster file, such as downloaded from &lt;https://lcviewer.vito.be/download&gt;</span>
+<span class="sd">    pixel_values : list-like, optional</span>
+<span class="sd">        subset of pixel values to extract, by default None. If None, this function</span>
+<span class="sd">        may generate a very large geodataframe</span>
+<span class="sd">    nodata : int, optional</span>
+<span class="sd">        pixel value denoting &quot;no data&quot; in input raster</span>
+<span class="sd">    n_jobs : int</span>
+<span class="sd">        [Optional. Default=-1] Number of processes to run in parallel. If -1,</span>
+<span class="sd">        this is set to the number of CPUs available</span>
+<span class="sd">    collapse_values : bool, optional</span>
+<span class="sd">        If True, multiple values passed to the pixel_values argument are treated</span>
+<span class="sd">        as a single type. I.e. polygons will be generated from any contiguous collection</span>
+<span class="sd">        of values from pixel_types, instead of unique polygons generated for each value</span>
+<span class="sd">        This can dramatically reduce the complexity of the resulting geodataframe a</span>
+<span class="sd">        fewer polygons are required to represent the study area.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    geopandas.GeoDataFrame</span>
+<span class="sd">        geodataframe whose rows are the zones extracted by the rasterio.features module.</span>
+<span class="sd">        The geometry of each zone is the boundary of a contiguous group of pixels with</span>
+<span class="sd">        the same value; the `value` column contains the pixel value of each zone.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">n_jobs</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">n_jobs</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">rio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">raster_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+        <span class="n">raster_crs</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">raster_crs</span><span class="p">)</span>
+        <span class="n">geomask</span> <span class="o">=</span> <span class="p">[</span><span class="n">gdf</span><span class="o">.</span><span class="n">union_all</span><span class="p">()</span><span class="o">.</span><span class="n">__geo_interface__</span><span class="p">]</span>
+        <span class="n">out_image</span><span class="p">,</span> <span class="n">out_transform</span> <span class="o">=</span> <span class="n">mask</span><span class="p">(</span>
+            <span class="n">src</span><span class="p">,</span> <span class="n">geomask</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=</span><span class="n">nodata</span><span class="p">,</span> <span class="n">crop</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>  <span class="c1"># clip to AoI using a vector layer</span>
+
+        <span class="k">if</span> <span class="n">pixel_values</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">collapse_values</span><span class="p">:</span>
+                <span class="n">out_image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">out_image</span><span class="p">,</span> <span class="n">pixel_values</span><span class="p">),</span> <span class="n">pixel_values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">out_image</span>
+                <span class="p">)</span>  <span class="c1">#  replace values to generate fewer polys</span>
+            <span class="n">pixel_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span>
+                <span class="n">out_image</span><span class="p">,</span> <span class="n">pixel_values</span>
+            <span class="p">)</span>  <span class="c1"># only include requested pixels</span>
+
+        <span class="n">shapes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="n">features</span><span class="o">.</span><span class="n">shapes</span><span class="p">(</span><span class="n">out_image</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">pixel_values</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">out_transform</span><span class="p">)</span>
+        <span class="p">)</span>  <span class="c1"># convert regions to polygons</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">shapes</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+    <span class="n">geoms</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;geometry&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">pieces</span> <span class="o">=</span> <span class="n">_chunk_dfs</span><span class="p">(</span><span class="n">geoms</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">)</span>
+    <span class="n">geoms</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+        <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">)(</span><span class="n">delayed</span><span class="p">(</span><span class="n">_apply_parser</span><span class="p">)(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">pieces</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">geoms</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoSeries</span><span class="p">(</span><span class="n">geoms</span><span class="p">)</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># we sometimes get self-intersecting rings</span>
+    <span class="n">vals</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+    <span class="n">gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="n">geoms</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="n">raster_crs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">collapse_values</span><span class="p">:</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>  <span class="c1"># values col is misleading in this case</span>
+
+    <span class="k">return</span> <span class="n">gdf</span></div>
+
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2018-, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 9.1.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

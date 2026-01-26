@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>tobler.area_weighted.area_interpolate &#8212; tobler v0.13.1.dev29+gbbadbd264 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <script src="../../../_static/documentation_options.js?v=8aad6bdc"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../../../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../../../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          tobler</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.13.1.dev29+gbbadbd264</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../../../installation.html">Installation</a></li>
+                <li><a href="../../../tutorial.html">Tutorial</a></li>
+                <li><a href="../../../api.html">API</a></li>
+                <li><a href="../../../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#installing-a-released-version">Installing a released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#installing-a-development-from-source">Installing a development from source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api.html#area-weighted">Area Weighted</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api.html#dasymetric">Dasymetric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api.html#model">Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api.html#pycnophylactic">Pycnophylactic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api.html#util">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <h1>Source code for tobler.area_weighted.area_interpolate</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Area Weighted Interpolation</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.sparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">coo_matrix</span><span class="p">,</span> <span class="n">diags</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">tobler.util.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">_check_crs</span><span class="p">,</span> <span class="n">_inf_check</span><span class="p">,</span> <span class="n">_nan_check</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;area_interpolate&quot;</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_chunk_dfs</span><span class="p">(</span><span class="n">geoms_to_chunk</span><span class="p">,</span> <span class="n">geoms_full</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">):</span>
+    <span class="n">chunk_size</span> <span class="o">=</span> <span class="n">geoms_to_chunk</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="n">n_jobs</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_jobs</span><span class="p">):</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="n">chunk_size</span>
+        <span class="k">yield</span> <span class="n">geoms_to_chunk</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">start</span> <span class="p">:</span> <span class="n">start</span> <span class="o">+</span> <span class="n">chunk_size</span><span class="p">],</span> <span class="n">geoms_full</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_index_n_query</span><span class="p">(</span><span class="n">geoms1</span><span class="p">,</span> <span class="n">geoms2</span><span class="p">):</span>
+    <span class="c1"># Pick largest for STRTree, query the smallest</span>
+    <span class="k">if</span> <span class="n">geoms1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">geoms2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="n">large</span> <span class="o">=</span> <span class="n">geoms1</span>
+        <span class="n">small</span> <span class="o">=</span> <span class="n">geoms2</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">large</span> <span class="o">=</span> <span class="n">geoms2</span>
+        <span class="n">small</span> <span class="o">=</span> <span class="n">geoms1</span>
+    <span class="c1"># Build tree + query</span>
+    <span class="n">qry_polyIDs</span><span class="p">,</span> <span class="n">tree_polyIDs</span> <span class="o">=</span> <span class="n">large</span><span class="o">.</span><span class="n">sindex</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">small</span><span class="p">,</span> <span class="n">predicate</span><span class="o">=</span><span class="s2">&quot;intersects&quot;</span><span class="p">)</span>
+    <span class="c1"># Remap IDs to global</span>
+    <span class="n">large_global_ids</span> <span class="o">=</span> <span class="n">large</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">tree_polyIDs</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">small_global_ids</span> <span class="o">=</span> <span class="n">small</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">qry_polyIDs</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span>
+    <span class="c1"># Return always global IDs for geoms1, geoms2</span>
+    <span class="k">if</span> <span class="n">geoms1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">geoms2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">large_global_ids</span><span class="p">,</span> <span class="n">small_global_ids</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">small_global_ids</span><span class="p">,</span> <span class="n">large_global_ids</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_chunk_polys</span><span class="p">(</span><span class="n">id_pairs</span><span class="p">,</span> <span class="n">geoms_left</span><span class="p">,</span> <span class="n">geoms_right</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">):</span>
+    <span class="n">chunk_size</span> <span class="o">=</span> <span class="n">id_pairs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="n">n_jobs</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_jobs</span><span class="p">):</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="n">chunk_size</span>
+        <span class="n">chunk1</span> <span class="o">=</span> <span class="n">geoms_left</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="n">id_pairs</span><span class="p">[</span><span class="n">start</span> <span class="p">:</span> <span class="n">start</span> <span class="o">+</span> <span class="n">chunk_size</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+        <span class="n">chunk2</span> <span class="o">=</span> <span class="n">geoms_right</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="n">id_pairs</span><span class="p">[</span><span class="n">start</span> <span class="p">:</span> <span class="n">start</span> <span class="o">+</span> <span class="n">chunk_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+        <span class="k">yield</span> <span class="n">chunk1</span><span class="p">,</span> <span class="n">chunk2</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_intersect_area_on_chunk</span><span class="p">(</span><span class="n">geoms1</span><span class="p">,</span> <span class="n">geoms2</span><span class="p">):</span>
+    <span class="n">areas</span> <span class="o">=</span> <span class="n">geoms1</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">geoms2</span><span class="p">)</span><span class="o">.</span><span class="n">area</span>
+    <span class="k">return</span> <span class="n">areas</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_area_tables_binning_parallel</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">target_df</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct area allocation and source-target correspondence tables using</span>
+<span class="sd">    a parallel spatial indexing approach</span>
+<span class="sd">    ...</span>
+
+<span class="sd">    NOTE: currently, the largest df is chunked and the other one is shipped in</span>
+<span class="sd">    full to each core; within each process, the spatial index is built for the</span>
+<span class="sd">    largest set of geometries, and the other one used for `query`</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    source_df : geopandas.GeoDataFrame</span>
+<span class="sd">        GeoDataFrame containing input data and polygons</span>
+<span class="sd">    target_df : geopandas.GeoDataFramee</span>
+<span class="sd">        GeoDataFrame defining the output geometries</span>
+<span class="sd">    n_jobs : int</span>
+<span class="sd">        [Optional. Default=-1] Number of processes to run in parallel. If -1,</span>
+<span class="sd">        this is set to the number of CPUs available</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tables : scipy.sparse.csr_matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">joblib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span><span class="p">,</span> <span class="n">parallel_backend</span>
+
+    <span class="k">if</span> <span class="n">_check_crs</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">target_df</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">n_jobs</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">n_jobs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+
+    <span class="n">df1</span> <span class="o">=</span> <span class="n">source_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">df2</span> <span class="o">=</span> <span class="n">target_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># Chunk the largest, ship the smallest in full</span>
+    <span class="k">if</span> <span class="n">df1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">df2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">to_chunk</span> <span class="o">=</span> <span class="n">df1</span>
+        <span class="n">df_full</span> <span class="o">=</span> <span class="n">df2</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">to_chunk</span> <span class="o">=</span> <span class="n">df2</span>
+        <span class="n">df_full</span> <span class="o">=</span> <span class="n">df1</span>
+
+    <span class="c1"># Spatial index query</span>
+    <span class="c1">## Reindex on positional IDs</span>
+    <span class="n">to_workers</span> <span class="o">=</span> <span class="n">_chunk_dfs</span><span class="p">(</span>
+        <span class="n">gpd</span><span class="o">.</span><span class="n">GeoSeries</span><span class="p">(</span><span class="n">to_chunk</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="n">to_chunk</span><span class="o">.</span><span class="n">crs</span><span class="p">),</span>
+        <span class="n">gpd</span><span class="o">.</span><span class="n">GeoSeries</span><span class="p">(</span><span class="n">df_full</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="n">df_full</span><span class="o">.</span><span class="n">crs</span><span class="p">),</span>
+        <span class="n">n_jobs</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">parallel_backend</span><span class="p">(</span><span class="s2">&quot;loky&quot;</span><span class="p">,</span> <span class="n">inner_max_num_threads</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">worker_out</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">)(</span>
+            <span class="n">delayed</span><span class="p">(</span><span class="n">_index_n_query</span><span class="p">)(</span><span class="o">*</span><span class="n">chunk_pair</span><span class="p">)</span> <span class="k">for</span> <span class="n">chunk_pair</span> <span class="ow">in</span> <span class="n">to_workers</span>
+        <span class="p">)</span>
+
+    <span class="n">ids_src</span><span class="p">,</span> <span class="n">ids_tgt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">worker_out</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="c1"># Intersection + area calculation</span>
+    <span class="n">chunks_to_intersection</span> <span class="o">=</span> <span class="n">_chunk_polys</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">ids_src</span><span class="p">,</span> <span class="n">ids_tgt</span><span class="p">])</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">df1</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span> <span class="n">df2</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span> <span class="n">n_jobs</span>
+    <span class="p">)</span>
+    <span class="k">with</span> <span class="n">parallel_backend</span><span class="p">(</span><span class="s2">&quot;loky&quot;</span><span class="p">,</span> <span class="n">inner_max_num_threads</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">worker_out</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">)(</span>
+            <span class="n">delayed</span><span class="p">(</span><span class="n">_intersect_area_on_chunk</span><span class="p">)(</span><span class="o">*</span><span class="n">chunk_pair</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">chunk_pair</span> <span class="ow">in</span> <span class="n">chunks_to_intersection</span>
+        <span class="p">)</span>
+    <span class="n">areas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">worker_out</span><span class="p">)</span>
+
+    <span class="c1"># Build CSR table</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">coo_matrix</span><span class="p">(</span>
+        <span class="p">(</span>
+            <span class="n">areas</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">ids_src</span><span class="p">,</span> <span class="n">ids_tgt</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">df1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">df2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">table</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_area_tables_binning</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">target_df</span><span class="p">,</span> <span class="n">spatial_index</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct area allocation and source-target correspondence</span>
+<span class="sd">    tables using a spatial indexing approach</span>
+<span class="sd">    ...</span>
+
+<span class="sd">    NOTE: this currently relies on Geopandas&#39; spatial index machinery</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    source_df : geopandas.GeoDataFrame</span>
+<span class="sd">        GeoDataFrame containing input data and polygons</span>
+<span class="sd">    target_df : geopandas.GeoDataFramee</span>
+<span class="sd">        GeoDataFrame defining the output geometries</span>
+<span class="sd">    spatial_index : str</span>
+<span class="sd">        Spatial index to use to build the allocation of area from source to</span>
+<span class="sd">        target tables. It currently support the following values:</span>
+<span class="sd">            - &quot;source&quot;: build the spatial index on `source_df`</span>
+<span class="sd">            - &quot;target&quot;: build the spatial index on `target_df`</span>
+<span class="sd">            - &quot;auto&quot;: attempts to guess the most efficient alternative.</span>
+<span class="sd">              Currently, this option uses the largest table to build the</span>
+<span class="sd">              index, and performs a `bulk_query` on the shorter table.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tables : scipy.sparse.csr_matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">_check_crs</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">target_df</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">df1</span> <span class="o">=</span> <span class="n">source_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">df2</span> <span class="o">=</span> <span class="n">target_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># it is generally more performant to use the longer df as spatial index</span>
+    <span class="k">if</span> <span class="n">spatial_index</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
+        <span class="n">spatial_index</span> <span class="o">=</span> <span class="s2">&quot;source&quot;</span> <span class="k">if</span> <span class="n">df1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">df2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">else</span> <span class="s2">&quot;target&quot;</span>
+    <span class="k">if</span> <span class="n">spatial_index</span> <span class="o">==</span> <span class="s2">&quot;source&quot;</span><span class="p">:</span>
+        <span class="n">ids_tgt</span><span class="p">,</span> <span class="n">ids_src</span> <span class="o">=</span> <span class="n">df1</span><span class="o">.</span><span class="n">sindex</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">df2</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span> <span class="n">predicate</span><span class="o">=</span><span class="s2">&quot;intersects&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">spatial_index</span> <span class="o">==</span> <span class="s2">&quot;target&quot;</span><span class="p">:</span>
+        <span class="n">ids_src</span><span class="p">,</span> <span class="n">ids_tgt</span> <span class="o">=</span> <span class="n">df2</span><span class="o">.</span><span class="n">sindex</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">df1</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span> <span class="n">predicate</span><span class="o">=</span><span class="s2">&quot;intersects&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">spatial_index</span><span class="si">}</span><span class="s2">&#39; is not a valid option. &quot;</span>
+            <span class="s2">&quot;Use &#39;auto&#39;, &#39;source&#39; or &#39;target&#39;.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">areas</span> <span class="o">=</span> <span class="n">df1</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">ids_src</span><span class="p">]</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">df2</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">ids_tgt</span><span class="p">])</span><span class="o">.</span><span class="n">area</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="n">coo_matrix</span><span class="p">(</span>
+        <span class="p">(</span>
+            <span class="n">areas</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">ids_src</span><span class="p">,</span> <span class="n">ids_tgt</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">df1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">df2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">table</span>
+
+
+<div class="viewcode-block" id="area_interpolate">
+<a class="viewcode-back" href="../../../generated/tobler.area_weighted.area_interpolate.html#tobler.area_weighted.area_interpolate.area_interpolate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">area_interpolate</span><span class="p">(</span>
+    <span class="n">source_df</span><span class="p">,</span>
+    <span class="n">target_df</span><span class="p">,</span>
+    <span class="n">extensive_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">intensive_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">table</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">allocate_total</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">spatial_index</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">categorical_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">categorical_frequency</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Area interpolation for extensive, intensive and categorical variables.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    source_df : geopandas.GeoDataFrame</span>
+<span class="sd">    target_df : geopandas.GeoDataFrame</span>
+<span class="sd">    extensive_variables : list</span>
+<span class="sd">        [Optional. Default=None] Columns in dataframes for extensive variables</span>
+<span class="sd">    intensive_variables : list</span>
+<span class="sd">        [Optional. Default=None] Columns in dataframes for intensive variables</span>
+<span class="sd">    table : scipy.sparse.csr_matrix</span>
+<span class="sd">        [Optional. Default=None] Area allocation source-target correspondence</span>
+<span class="sd">        table. If not provided, it will be built from `source_df` and</span>
+<span class="sd">        `target_df` using `tobler.area_interpolate._area_tables_binning`</span>
+<span class="sd">    allocate_total : boolean</span>
+<span class="sd">        [Optional. Default=True] True if total value of source area should be</span>
+<span class="sd">        allocated. False if denominator is area of i. Note that the two cases</span>
+<span class="sd">        would be identical when the area of the source polygon is exhausted by</span>
+<span class="sd">        intersections. See Notes for more details.</span>
+<span class="sd">    spatial_index : str</span>
+<span class="sd">        [Optional. Default=&quot;auto&quot;] Spatial index to use to build the</span>
+<span class="sd">        allocation of area from source to target tables. It currently support</span>
+<span class="sd">        the following values:</span>
+
+<span class="sd">        - &quot;source&quot;: build the spatial index on `source_df`</span>
+<span class="sd">        - &quot;target&quot;: build the spatial index on `target_df`</span>
+<span class="sd">        - &quot;auto&quot;: attempts to guess the most efficient alternative.</span>
+
+<span class="sd">        Currently, this option uses the largest table to build the</span>
+<span class="sd">        index, and performs a `bulk_query` on the shorter table.</span>
+<span class="sd">        This argument is ignored if n_jobs&gt;1 (or n_jobs=-1).</span>
+<span class="sd">    n_jobs : int</span>
+<span class="sd">        [Optional. Default=1] Number of processes to run in parallel to</span>
+<span class="sd">        generate the area allocation. If -1, this is set to the number of CPUs</span>
+<span class="sd">        available. If `table` is passed, this is ignored.</span>
+<span class="sd">    categorical_variables : list</span>
+<span class="sd">        [Optional. Default=None] Columns in dataframes for categorical variables</span>
+<span class="sd">    categorical_frequency : Boolean</span>
+<span class="sd">        [Optional. Default=True] If True, `estimates` returns the frequency of each</span>
+<span class="sd">        value in a categorical variable in every polygon of `target_df` (proportion of</span>
+<span class="sd">        area). If False, `estimates` contains the area in every polygon of `target_df`</span>
+<span class="sd">        that is occupied by each value of the categorical</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    estimates : geopandas.GeoDataFrame</span>
+<span class="sd">         new geodataframe with interpolated variables as columns and target_df geometry</span>
+<span class="sd">         as output geometry</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The assumption is both dataframes have the same coordinate reference system.</span>
+<span class="sd">    For an extensive variable, the estimate at target polygon j (default case) is:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">     v_j = \\sum_i v_i w_{i,j}</span>
+
+<span class="sd">     w_{i,j} = a_{i,j} / \\sum_k a_{i,k}</span>
+
+<span class="sd">    If the area of the source polygon is not exhausted by intersections with</span>
+<span class="sd">    target polygons and there is reason to not allocate the complete value of</span>
+<span class="sd">    an extensive attribute, then setting allocate_total=False will use the</span>
+<span class="sd">    following weights:</span>
+
+<span class="sd">    $$v_j = \\sum_i v_i w_{i,j}$$</span>
+
+<span class="sd">    $$w_{i,j} = a_{i,j} / a_i$$</span>
+
+<span class="sd">    where a_i is the total area of source polygon i.</span>
+<span class="sd">    For an intensive variable, the estimate at target polygon j is:</span>
+
+<span class="sd">    $$v_j = \\sum_i v_i w_{i,j}$$</span>
+
+<span class="sd">    $$w_{i,j} = a_{i,j} / \\sum_k a_{k,j}$$</span>
+
+<span class="sd">    For categorical variables, the estimate returns ratio of presence of each</span>
+<span class="sd">    unique category.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">source_df</span> <span class="o">=</span> <span class="n">source_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">target_df</span> <span class="o">=</span> <span class="n">target_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">_check_crs</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">target_df</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">n_jobs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">_area_tables_binning</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">target_df</span><span class="p">,</span> <span class="n">spatial_index</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">_area_tables_binning_parallel</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">target_df</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">)</span>
+
+    <span class="n">dfs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">extensive</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">extensive_variables</span><span class="p">:</span>
+        <span class="n">den</span> <span class="o">=</span> <span class="n">source_df</span><span class="o">.</span><span class="n">area</span><span class="o">.</span><span class="n">values</span>
+        <span class="k">if</span> <span class="n">allocate_total</span><span class="p">:</span>
+            <span class="n">den</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">den</span> <span class="o">=</span> <span class="n">den</span> <span class="o">+</span> <span class="p">(</span><span class="n">den</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">den</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">den</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">den</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">den</span> <span class="o">=</span> <span class="n">den</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n</span><span class="p">,))</span>
+        <span class="n">den</span> <span class="o">=</span> <span class="n">diags</span><span class="p">([</span><span class="n">den</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="n">den</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>  <span class="c1"># row standardize table</span>
+
+        <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">extensive_variables</span><span class="p">:</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">_nan_check</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">variable</span><span class="p">)</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">_inf_check</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">variable</span><span class="p">)</span>
+            <span class="n">estimates</span> <span class="o">=</span> <span class="n">diags</span><span class="p">([</span><span class="n">vals</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+            <span class="n">estimates</span> <span class="o">=</span> <span class="n">estimates</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">extensive</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">estimates</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">extensive</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">extensive</span><span class="p">)</span>
+        <span class="n">extensive</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">extensive</span><span class="p">)</span>
+        <span class="n">extensive</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">extensive</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">extensive_variables</span><span class="p">)</span>
+
+    <span class="n">intensive</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">intensive_variables</span><span class="p">:</span>
+        <span class="n">area</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">den</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">area</span> <span class="o">+</span> <span class="p">(</span><span class="n">area</span> <span class="o">==</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">n</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">den</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">den</span> <span class="o">=</span> <span class="n">den</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">k</span><span class="p">,))</span>
+        <span class="n">den</span> <span class="o">=</span> <span class="n">diags</span><span class="p">([</span><span class="n">den</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">den</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">intensive_variables</span><span class="p">:</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">_nan_check</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">variable</span><span class="p">)</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">_inf_check</span><span class="p">(</span><span class="n">source_df</span><span class="p">,</span> <span class="n">variable</span><span class="p">)</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="n">vals</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">vals</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n</span><span class="p">,))</span>
+            <span class="n">estimates</span> <span class="o">=</span> <span class="n">diags</span><span class="p">([</span><span class="n">vals</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">estimates</span> <span class="o">=</span> <span class="n">estimates</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">intensive</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">estimates</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">intensive</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">intensive</span><span class="p">)</span>
+        <span class="n">intensive</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">intensive</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">intensive_variables</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">categorical_variables</span><span class="p">:</span>
+        <span class="n">categorical</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">categorical_variables</span><span class="p">:</span>
+            <span class="n">unique</span> <span class="o">=</span> <span class="n">source_df</span><span class="p">[</span><span class="n">variable</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">unique</span><span class="p">:</span>
+                <span class="n">mask</span> <span class="o">=</span> <span class="n">source_df</span><span class="p">[</span><span class="n">variable</span><span class="p">]</span> <span class="o">==</span> <span class="n">value</span>
+                <span class="n">categorical</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+                    <span class="n">table</span><span class="p">[</span><span class="n">mask</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">categorical</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">categorical</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">categorical_frequency</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">categorical</span> <span class="o">=</span> <span class="n">categorical</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">target_df</span><span class="o">.</span><span class="n">area</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;rows&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">extensive_variables</span><span class="p">:</span>
+        <span class="n">dfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">extensive</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">intensive_variables</span><span class="p">:</span>
+        <span class="n">dfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">intensive</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">categorical_variables</span><span class="p">:</span>
+        <span class="n">dfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">categorical</span><span class="p">)</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">dfs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">target_df</span><span class="p">[</span><span class="n">target_df</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">target_df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span></div>
+
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2018-, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 9.1.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
