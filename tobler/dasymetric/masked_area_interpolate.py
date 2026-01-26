@@ -4,8 +4,9 @@ import geopandas as gpd
 
 from ..area_weighted import area_interpolate
 from .raster_tools import extract_raster_features
+from ..util import poly_to_multidots
 
-__all__ = ["masked_area_interpolate"]
+__all__ = ["masked_area_interpolate", "masked_dot_density"]
 
 
 def masked_area_interpolate(
@@ -87,3 +88,91 @@ def masked_area_interpolate(
         allocate_total=allocate_total,
     )
     return interpolation
+
+
+def masked_dot_density(
+    source_df,
+    raster,
+    pixel_values,
+    scale=1,
+    method="uniform",
+    categories=None,
+    rng=None,
+    method_kwargs=None,
+    nodata=255,
+    n_jobs=-1,
+):
+    """Simulate a point pattern process within each source polygon while using raster
+        data to mask out uninhabited areas of the each geometry.
+
+    Parameters
+    ----------
+    source_df : geopandas.GeoDataFrame
+        source data to be converted to another geometric representation.
+    raster : str
+        path to raster file that contains ancillary data
+    pixel_values : list of ints
+        list of pixel values that should be considered part of the mask. For example if
+        using data from NLCD Land Cover Database <https://www.mrlc.gov/data>, a common
+        input might be [21,22,23,24], which match the "developed" land types in
+        that dataset
+    scale : int, optional
+        scalar coefficient used to increase or decrease the number of simulated points in
+        each geometry. For example a number less than 1 is used to create a proportional
+        dot-density map; a stochastic realization of the population in each polygon would use
+        1, resulting in the same number of points generated as the numeric value in the dataframe.
+        By default 1
+    method : str, optional
+        name of the distribution used to simulate point locations. The default is  "uniform", in which
+        every location within a polygon has an equal chance of being chosen. Alternatively, other
+    categories : list-like, optional
+        a list or array of columns in the dataframe holding the desired size of the set of points in each
+        category. For example this would hold a set of mutually-exclusive racial groups, or employment
+        industries
+    rng : {None, int, array_like[ints], SeedSequence, BitGenerator, Generator}, optional
+        A random generator or seed to initialize the numpy BitGenerator. If None, then fresh,
+        unpredictable entropy will be pulled from the OS.
+    method_kwargs : dict, optional
+        additional keyword arguments passed to the pointpats.random generator.
+    nodata : int
+        value in raster that indicates null or missing values. Default is 255
+    n_jobs : int
+        [Optional. Default=-1] Number of processes to run in parallel to
+        generate the area allocation. If -1, this is set to the number of CPUs
+        available.
+
+    Returns
+    -------
+    GeoDataFrame
+        a geodataframe with simulated points in the geometry column, with each row containing the index
+        of the containing polygon, and the category to which the point belongs.
+    """
+    if categories is None:
+        raise ValueError("must provide a set of categories to draw from")
+    source_df = source_df.copy()
+    assert not any(source_df.index.duplicated()), (
+        "The index of the source_df cannot contain duplicates."
+    )
+
+    #  create a vector mask from the raster data
+    raster_mask = extract_raster_features(
+        source_df, raster, pixel_values, nodata, n_jobs, collapse_values=True
+    )
+    #  create a column in the source_df to dissolve on
+    idx_name = source_df.index.name if source_df.index.name else "idx"
+    source_df[idx_name] = source_df.index
+
+    #  clip source_df by its mask (overlay/dissolve is faster than gpd.clip here)
+    source_df = gpd.overlay(
+        source_df, raster_mask.to_crs(source_df.crs), how="intersection"
+    ).dissolve(idx_name)
+
+    gdf = poly_to_multidots(
+        source_df,
+        scale=scale,
+        method=method,
+        categories=categories,
+        rng=rng,
+        method_kwargs=method_kwargs,
+    )
+    return gdf
