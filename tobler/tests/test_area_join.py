@@ -47,8 +47,12 @@ class TestAreaJoin:
         assert result.ints.isna().sum() == 20
 
     def test_area_join_strings(self):
-        with x_preserve_dtype_warning:
+        if PDLT3:
+            with x_preserve_dtype_warning:
+                result = area_join(self.source, self.target, "strings")
+        else:
             result = area_join(self.source, self.target, "strings")
+
         assert (result.columns == ["geometry", "strings"]).all()
         assert result.strings.dtype.name == ("object" if PDLT3 else "str")
         assert isinstance(result.strings.iloc[0], str)
