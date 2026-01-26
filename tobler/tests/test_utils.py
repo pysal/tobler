@@ -10,7 +10,7 @@ from numpy.testing import assert_almost_equal
 from tobler.util import h3fy
 
 
-PY312 = platform.python_version_tuple()[:2] == (3, 12)
+PY312 = platform.python_version_tuple()[:2] == ("3", "12")
 
 
 @pytest.fixture
