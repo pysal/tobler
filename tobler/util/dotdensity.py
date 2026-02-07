@@ -1,21 +1,31 @@
-import pandas as pd
+from warnings import warn
+
 import geopandas as gpd
-import numpy as np
+import pandas as pd
+from geopandas.tools._random import uniform
 from pandas.api.types import is_list_like
 from shapely.geometry import MultiPoint
-from warnings import warn
-from geopandas.tools._random import uniform
 
 
-def poly_to_dots(
-    gdf, scale=1, method="uniform", category=None, rng=None, method_kwargs=None
+def _poly_to_dots(
+    gdf, scale=1., method="uniform", category=None, rng=None, method_kwargs=None
 ):
+    """this is just a function that wraps geopandas sample_points, but returns
+    a single point from a uniform distribution when clustered pointpattern
+    DGPs would raise an error
+    """
     if method_kwargs is None:
         method_kwargs = {}
     if category is None:
         raise ValueError("must pass a category to expand")
     if category not in gdf.columns.tolist():
         raise ValueError(f"{category} not in columns of the passed geodataframe")
+    if not pd.api.types.is_numeric_dtype(gdf[category]):
+        raise ValueError(
+            f"The column {category} must hold numeric data, but is "
+            + f" type {gdf[category].dtype}."
+        )
+    # this could be a parallel apply, like with hex-generation
     size = (gdf[category] * scale).round(0).astype(int).to_numpy()
     if method == "uniform":
         pts = gpd.GeoSeries(
@@ -45,10 +55,14 @@ def poly_to_dots(
     return pts.reset_index()
 
 
-def poly_to_multidots(
-    gdf, scale=1, method="uniform", categories=None, rng=None, method_kwargs=None
+def draw_points_by_column(
+    gdf, columns, scale=1.0, method="uniform", rng=None, method_kwargs=None
 ):
-    """Simulate points-in-polygon for multiple categories.
+    """Draw a sample of points inside each polygon/multipolygon row of a
+    geodataframe, where sample size is one or more columns on the dataframe,
+    optionally scaled by a constant. For example to create a proportional dot density
+    map, pass a polygon geodataframe storing total population counts for
+    mutually-exclusive groups. 
 
     Parameters
     ----------
@@ -56,30 +70,35 @@ def poly_to_multidots(
         a geodataframe with columns of numeric data, a selection of which will be used
         to simulate a point-process within each geometry. The data in each column defines
         the number of points to simulate in each geometry
-    scale : int, optional
-        scalar coefficient used to increase or decrease the number of simulated points in
-        each geometry. For example a number less than 1 is used to create a proportional
-        dot-density map; a stochastic realization of the population in each polygon would use
-        1, resulting in the same number of points generated as the numeric value in the dataframe.
+    columns : list-like,
+        a list or array of columns in the dataframe holding the desired size of the set
+        of points in each category. For example this would hold a set of
+        mutually-exclusive racial groups, or employment industries, etc.
+        industries
+    scale : float, optional
+        scalar coefficient used to increase or decrease the number of simulated points
+        in each geometry. For example a number less than 1 is used to create a
+        proportional dot-density map; a stochastic realization of the population in each
+        polygon would use 1, resulting in the same number of points generated as the
+        numeric value in the dataframe.
         By default 1
     method : str, optional
-        name of the distribution used to simulate point locations. The default is  "uniform", in which
-        every location within a polygon has an equal chance of being chosen. Alternatively, other
-    categories : list-like, optional
-        a list or array of columns in the dataframe holding the desired size of the set of points in each
-        category. For example this would hold a set of mutually-exclusive racial groups, or employment
-        industries
+        name of the distribution used to simulate point locations. The default is
+        "uniform", in which every location within a polygon has an equal chance of being
+        chosen. Alternatively, other methods are implemented in the `pointpats` package,
+        including {'normal', 'cluster_normal', 'poisson', 'cluster_poisson'}
     rng : {None, int, array_like[ints], SeedSequence, BitGenerator, Generator}, optional
-        A random generator or seed to initialize the numpy BitGenerator. If None, then fresh,
-        unpredictable entropy will be pulled from the OS.
+        A random generator or seed to initialize the numpy BitGenerator. If None, then
+        fresh, unpredictable entropy will be pulled from the OS.
     method_kwargs : dict, optional
         additional keyword arguments passed to the pointpats.random generator.
 
     Returns
     -------
     GeoDataFrame
-        a geodataframe with simulated points in the geometry column, with each row containing the index
-        of the containing polygon, and the category to which the point belongs.
+        a geodataframe with simulated points in the geometry column, with each row/point
+        holding the index of its containing polygon, and the column to which the
+        point belongs.
 
     Raises
     ------
@@ -88,11 +107,11 @@ def poly_to_multidots(
     ValueError
         raises an error of the categories argument is not list-like
     """
-    if not is_list_like(categories):
+    if not is_list_like(columns):
         raise ValueError("`categories` should be a list of columns")
     pts = []
-    for cat in categories:
-        dots = poly_to_dots(
+    for cat in columns:
+        dots = _poly_to_dots(
             gdf,
             scale=scale,
             method=method,
@@ -111,10 +130,10 @@ def poly_to_multidots(
 def _draw_pointpats(row, column, scale, method, rng, method_kwargs):
     try:
         import pointpats as pps
-    except:
+    except ImportError as e:
         raise ImportError(
             "you must have `pointpats` installed to draw from other distributions"
-        )
+        ) from e
     sample_function = getattr(pps.random, method)
     pts = []
     val = int(round(row[column] * scale, 0))
@@ -130,7 +149,7 @@ def _draw_pointpats(row, column, scale, method, rng, method_kwargs):
             ).union_all()
         )
     elif val == 1:
-        warn(f"drawing size=1, resorting to uniform for single draw")
+        warn("drawing size=1, resorting to uniform for single draw", stacklevel=2)
         pts.append(uniform(row["geometry"], 1, rng))
     else:
         pts.append(MultiPoint())

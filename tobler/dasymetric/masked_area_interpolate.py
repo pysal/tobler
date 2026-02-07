@@ -3,8 +3,8 @@ from warnings import warn
 import geopandas as gpd
 
 from ..area_weighted import area_interpolate
+from ..util import draw_points_by_column
 from .raster_tools import extract_raster_features
-from ..util import poly_to_multidots
 
 __all__ = ["masked_area_interpolate", "masked_dot_density"]
 
@@ -68,9 +68,9 @@ def masked_area_interpolate(
         )
         pixel_values = codes
     source_df = source_df.copy()
-    assert not any(source_df.index.duplicated()), (
-        "The index of the source_df cannot contain duplicates."
-    )
+    assert not any(
+        source_df.index.duplicated()
+    ), "The index of the source_df cannot contain duplicates."
 
     #  create a vector mask from the raster data
     raster_mask = extract_raster_features(
@@ -104,14 +104,14 @@ def masked_dot_density(
     pixel_values,
     scale=1,
     method="uniform",
-    categories=None,
+    columns=None,
     rng=None,
     method_kwargs=None,
     nodata=255,
     n_jobs=-1,
 ):
     """Simulate a point pattern process within each source polygon while using raster
-        data to mask out uninhabited areas of the each geometry.
+    data to mask out uninhabited areas of the each geometry.
 
     Parameters
     ----------
@@ -133,7 +133,7 @@ def masked_dot_density(
     method : str, optional
         name of the distribution used to simulate point locations. The default is  "uniform", in which
         every location within a polygon has an equal chance of being chosen. Alternatively, other
-    categories : list-like, optional
+    columns : list-like, optional
         a list or array of columns in the dataframe holding the desired size of the set of points in each
         category. For example this would hold a set of mutually-exclusive racial groups, or employment
         industries
@@ -155,12 +155,12 @@ def masked_dot_density(
         a geodataframe with simulated points in the geometry column, with each row containing the index
         of the containing polygon, and the category to which the point belongs.
     """
-    if categories is None:
+    if columns is None:
         raise ValueError("must provide a set of categories to draw from")
     source_df = source_df.copy()
-    assert not any(source_df.index.duplicated()), (
-        "The index of the source_df cannot contain duplicates."
-    )
+    assert not any(
+        source_df.index.duplicated()
+    ), "The index of the source_df cannot contain duplicates."
 
     #  create a vector mask from the raster data
     raster_mask = extract_raster_features(
@@ -175,11 +175,11 @@ def masked_dot_density(
         source_df, raster_mask.to_crs(source_df.crs), how="intersection"
     ).dissolve(idx_name)
 
-    gdf = poly_to_multidots(
+    gdf = draw_points_by_column(
         source_df,
         scale=scale,
         method=method,
-        categories=categories,
+        columns=columns,
         rng=rng,
         method_kwargs=method_kwargs,
     )
