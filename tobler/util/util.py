@@ -1,6 +1,6 @@
 """Useful functions to support tobler's interpolation methods."""
 
-from warnings import warn
+import warnings
 
 import geopandas
 import numpy as np
@@ -9,9 +9,13 @@ import shapely
 from packaging.version import Version
 from shapely.geometry import Polygon
 
-GPD_10 = Version(geopandas.__version__) >= Version("1.0.0dev")
-
 __all__ = ["h3fy", "circumradius"]
+
+
+def _h3lt4(p) -> bool:
+    """Helper to isolate h3 version without importing globally."""
+
+    return Version(p.__version__) < Version("4.0")
 
 
 def circumradius(resolution):
@@ -35,7 +39,7 @@ def circumradius(resolution):
             "You can install it with `conda install h3-py` or "
             "`pip install h3`"
         ) from err
-    if Version(h3.__version__) < Version("4.0"):
+    if _h3lt4(h3):
         return h3.edge_length(resolution, "m")
     return h3.average_hexagon_edge_length(resolution, "m")
 
@@ -122,7 +126,7 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
 
     if source.crs.is_geographic:
         if buffer:  # if CRS is geographic but user wants a buffer, we need to estimate
-            warn(
+            warnings.warn(
                 "The source geodataframe is stored in a geographic CRS. "
                 "Falling back to estimated UTM zone to generate desired buffer. "
                 "If this produces unexpected results, reproject the input data "
@@ -136,7 +140,16 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
             )
 
     else:  # if CRS is projected, we need lat/long
-        crs_units = source.crs.to_dict()["units"]
+        with warnings.catch_warnings():
+            warnings.filterwarnings(
+                "ignore",
+                category=UserWarning,
+                message=(
+                    "You will likely lose important projection information "
+                    "when converting to a PROJ string from another format"
+                ),
+            )
+            crs_units = source.crs.to_dict()["units"]
         if buffer:  #  we can only convert between units we know
             if crs_units not in ["m", "us-ft"]:
                 raise ValueError(
@@ -147,16 +160,11 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
                 )
             clipper = source.to_crs(4326)
             distance = circumradius(resolution)
-            if crs_units == "ft-us":
-                distance = distance * 3.281
             source = source.buffer(distance).to_crs(4326)
         else:
             source = source.to_crs(4326)
 
-    if GPD_10:
-        source_unary = shapely.force_2d(source.union_all())
-    else:
-        source_unary = shapely.force_2d(source.unary_union)
+    source_unary = shapely.force_2d(source.union_all())
 
     if isinstance(source_unary, Polygon):
         hexagons = _to_hex(
@@ -178,7 +186,7 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
     return hexagons
 
 
-def _to_hex(source, resolution=6, return_geoms=True, buffer=True):  # noqa: ARG001 Unused function argument: `buffer`
+def _to_hex(source, resolution=6, return_geoms=True):
     """Generate a hexgrid geodataframe that covers the face of a source geometry.
 
     Parameters
@@ -208,12 +216,12 @@ def _to_hex(source, resolution=6, return_geoms=True, buffer=True):  # noqa: ARG0
             "`pip install h3`"
         ) from err
 
-    if Version(h3.__version__) > Version("4.0"):
-        polyfill = h3.geo_to_cells
-        kwargs = {}
-    else:
+    if _h3lt4(h3):
         polyfill = h3.polyfill
         kwargs = dict(geo_json_conformant=True)
+    else:
+        polyfill = h3.geo_to_cells
+        kwargs = {}
 
     hexids = pandas.Series(
         list(polyfill(source.__geo_interface__, resolution, **kwargs)),
@@ -223,13 +231,13 @@ def _to_hex(source, resolution=6, return_geoms=True, buffer=True):  # noqa: ARG0
     if not return_geoms:
         return hexids
 
-    if Version(h3.__version__) > Version("4.0"):
+    if _h3lt4(h3):
         polys = hexids.apply(
-            lambda hex_id: shapely.geometry.shape(h3.cells_to_geo([hex_id])),
+            lambda hex_id: Polygon(h3.h3_to_geo_boundary(hex_id, geo_json=True)),
         )
     else:
         polys = hexids.apply(
-            lambda hex_id: Polygon(h3.h3_to_geo_boundary(hex_id, geo_json=True)),
+            lambda hex_id: shapely.geometry.shape(h3.cells_to_geo([hex_id])),
         )
 
     hexs = geopandas.GeoDataFrame(hexids, geometry=polys.values, crs=4326).set_index(

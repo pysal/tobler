@@ -35,5 +35,4 @@ dependencies:
   - astropy
   - myst-parser
   - sphinx-autodoc2
-  - nbsphinx-link
   - linkify-it-py

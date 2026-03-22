@@ -36,7 +36,6 @@ extensions = [  #'sphinx_gallery.gen_gallery',
     "nbsphinx",
     "myst_parser",
     "autodoc2",
-    "nbsphinx_link",
 ]
 
 myst_enable_extensions = [
