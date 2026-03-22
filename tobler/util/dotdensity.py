@@ -55,7 +55,7 @@ def _poly_to_dots(
     return pts.reset_index()
 
 
-def draw_points_by_column(
+def dot_density(
     gdf, columns, scale=1.0, method="uniform", rng=None, method_kwargs=None
 ):
     """Draw a sample of points inside each polygon/multipolygon row of a

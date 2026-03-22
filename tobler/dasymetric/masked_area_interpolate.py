@@ -3,7 +3,7 @@ from warnings import warn
 import geopandas as gpd
 
 from ..area_weighted import area_interpolate
-from ..util import draw_points_by_column
+from ..util import dot_density
 from .raster_tools import extract_raster_features
 
 __all__ = ["masked_area_interpolate", "masked_dot_density"]
@@ -43,7 +43,7 @@ def masked_area_interpolate(
     intensive_variables : list
         Columns of the input dataframe containing intensive variables to interpolate
     categorical_variables : list
-        [Optional. Default=None] Columns in dataframes for categorical variables
+        [Optional. Default=None] Columns in dataframes for categorical variables`
     allocate_total : bool
         whether to allocate the total from the source geometries (the default is True).
     nodata : int
@@ -175,7 +175,7 @@ def masked_dot_density(
         source_df, raster_mask.to_crs(source_df.crs), how="intersection"
     ).dissolve(idx_name)
 
-    gdf = draw_points_by_column(
+    gdf = dot_density(
         source_df,
         scale=scale,
         method=method,
