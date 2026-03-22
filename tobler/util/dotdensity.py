@@ -6,6 +6,8 @@ from geopandas.tools._random import uniform
 from pandas.api.types import is_list_like
 from shapely.geometry import MultiPoint
 
+__all__ = ["dot_density"]
+
 
 def _poly_to_dots(
     gdf, scale=1.0, method="uniform", category=None, rng=None, method_kwargs=None

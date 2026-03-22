@@ -34,6 +34,7 @@ variables being assigned to the target
 
    extract_raster_features
    masked_area_interpolate
+   masked_dot_density
 
 
 Model
@@ -70,3 +71,4 @@ Utility Functions
    :toctree: generated/
 
    h3fy
+   dot_density
