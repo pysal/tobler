@@ -17,6 +17,7 @@ dependencies:
   - rasterstats
   - scikit-learn
   - scipy
+  - pointpats
   - statsmodels
   - tqdm
   - codecov

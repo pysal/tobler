@@ -16,6 +16,7 @@ dependencies:
   - statsmodels
   - scipy
   - tqdm
+  - pointpats
   - codecov
   - coverage
   - pytest
