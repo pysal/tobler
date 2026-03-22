@@ -53,12 +53,10 @@ def _nan_check(df, column):
 
     Warn and replace nan with 0.0.
     """
-    values = df[column].values
-    if np.any(np.isnan(values)) or np.any(np.isinf(values)):
-        wherenan = np.isnan(values)
-        values[wherenan] = 0.0
+    values = df[column].copy()
+    if values.isna().any():
         warn(f"nan values in variable: {column}, replacing with 0", stacklevel=2)
-    return values
+    return values.fillna(0.0).values
 
 
 def _inf_check(df, column):
@@ -66,12 +64,10 @@ def _inf_check(df, column):
 
     Warn and replace inf with 0.0.
     """
-    values = df[column].values
-    if np.any(np.isinf(values)):
-        wherenan = np.isinf(values)
-        values[wherenan] = 0.0
+    values = df[column].copy()
+    if np.isinf(values).any():
         warn(f"inf values in variable: {column}, replacing with 0", stacklevel=2)
-    return values
+    return values.replace([np.inf, -np.inf], 0.0).values
 
 
 def _check_presence_of_crs(geoinput):

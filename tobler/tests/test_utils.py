@@ -10,52 +10,51 @@ from numpy.testing import assert_almost_equal
 from tobler.util import h3fy
 
 
-def test_h3fy():
+def test_h3fy(datasets):
+    sac1 = datasets[0]
     sac1 = load_example("Sacramento1")
     sac1 = geopandas.read_file(sac1.get_path("sacramentot2.shp"))
     sac_hex = h3fy(sac1, return_geoms=True)
     assert sac_hex.shape == (364, 1)
 
 
-def test_h3fy_nogeoms():
-    sac1 = load_example("Sacramento1")
-    sac1 = geopandas.read_file(sac1.get_path("sacramentot2.shp"))
+def test_h3fy_nogeoms(datasets):
+    sac1 = datasets[0]
     sac_hex = h3fy(sac1, return_geoms=False)
     assert len(sac_hex) == 364
 
 
-def test_h3fy_nocrs():
-    sac1 = load_example("Sacramento1")
-    sac1 = geopandas.read_file(sac1.get_path("sacramentot2.shp")).set_crs(
+def test_h3fy_nocrs(datasets):
+    sac1 = datasets[0]
+    sac1= sac1.set_crs(
         None, allow_override=True
     )
     with pytest.raises(ValueError, match="source geodataframe must have a valid CRS"):
         h3fy(sac1, return_geoms=True)
 
 
-def test_h3fy_diff_crs():
-    sac1 = load_example("Sacramento1")
-    sac1 = geopandas.read_file(sac1.get_path("sacramentot2.shp"))
+def test_h3fy_diff_crs(datasets):
+    sac1 = datasets[0]
     sac1 = sac1.to_crs(32710)
     sac_hex = h3fy(sac1)
     assert sac_hex.shape == (364, 1)
     assert sac_hex.crs.to_string() == "EPSG:32710"
 
 
-def test_h3fy_clip():
-    sac1 = load_example("Sacramento1")
-    sac1 = geopandas.read_file(sac1.get_path("sacramentot2.shp"))
+def test_h3fy_clip(datasets):
+    sac1 = datasets[0].to_crs(4326)
     sac_hex = h3fy(sac1, clip=True)
     sac_hex = sac_hex.to_crs(sac_hex.estimate_utm_crs())
     assert_almost_equal(sac_hex.area.sum(), 13131736346.537422, decimal=0)
 
 
-def test_h3fy_clip_buffer():
-    sac1 = load_example("Sacramento1")
-    sac1 = geopandas.read_file(sac1.get_path("sacramentot2.shp"))
+def test_h3fy_clip_buffer(datasets):
+    sac1 = datasets[0].to_crs(4326)
+
     with pytest.warns(
         UserWarning, match="The source geodataframe is stored in a geographic CRS",
     ):
+
         sac_hex = h3fy(sac1, clip=True, buffer=True)
     sac_hex = sac_hex.to_crs(sac_hex.estimate_utm_crs())
     sac1 = sac1.to_crs(sac_hex.estimate_utm_crs())
