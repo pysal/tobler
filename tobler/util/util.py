@@ -1,6 +1,6 @@
 """Useful functions to support tobler's interpolation methods."""
 
-import warnings
+from warnings import warn
 
 import geopandas
 import numpy as np
