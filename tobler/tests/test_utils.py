@@ -65,6 +65,7 @@ def test_h3fy_clip(sac1):
 
 
 def test_h3fy_clip_buffer(sac1):
+    sac1 = sac1.to_crs(4326)
     with pytest.warns(
         UserWarning,
         match="The source geodataframe is stored in a geographic CRS",

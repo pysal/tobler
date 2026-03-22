@@ -1,6 +1,6 @@
 """Useful functions to support tobler's interpolation methods."""
 
-from warnings import warn
+from warnings import catch_warnings, filterwarnings, warn
 
 import geopandas
 import numpy as np
@@ -126,7 +126,7 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
 
     if source.crs.is_geographic:
         if buffer:  # if CRS is geographic but user wants a buffer, we need to estimate
-            warnings.warn(
+            warn(
                 "The source geodataframe is stored in a geographic CRS. "
                 "Falling back to estimated UTM zone to generate desired buffer. "
                 "If this produces unexpected results, reproject the input data "
@@ -140,8 +140,8 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
             )
 
     else:  # if CRS is projected, we need lat/long
-        with warnings.catch_warnings():
-            warnings.filterwarnings(
+        with catch_warnings():
+            filterwarnings(
                 "ignore",
                 category=UserWarning,
                 message=(
