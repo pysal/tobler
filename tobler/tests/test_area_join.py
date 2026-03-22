@@ -1,11 +1,16 @@
+from packaging.version import Version
+
 import geopandas as gpd
 import numpy as np
 import pandas as pd
 import pytest
-from pandas.api.types import is_string_dtype
-
+from shapely.geometry import Point
 
 from tobler.area_weighted import area_join
+
+PDLT3 = Version(pd.__version__) < Version("v3.0.0")
+
+x_preserve_dtype_warning = pytest.warns(UserWarning, match="Cannot preserve dtype of")
 
 
 class TestAreaJoin:
@@ -32,7 +37,7 @@ class TestAreaJoin:
         assert result.floats.isna().sum() == 20
 
     def test_area_join_ints(self):
-        with pytest.warns(UserWarning, match="Cannot preserve dtype of"):
+        with x_preserve_dtype_warning:
             result = area_join(self.source, self.target, "ints")
 
         assert (result.columns == ["geometry", "ints"]).all()
@@ -42,14 +47,19 @@ class TestAreaJoin:
         assert result.ints.isna().sum() == 20
 
     def test_area_join_strings(self):
-        result = area_join(self.source, self.target, "strings")
+        if PDLT3:
+            result = area_join(self.source, self.target, "strings")
+        else:
+            with x_preserve_dtype_warning:
+                result = area_join(self.source, self.target, "strings")
+
         assert (result.columns == ["geometry", "strings"]).all()
-        assert is_string_dtype(result.strings)
+        assert result.strings.dtype.name == ("object" if PDLT3 else "str")
         assert isinstance(result.strings.iloc[0], str)
         assert result.strings.isna().sum() == 20
 
     def test_area_join_array(self):
-        with pytest.warns(UserWarning, match="Cannot preserve dtype of"):
+        with x_preserve_dtype_warning:
             result = area_join(self.source, self.target, ["floats", "ints", "strings"])
 
         assert (result.columns == ["geometry", "floats", "ints", "strings"]).all()
@@ -60,7 +70,7 @@ class TestAreaJoin:
         assert result.ints.dtype == object
         assert isinstance(result.ints.iloc[0], int)
         assert result.ints.isna().sum() == 20
-        assert is_string_dtype(result.strings)
+        assert result.strings.dtype.name == ("object" if PDLT3 else "str")
         assert isinstance(result.strings.iloc[0], str)
         assert result.strings.isna().sum() == 20
 
