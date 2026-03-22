@@ -8,11 +8,11 @@ from shapely.geometry import MultiPoint
 
 
 def _poly_to_dots(
-    gdf, scale=1., method="uniform", category=None, rng=None, method_kwargs=None
+    gdf, scale=1.0, method="uniform", category=None, rng=None, method_kwargs=None
 ):
     """this is just a function that wraps geopandas sample_points, but returns
-    a single point from a uniform distribution when clustered pointpattern
-    DGPs would raise an error
+    a single point from a uniform distribution when clustered point pattern
+    data-generating processes would raise an error.
     """
     if method_kwargs is None:
         method_kwargs = {}
@@ -62,7 +62,7 @@ def dot_density(
     geodataframe, where sample size is one or more columns on the dataframe,
     optionally scaled by a constant. For example to create a proportional dot density
     map, pass a polygon geodataframe storing total population counts for
-    mutually-exclusive groups. 
+    mutually-exclusive groups.
 
     Parameters
     ----------
