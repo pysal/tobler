@@ -1,4 +1,3 @@
-
 import geopandas as gpd
 import pytest
 from shapely.geometry import box
@@ -95,5 +94,17 @@ def test_draw_points_geometry_within_polygons(simple_gdf):
 
 def test_draw_points_single_column(simple_gdf):
     result = dot_density(simple_gdf, columns=["pop_b"], rng=0)
+    assert len(result) == simple_gdf["pop_b"].sum()
+    assert set(result["category"].unique()) == {"pop_b"}
+
+
+def test_draw_points_normal_cluster(simple_gdf):
+    result = dot_density(simple_gdf, method='cluster_normal', columns=["pop_b"], rng=0)
+    assert len(result) == simple_gdf["pop_b"].sum()
+    assert set(result["category"].unique()) == {"pop_b"}
+
+
+def test_draw_points_normal_cluster(simple_gdf):
+    result = dot_density(simple_gdf, method='cluster_poisson', columns=["pop_b"], rng=0)
     assert len(result) == simple_gdf["pop_b"].sum()
     assert set(result["category"].unique()) == {"pop_b"}
