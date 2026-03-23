@@ -1,0 +1,53 @@
+# {py:mod}`tobler.util`
+
+```{py:module} tobler.util
+```
+
+```{autodoc2-docstring} tobler.util
+:allowtitles:
+```
+
+## Package Contents
+
+### Functions
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`h3fy <tobler.util.util.h3fy>`
+  - ```{autodoc2-docstring} tobler.util.util.h3fy
+    :summary:
+    ```
+* - {py:obj}`circumradius <tobler.util.util.circumradius>`
+  - ```{autodoc2-docstring} tobler.util.util.circumradius
+    :summary:
+    ```
+* - {py:obj}`dot_density <tobler.util.dotdensity.dot_density>`
+  - ```{autodoc2-docstring} tobler.util.dotdensity.dot_density
+    :summary:
+    ```
+````
+
+### API
+
+````{py:function} h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True)
+:canonical: tobler.util.util.h3fy
+
+```{autodoc2-docstring} tobler.util.util.h3fy
+```
+````
+
+````{py:function} circumradius(resolution)
+:canonical: tobler.util.util.circumradius
+
+```{autodoc2-docstring} tobler.util.util.circumradius
+```
+````
+
+````{py:function} dot_density(gdf, columns, scale=1.0, method='uniform', rng=None, method_kwargs=None)
+:canonical: tobler.util.dotdensity.dot_density
+
+```{autodoc2-docstring} tobler.util.dotdensity.dot_density
+```
+````
