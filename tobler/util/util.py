@@ -1,6 +1,6 @@
 """Useful functions to support tobler's interpolation methods."""
 
-import warnings
+from warnings import catch_warnings, filterwarnings, warn
 
 import geopandas
 import numpy as np
@@ -57,14 +57,10 @@ def _nan_check(df, column):
 
     Warn and replace nan with 0.0.
     """
-    values = df[column].values.copy()
-    if np.any(np.isnan(values)) or np.any(np.isinf(values)):
-        wherenan = np.isnan(values)
-        values[wherenan] = 0.0
-        warnings.warn(
-            f"nan values in variable: {column}, replacing with 0", stacklevel=2
-        )
-    return values
+    values = df[column].copy()
+    if values.isna().any():
+        warn(f"nan values in variable: {column}, replacing with 0", stacklevel=2)
+    return values.fillna(0.0).values
 
 
 def _inf_check(df, column):
@@ -72,14 +68,10 @@ def _inf_check(df, column):
 
     Warn and replace inf with 0.0.
     """
-    values = df[column].values.copy()
-    if np.any(np.isinf(values)):
-        wherenan = np.isinf(values)
-        values[wherenan] = 0.0
-        warnings.warn(
-            f"inf values in variable: {column}, replacing with 0", stacklevel=2
-        )
-    return values
+    values = df[column].copy()
+    if np.isinf(values).any():
+        warn(f"inf values in variable: {column}, replacing with 0", stacklevel=2)
+    return values.replace([np.inf, -np.inf], 0.0).values
 
 
 def _check_presence_of_crs(geoinput):
@@ -134,7 +126,7 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
 
     if source.crs.is_geographic:
         if buffer:  # if CRS is geographic but user wants a buffer, we need to estimate
-            warnings.warn(
+            warn(
                 "The source geodataframe is stored in a geographic CRS. "
                 "Falling back to estimated UTM zone to generate desired buffer. "
                 "If this produces unexpected results, reproject the input data "
@@ -148,8 +140,8 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
             )
 
     else:  # if CRS is projected, we need lat/long
-        with warnings.catch_warnings():
-            warnings.filterwarnings(
+        with catch_warnings():
+            filterwarnings(
                 "ignore",
                 category=UserWarning,
                 message=(

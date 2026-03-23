@@ -51,6 +51,7 @@ plus = [
     "astropy",
     "dask-geopandas",
     "h3",
+    "pointpats"
 ]
 dev = ["pre-commit"]
 docs = [

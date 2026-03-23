@@ -1,33 +1,18 @@
 """test interpolation functions."""
 
 import dask_geopandas
-import geopandas
 import pytest
 from geopandas.testing import assert_geodataframe_equal
-from libpysal.examples import load_example
 from numpy.testing import assert_almost_equal
 
 from tobler.area_weighted import area_interpolate, area_interpolate_dask
 from tobler.area_weighted.area_interpolate import _area_tables_binning
 
 
-def datasets():
-    sac1 = load_example("Sacramento1")
-    sac2 = load_example("Sacramento2")
-    sac1 = geopandas.read_file(sac1.get_path("sacramentot2.shp"))
-    sac1 = sac1.to_crs(sac1.estimate_utm_crs())
-    sac2 = geopandas.read_file(sac2.get_path("SacramentoMSA2.shp"))
-    sac2 = sac2.to_crs(sac1.crs)
-    sac1["pct_poverty"] = sac1.POV_POP / sac1.POV_TOT
-    categories = ["cat", "dog", "donkey", "wombat", "capybara"]
-    sac1["animal"] = (categories * ((len(sac1) // len(categories)) + 1))[: len(sac1)]
 
-    return sac1, sac2
-
-
-def test_area_interpolate_singlecore():
-    sac1, sac2 = datasets()
-    with (pytest.WARN_VAR_VALS_NAN, pytest.WARN_VAR_VALS_INF):
+def test_area_interpolate_singlecore(datasets):
+    sac1, sac2 = datasets
+    with pytest.WARN_VAR_VALS_INF:
         area = area_interpolate(
             source_df=sac1,
             target_df=sac2,
@@ -45,8 +30,8 @@ def test_area_interpolate_singlecore():
     assert_almost_equal(area.animal_capybara.sum(), 20, decimal=0)
 
 
-def test_area_interpolate_extensive():
-    sac1, sac2 = datasets()
+def test_area_interpolate_extensive(datasets):
+    sac1, sac2 = datasets
     area = area_interpolate(
         source_df=sac1.to_crs(4326),  # trigger warning once
         target_df=sac2.to_crs(4326),
@@ -56,9 +41,9 @@ def test_area_interpolate_extensive():
     assert_almost_equal(area.TOT_POP.sum(), 1796856, decimal=0)
 
 
-def test_area_interpolate_intensive():
-    sac1, sac2 = datasets()
-    with (pytest.WARN_VAR_VALS_NAN, pytest.WARN_VAR_VALS_INF):
+def test_area_interpolate_intensive(datasets):
+    sac1, sac2 = datasets
+    with pytest.WARN_VAR_VALS_INF:
         area = area_interpolate(
             source_df=sac1,
             target_df=sac2,
@@ -68,9 +53,9 @@ def test_area_interpolate_intensive():
     assert_almost_equal(area.pct_poverty.sum(), 2140, decimal=0)
 
 
-def test_area_interpolate_categorical():
-    sac1, sac2 = datasets()
-    with (pytest.WARN_VAR_VALS_NAN, pytest.WARN_VAR_VALS_INF):
+def test_area_interpolate_categorical(datasets):
+    sac1, sac2 = datasets
+    with pytest.WARN_VAR_VALS_INF:
         area = area_interpolate(
             source_df=sac1,
             target_df=sac2,
@@ -87,8 +72,8 @@ def test_area_interpolate_categorical():
 
 
 @pytest.mark.xfail(reason="dask_geopandas is broken with dask-expr backend")
-def test_area_interpolate_categorical_dask():
-    sac1, sac2 = datasets()
+def test_area_interpolate_categorical_dask(datasets):
+    sac1, sac2 = datasets
     sac1["animal"] = sac1["animal"].astype("category")
     dsac1 = dask_geopandas.from_geopandas(sac1, npartitions=2).spatial_shuffle(
         by="hilbert", shuffle="tasks"
@@ -96,7 +81,7 @@ def test_area_interpolate_categorical_dask():
     dsac2 = dask_geopandas.from_geopandas(sac2, npartitions=2).spatial_shuffle(
         by="hilbert", shuffle="tasks"
     )
-    with (pytest.WARN_VAR_VALS_NAN, pytest.WARN_VAR_VALS_INF):
+    with pytest.WARN_VAR_VALS_INF:
         area = area_interpolate_dask(
             source_dgdf=dsac1,
             target_dgdf=dsac2,
@@ -110,11 +95,11 @@ def test_area_interpolate_categorical_dask():
     assert_almost_equal(area.animal_capybara.sum(), 20, decimal=0)
 
 
-def test_area_interpolate_custom_index():
-    sac1, sac2 = datasets()
+def test_area_interpolate_custom_index(datasets):
+    sac1, sac2 = datasets
     sac1.index = sac1.index * 2
     sac2.index = sac2.index * 13
-    with (pytest.WARN_VAR_VALS_NAN, pytest.WARN_VAR_VALS_INF):
+    with (pytest.WARN_VAR_VALS_INF):
         area = area_interpolate(
             source_df=sac1,
             target_df=sac2,
@@ -132,16 +117,16 @@ def test_area_interpolate_custom_index():
     assert not area.isna().any().any()
 
 
-def test_area_interpolate_sindex_options():
-    sac1, sac2 = datasets()
-    with (pytest.WARN_VAR_VALS_NAN, pytest.WARN_VAR_VALS_INF):
+def test_area_interpolate_sindex_options(datasets):
+    sac1, sac2 = datasets
+    with pytest.WARN_VAR_VALS_INF:
         auto = area_interpolate(
             source_df=sac1,
             target_df=sac2,
             extensive_variables=["TOT_POP"],
             intensive_variables=["pct_poverty"],
         )
-    with (pytest.WARN_VAR_VALS_NAN, pytest.WARN_VAR_VALS_INF):
+    with (pytest.WARN_VAR_VALS_INF):
         source = area_interpolate(
             source_df=sac1,
             target_df=sac2,
@@ -149,7 +134,7 @@ def test_area_interpolate_sindex_options():
             intensive_variables=["pct_poverty"],
             spatial_index="source",
         )
-    with (pytest.WARN_VAR_VALS_NAN, pytest.WARN_VAR_VALS_INF):
+    with (pytest.WARN_VAR_VALS_INF):
         target = area_interpolate(
             source_df=sac1,
             target_df=sac2,
@@ -171,9 +156,9 @@ def test_area_interpolate_sindex_options():
         )
 
 
-def test_area_interpolate_parallel():
-    sac1, sac2 = datasets()
-    with (pytest.WARN_VAR_VALS_NAN, pytest.WARN_VAR_VALS_INF):
+def test_area_interpolate_parallel(datasets):
+    sac1, sac2 = datasets
+    with pytest.WARN_VAR_VALS_INF:
         area = area_interpolate(
             source_df=sac1,
             target_df=sac2,
@@ -185,8 +170,8 @@ def test_area_interpolate_parallel():
     assert_almost_equal(area.pct_poverty.sum(), 2140, decimal=0)
 
 
-def test_area_tables_binning():
-    sac1, sac2 = datasets()
+def test_area_tables_binning(datasets):
+    sac1, sac2 = datasets
     sac1 = sac1.to_crs(4326)
     sac2 = sac2.to_crs(4326)
 
@@ -207,11 +192,11 @@ def test_area_tables_binning():
     assert (auto[5][0].toarray() > 0).sum() == 7
 
 
-def test_passed_table():
-    sac1, sac2 = datasets()
+def test_passed_table(datasets):
+    sac1, sac2 = datasets
     csr = _area_tables_binning(source_df=sac1, target_df=sac2, spatial_index="auto")
 
-    with (pytest.WARN_VAR_VALS_NAN, pytest.WARN_VAR_VALS_INF):
+    with pytest.WARN_VAR_VALS_INF:
         area = area_interpolate(
             source_df=sac1,
             target_df=sac2,
@@ -224,7 +209,7 @@ def test_passed_table():
 
     dok = csr.todok()
 
-    with (pytest.WARN_VAR_VALS_NAN, pytest.WARN_VAR_VALS_INF):
+    with pytest.WARN_VAR_VALS_INF:
         area = area_interpolate(
             source_df=sac1,
             target_df=sac2,

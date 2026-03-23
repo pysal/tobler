@@ -19,6 +19,7 @@ dependencies:
   - scikit-learn
   - scipy=1.13
   - statsmodels=0.14
+  - pointpats
   - tqdm=4.67
   - codecov
   - coverage

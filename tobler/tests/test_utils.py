@@ -65,8 +65,10 @@ def test_h3fy_clip(sac1):
 
 
 def test_h3fy_clip_buffer(sac1):
+    sac1 = sac1.to_crs(4326)
     with pytest.warns(
-        UserWarning, match="The source geodataframe is stored in a geographic CRS",
+        UserWarning,
+        match="The source geodataframe is stored in a geographic CRS",
     ):
         sac_hex = h3fy(sac1, clip=True, buffer=True)
     sac_hex = sac_hex.to_crs(sac_hex.estimate_utm_crs())

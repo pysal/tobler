@@ -15,6 +15,7 @@ dependencies:
   - pandas
   - rasterio
   - rasterstats
+  - pointpats
   - scikit-learn
   - scipy
   - statsmodels
