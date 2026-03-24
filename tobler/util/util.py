@@ -7,7 +7,6 @@ import geopandas
 import numpy as np
 import pandas
 import shapely
-from astropy.io.fits.util import fill
 from packaging.version import Version
 from shapely.geometry import Polygon
 
