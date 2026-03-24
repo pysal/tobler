@@ -27,13 +27,20 @@ dependencies:
   - pytest-mpl
   - pytest-xdist
   # docs
-  - sphinx>=1.4.3
-  - sphinxcontrib-bibtex
-  - sphinx_bootstrap_theme
   - numpydoc
   - nbsphinx
   - joblib
   - astropy
+  - osmnx
+  - contextily
   - myst-parser
   - sphinx-autodoc2
-  - linkify-it-py
+  - geodatasets
+  - lonboard
+  - watermark
+  - myst-nb
+  - sphinx
+  - sphinxcontrib-bibtex
+  - sphinx-autosummary-accessors
+  - sphinx-copybutton
+  - sphinx-immaterial
