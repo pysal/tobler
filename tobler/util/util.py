@@ -72,6 +72,8 @@ def _nan_check(df, column, fill_value=0.0):
             f"nan values in variable: {column}, replacing with {fill_value}",
             stacklevel=2,
         )
+    if fill_value is None:
+        return values.values
     return values.fillna(fill_value).values
 
 
