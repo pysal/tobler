@@ -1,9 +1,13 @@
 """test interpolation functions."""
 
 import dask_geopandas
+import geopandas
+import numpy as np
 import pytest
 from geopandas.testing import assert_geodataframe_equal
 from numpy.testing import assert_almost_equal
+from scipy.sparse import csr_matrix
+from shapely.geometry import box
 
 from tobler.area_weighted import area_interpolate, area_interpolate_dask
 from tobler.area_weighted.area_interpolate import _area_tables_binning
@@ -219,3 +223,93 @@ def test_passed_table(datasets):
         )
     assert_almost_equal(area.TOT_POP.sum(), 1796856, decimal=0)
     assert_almost_equal(area.pct_poverty.sum(), 2140, decimal=0)
+
+
+@pytest.mark.parametrize(
+    ("variable_kind", "fill_nan", "warning_fill", "expected"),
+    [
+        ("extensive", 0.0, 0.0, np.array([1.0, 0.0])),
+        ("extensive", 5.0, 5.0, np.array([1.0, 5.0])),
+        ("extensive", "mean", 1.0, np.array([1.0, 1.0])),
+        ("extensive", "median", 1.0, np.array([1.0, 1.0])),
+        ("extensive", "max", 1.0, np.array([1.0, 1.0])),
+        ("extensive", "min", 1.0, np.array([1.0, 1.0])),
+        ("intensive", 0.0, 0.0, np.array([1.0, 0.0])),
+        ("intensive", 5.0, 5.0, np.array([1.0, 5.0])),
+        ("intensive", "mean", 1.0, np.array([1.0, 1.0])),
+        ("intensive", "median", 1.0, np.array([1.0, 1.0])),
+        ("intensive", "max", 1.0, np.array([1.0, 1.0])),
+        ("intensive", "min", 1.0, np.array([1.0, 1.0])),
+    ],
+)
+def test_area_interpolate_fill_nan_strategies(
+    variable_kind, fill_nan, warning_fill, expected
+):
+    source = geopandas.GeoDataFrame(
+        {"value": [1.0, np.nan]},
+        geometry=[box(0, 0, 1, 1), box(1, 0, 2, 1)],
+    )
+    target = geopandas.GeoDataFrame(
+        geometry=[box(0, 0, 1, 1), box(1, 0, 2, 1)],
+    )
+    table = csr_matrix(np.eye(2))
+
+    kwargs = {f"{variable_kind}_variables": ["value"]}
+    with pytest.warns(
+        UserWarning,
+        match=f"nan values in variable: value, replacing with {warning_fill}",
+    ):
+        result = area_interpolate(
+            source_df=source,
+            target_df=target,
+            table=table,
+            fill_nan=fill_nan,
+            **kwargs,
+        )
+
+    np.testing.assert_allclose(result["value"].to_numpy(), expected)
+
+
+@pytest.mark.parametrize("variable_kind", ["extensive", "intensive"])
+def test_area_interpolate_fill_nan_none_propagates(variable_kind):
+    source = geopandas.GeoDataFrame(
+        {"value": [1.0, np.nan]},
+        geometry=[box(0, 0, 1, 1), box(1, 0, 2, 1)],
+    )
+    target = geopandas.GeoDataFrame(
+        geometry=[box(0, 0, 1, 1), box(1, 0, 2, 1)],
+    )
+    table = csr_matrix(np.eye(2))
+
+    kwargs = {f"{variable_kind}_variables": ["value"]}
+    result = area_interpolate(
+        source_df=source,
+        target_df=target,
+        table=table,
+        fill_nan=None,
+        **kwargs,
+    )
+
+    assert result["value"].isna().tolist() == [False, True]
+
+
+@pytest.mark.parametrize("variable_kind", ["extensive", "intensive"])
+def test_area_interpolate_fill_nan_invalid_strategy(variable_kind):
+    source = geopandas.GeoDataFrame(
+        {"value": [1.0, np.nan]},
+        geometry=[box(0, 0, 1, 1), box(1, 0, 2, 1)],
+    )
+    target = geopandas.GeoDataFrame(
+        geometry=[box(0, 0, 1, 1), box(1, 0, 2, 1)],
+    )
+    table = csr_matrix(np.eye(2))
+
+    kwargs = {f"{variable_kind}_variables": ["value"]}
+    with pytest.raises(ValueError, match="fill_value should be either None, a numeric value"):
+        area_interpolate(
+            source_df=source,
+            target_df=target,
+            table=table,
+            fill_nan="mode",
+            **kwargs,
+        )

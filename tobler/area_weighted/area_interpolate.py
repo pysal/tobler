@@ -212,6 +212,7 @@ def area_interpolate(
     n_jobs=1,
     categorical_variables=None,
     categorical_frequency=True,
+    fill_nan=0.0
 ):
     """
     Area interpolation for extensive, intensive and categorical variables.
@@ -256,6 +257,12 @@ def area_interpolate(
         value in a categorical variable in every polygon of `target_df` (proportion of
         area). If False, `estimates` contains the area in every polygon of `target_df`
         that is occupied by each value of the categorical
+    fill_nan : numeric, str, or None
+        [Optional. Default=0.0] Value to replace NaN values in the source variables. 
+        If None, NaN values are not replaced and will propagate through the interpolation.
+        If a string is passed, it should be one of 'mean', 'median', 'max', or 'min',
+        and NaN values will be replaced with the corresponding aggregate value from the
+        source variable.
 
     Returns
     -------
@@ -320,8 +327,8 @@ def area_interpolate(
         weights = den.dot(table)  # row standardize table
 
         for variable in extensive_variables:
-            vals = _nan_check(source_df, variable)
-            vals = _inf_check(source_df, variable)
+            vals = _nan_check(source_df, variable, fill_value=fill_nan)
+            vals = _inf_check(vals, variable, fill_value=fill_nan)
             estimates = diags([vals], [0], dtype=None).dot(weights)
             estimates = estimates.sum(axis=0)
             extensive.append(estimates.tolist()[0])
@@ -340,8 +347,8 @@ def area_interpolate(
         weights = table.dot(den)
 
         for variable in intensive_variables:
-            vals = _nan_check(source_df, variable)
-            vals = _inf_check(source_df, variable)
+            vals = _nan_check(source_df, variable, fill_value=fill_nan)
+            vals = _inf_check(vals, variable, fill_value=fill_nan)
             n = vals.shape[0]
             vals = vals.reshape((n,))
             estimates = diags([vals], [0])

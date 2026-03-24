@@ -1,11 +1,13 @@
 """Useful functions to support tobler's interpolation methods."""
 
+from copy import deepcopy
 from warnings import catch_warnings, filterwarnings, warn
 
 import geopandas
 import numpy as np
 import pandas
 import shapely
+from astropy.io.fits.util import fill
 from packaging.version import Version
 from shapely.geometry import Polygon
 
@@ -52,26 +54,46 @@ def _check_crs(source_df, target_df):
     return True
 
 
-def _nan_check(df, column):
+def _nan_check(df, column, fill_value=0.0):
     """Check if variable has nan values.
 
     Warn and replace nan with 0.0.
     """
+
     values = df[column].copy()
+
+    if isinstance(fill_value, str):
+        if fill_value not in ["mean", "median", "max", "min"]:
+            raise ValueError(
+                "fill_value should be either None, a numeric value, or one of 'mean', 'median', 'max', or 'min'"
+            )
+        fill_value = values.agg(fill_value)
     if values.isna().any():
-        warn(f"nan values in variable: {column}, replacing with 0", stacklevel=2)
-    return values.fillna(0.0).values
+        warn(
+            f"nan values in variable: {column}, replacing with {fill_value}",
+            stacklevel=2,
+        )
+    return values.fillna(fill_value).values
 
 
-def _inf_check(df, column):
+def _inf_check(vals, column, fill_value=0.0):
     """Check if variable has nan values.
 
     Warn and replace inf with 0.0.
     """
-    values = df[column].copy()
+    values = pandas.Series(vals)
+    if isinstance(fill_value, str):
+        if fill_value not in ["mean", "median", "max", "min"]:
+            raise ValueError(
+                "fill_value should be either None, a numeric value, or one of 'mean', 'median', 'max', or 'min'"
+            )
+        fill_value = values.agg(fill_value)
     if np.isinf(values).any():
-        warn(f"inf values in variable: {column}, replacing with 0", stacklevel=2)
-    return values.replace([np.inf, -np.inf], 0.0).values
+        warn(
+            f"inf values in variable: {column}, replacing with {fill_value}",
+            stacklevel=2,
+        )
+    return values.replace([np.inf, -np.inf], fill_value).values
 
 
 def _check_presence_of_crs(geoinput):
@@ -120,11 +142,12 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
         raise ValueError(
             "source geodataframe must have a valid CRS set before using this function"
         )
+    source = source.copy()
+    orig_crs = deepcopy(source.crs)
+    if clip:
+        clipper = source.to_crs(4326)
 
-    orig_crs = source.crs
-    clipper = source
-
-    if source.crs.is_geographic:
+    if orig_crs.is_geographic:
         if buffer:  # if CRS is geographic but user wants a buffer, we need to estimate
             warn(
                 "The source geodataframe is stored in a geographic CRS. "
@@ -158,7 +181,6 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
                     "argument requires either a geographic CRS or a projected "
                     "one measured in meters or feet (U.S.)"
                 )
-            clipper = source.to_crs(4326)
             distance = circumradius(resolution)
             source = source.buffer(distance).to_crs(4326)
         else:

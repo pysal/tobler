@@ -20,6 +20,7 @@ def masked_area_interpolate(
     allocate_total=True,
     nodata=255,
     n_jobs=-1,
+    fill_nan=0.0,
 ):
     """Interpolate data between two polygonal datasets using an
     auxiliary raster to mask out uninhabited land.
@@ -51,6 +52,12 @@ def masked_area_interpolate(
         [Optional. Default=-1] Number of processes to run in parallel to
         generate the area allocation. If -1, this is set to the number of CPUs
         available.
+    fill_nan : numeric, str, or None
+        [Optional. Default=0.0] Value to replace NaN values in the source variables.
+        If None, NaN values are not replaced and will propagate through the interpolation.
+        If a string is passed, it should be one of 'mean', 'median', 'max', or 'min',
+        and NaN values will be replaced with the corresponding aggregate value from the
+        source variable.
 
     Returns
     -------
@@ -86,6 +93,7 @@ def masked_area_interpolate(
         n_jobs=n_jobs,
         categorical_variables=categorical_variables,
         allocate_total=allocate_total,
+        fill_nan=fill_nan
     )
     return interpolation
 
