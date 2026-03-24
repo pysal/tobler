@@ -43,7 +43,7 @@ def test_h3fy_diff_crs(sac1):
 def test_h3fy_projected_us_feet_buffer(sac1):
 
     # seems to be a floating point difference only affecting Python 3.12?
-    records = 393 if PY312 else 396
+    records = 396
 
     sac_hex = h3fy(sac1.to_crs(2871), buffer=True)
     assert sac_hex.shape == (records, 1)
