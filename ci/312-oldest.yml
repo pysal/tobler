@@ -13,7 +13,7 @@ dependencies:
   - libpysal=4.10
   - mapclassify
   - numpy=2.0
-  - pandas=2.2
+  - pandas=2.3
   - rasterio=1.4
   - rasterstats=0.20
   - scikit-learn
