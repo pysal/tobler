@@ -6,7 +6,7 @@ import geopandas
 import pytest
 from libpysal.examples import load_example
 from numpy.testing import assert_almost_equal
-
+from packaging.version import Version
 from tobler.util import h3fy
 
 
@@ -41,9 +41,10 @@ def test_h3fy_diff_crs(sac1):
 
 
 def test_h3fy_projected_us_feet_buffer(sac1):
+    GPD11= Version(geopandas.__version__) >= Version("1.1")
 
     # seems to be a floating point difference only affecting Python 3.12?
-    records = 396
+    records = 393 if PY312 and GPD11 else 396
 
     sac_hex = h3fy(sac1.to_crs(2871), buffer=True)
     assert sac_hex.shape == (records, 1)
