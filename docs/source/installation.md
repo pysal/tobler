@@ -32,7 +32,7 @@ your fork. By making changes
 to your local clone and submitting a pull request to [pysal/tobler], you can
 contribute to the tobler development.
 
-[3.11]: https://docs.python.org/3.11/
+[3.11]: https://docs.python.org/3.12/
 [anaconda]: https://www.anaconda.com/download/
 [fork]: https://help.github.com/articles/fork-a-repo/
 [pysal/tobler]: https://github.com/pysal/tobler
