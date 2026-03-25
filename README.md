@@ -1,5 +1,5 @@
 <p align="center">
-<img src="docs/figs/tobler_long.png" height="200px">
+<img src="docs/source/_static/tobler_long.png" height="200px">
 </p>
 
 [![Continuous Integration](https://github.com/pysal/tobler/actions/workflows/unittests.yml/badge.svg)](https://github.com/pysal/tobler/actions/workflows/unittests.yml)
@@ -9,7 +9,7 @@
 ![GitHub commits since latest release (branch)](https://img.shields.io/github/commits-since/pysal/tobler/latest)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3386576.svg)](https://doi.org/10.5281/zenodo.3386576)
 
-# PySAL `tobler`
+# `tobler`: 
 
 `tobler` is a python package for areal interpolation, dasymetric mapping, change of support, and small area estimation. It provides a suite of tools with a simple interface for transferring data from one polygonal representation to another. Common examples include standardizing census data from different time periods to a single representation (i.e. to overcome boundary changes in successive years), or the conversion of data collected at different spatial scales into shared units of analysis (e.g. converting zip code and neighborhood data into a regular grid). `tobler` is part of the [PySAL](https://pysal.org) family of packages for spatial data science and provides highly performant implementations of basic and advanced interpolation methods, leveraging [`shapely`](https://shapely.readthedocs.io/en/latest/) to optimize for multicore architecture. The package name is an homage to the legendary quantitative geographer [Waldo Tobler](https://en.wikipedia.org/wiki/Waldo_R._Tobler), a pioneer in geographic interpolation methods, spatial analysis, and computational social science.
 
@@ -43,7 +43,7 @@ Model-based interpolation uses [spatial] statistical models to estimate a relati
 
 ![Charleston zipcodes to tracts](docs/_static/images/tobler3.png)
 
-![raster example](docs/figs/raster_lattice_example.png)
+![raster example](docs/source/_static/raster_lattice_example.png)
 
 ## Installation
 
@@ -66,7 +66,7 @@ The project is licensed under the [BSD license](https://github.com/pysal/tobler/
 
 ## Funding
 
-<img src="docs/figs/nsf_logo.jpg" width="50">
+<img src="docs/source/_static/nsf_logo.jpg" width="50">
 
 Award #1733705 [Neighborhoods in Space-Time Contexts](https://www.nsf.gov/awardsearch/showAward?AWD_ID=1733705&HistoricalAwards=false)
 
