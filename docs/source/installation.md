@@ -23,8 +23,8 @@ For working with a development version, we recommend [anaconda]. To get started,
 
 ```bash
 conda env create -f environment.yml
-source activate tobler
-python setup.py develop
+conda activate tobler
+pip install -e .
 ```
 
 You can also [fork] the [pysal/tobler] repo and create a local clone of
