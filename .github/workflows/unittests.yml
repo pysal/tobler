@@ -25,8 +25,7 @@
        matrix:
          os: [ubuntu-latest]
          environment-file: [
-            ci/311-oldest.yml,
-            ci/311-latest.yml,
+            ci/312-oldest.yml,
             ci/312-latest.yml,
             ci/313-latest.yml,
             ci/314-latest.yml,
