@@ -1,6 +1,6 @@
 # Installation
 
-Currently, tobler supports Python >= [3.11]. Please make sure that you are
+Currently, tobler supports Python >= [3.12]. Please make sure that you are
 operating in a Python 3 environment.
 
 ## Installing a released version
@@ -32,7 +32,7 @@ your fork. By making changes
 to your local clone and submitting a pull request to [pysal/tobler], you can
 contribute to the tobler development.
 
-[3.11]: https://docs.python.org/3.12/
+[3.12]: https://docs.python.org/3.12/
 [anaconda]: https://www.anaconda.com/download/
 [fork]: https://help.github.com/articles/fork-a-repo/
 [pysal/tobler]: https://github.com/pysal/tobler
