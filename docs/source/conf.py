@@ -13,7 +13,7 @@ project = "tobler"
 copyright = "2018-, pysal developers"  # noqa: A001 - shadowing a Python builtin
 author = "pysal developers"
 
-version = tobler.__version__.split("+", 1)[0]  # remove commit hash
+version = Version(tobler.__version__).public  # remove commit hash
 release = version
 
 language = "en"
