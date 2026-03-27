@@ -1,0 +1,31 @@
+# {py:mod}`tobler.dasymetric.raster_tools`
+
+```{py:module} tobler.dasymetric.raster_tools
+```
+
+```{autodoc2-docstring} tobler.dasymetric.raster_tools
+:allowtitles:
+```
+
+## Module Contents
+
+### Functions
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`extract_raster_features <tobler.dasymetric.raster_tools.extract_raster_features>`
+  - ```{autodoc2-docstring} tobler.dasymetric.raster_tools.extract_raster_features
+    :summary:
+    ```
+````
+
+### API
+
+````{py:function} extract_raster_features(gdf, raster_path, pixel_values=None, nodata=255, n_jobs=-1, collapse_values=False)
+:canonical: tobler.dasymetric.raster_tools.extract_raster_features
+
+```{autodoc2-docstring} tobler.dasymetric.raster_tools.extract_raster_features
+```
+````

@@ -1,0 +1,8 @@
+# {py:mod}`tobler.area_weighted`
+
+```{py:module} tobler.area_weighted
+```
+
+```{autodoc2-docstring} tobler.area_weighted
+:allowtitles:
+```
