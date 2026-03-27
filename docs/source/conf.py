@@ -5,7 +5,9 @@
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
-import tobler  # noqa
+from packaging.version import Version 
+
+import tobler
 
 project = "tobler"
 copyright = "2018-, pysal developers"  # noqa: A001 - shadowing a Python builtin
