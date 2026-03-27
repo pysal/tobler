@@ -1,0 +1,6 @@
+﻿tobler.util.dot\_density
+========================
+
+.. currentmodule:: tobler.util
+
+.. autofunction:: dot_density

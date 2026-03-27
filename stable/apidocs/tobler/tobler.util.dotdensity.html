@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>tobler.util.dotdensity &#8212; tobler v0.13.1.dev52+g4fac0f5e6 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+    <script src="../../_static/documentation_options.js?v=4f5b0b98"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          tobler</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.13.1.dev52+g4fac0f5e6</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../../installation.html">Installation</a></li>
+                <li><a href="../../tutorial.html">Tutorial</a></li>
+                <li><a href="../../api.html">API</a></li>
+                <li><a href="../../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#installing-a-released-version">Installing a released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#installing-a-development-from-source">Installing a development from source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#area-weighted">Area Weighted</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#dasymetric">Dasymetric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#model">Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#pycnophylactic">Pycnophylactic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#util">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tobler.util.dotdensity</span></code></a><ul>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#api">API</a><ul>
+<li><a class="reference internal" href="#tobler.util.dotdensity.dot_density"><code class="docutils literal notranslate"><span class="pre">dot_density()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section class="tex2jax_ignore mathjax_ignore" id="module-tobler.util.dotdensity">
+<span id="tobler-util-dotdensity"></span><h1><a class="reference internal" href="#module-tobler.util.dotdensity" title="tobler.util.dotdensity"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tobler.util.dotdensity</span></code></a><a class="headerlink" href="#module-tobler.util.dotdensity" title="Link to this heading">¶</a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h3>
+<table class="autosummary longtable docutils align-left">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tobler.util.dotdensity.dot_density" title="tobler.util.dotdensity.dot_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dot_density</span></code></a></p></td>
+<td><p>Draw a sample of points inside each polygon/multipolygon row of a
+geodataframe, where sample size is one or more columns on the dataframe,
+optionally scaled by a constant. For example to create a proportional dot density
+map, pass a polygon geodataframe storing total population counts for
+mutually-exclusive groups.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="api">
+<h3>API<a class="headerlink" href="#api" title="Link to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="tobler.util.dotdensity.dot_density">
+<span class="sig-prename descclassname"><span class="pre">tobler.util.dotdensity.</span></span><span class="sig-name descname"><span class="pre">dot_density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uniform'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tobler/util/dotdensity.html#dot_density"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tobler.util.dotdensity.dot_density" title="Link to this definition">¶</a></dt>
+<dd><p>Draw a sample of points inside each polygon/multipolygon row of a
+geodataframe, where sample size is one or more columns on the dataframe,
+optionally scaled by a constant. For example to create a proportional dot density
+map, pass a polygon geodataframe storing total population counts for
+mutually-exclusive groups.</p>
+<p class="rubric" id="id1">Parameters</p>
+<p>gdf : gpd.GeoDataFrame
+a geodataframe with columns of numeric data, a selection of which will be used
+to simulate a point-process within each geometry. The data in each column defines
+the number of points to simulate in each geometry
+columns : list-like,
+a list or array of columns in the dataframe holding the desired size of the set
+of points in each category. For example this would hold a set of
+mutually-exclusive racial groups, or employment industries, etc.
+industries
+scale : float, optional
+scalar coefficient used to increase or decrease the number of simulated points
+in each geometry. For example a number less than 1 is used to create a
+proportional dot-density map; a stochastic realization of the population in each
+polygon would use 1, resulting in the same number of points generated as the
+numeric value in the dataframe.
+By default 1
+method : str, optional
+name of the distribution used to simulate point locations. The default is
+“uniform”, in which every location within a polygon has an equal chance of being
+chosen. Alternatively, other methods are implemented in the <code class="docutils literal notranslate"><span class="pre">pointpats</span></code> package,
+including {‘normal’, ‘cluster_normal’, ‘poisson’, ‘cluster_poisson’}
+rng : {None, int, array_like[ints], SeedSequence, BitGenerator, Generator}, optional
+A random generator or seed to initialize the numpy BitGenerator. If None, then
+fresh, unpredictable entropy will be pulled from the OS.
+method_kwargs : dict, optional
+additional keyword arguments passed to the pointpats.random generator.</p>
+<p class="rubric" id="id2">Returns</p>
+<p>GeoDataFrame
+a geodataframe with simulated points in the geometry column, with each row/point
+holding the index of its containing polygon, and the column to which the
+point belongs.</p>
+<p class="rubric" id="id3">Raises</p>
+<p>ValueError
+raises an error if the specified categories are not columns in the geodataframe
+ValueError
+raises an error of the categories argument is not list-like</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="../../_sources/apidocs/tobler/tobler.util.dotdensity.md.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018-, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 9.1.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

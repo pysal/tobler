@@ -1,0 +1,31 @@
+# {py:mod}`tobler.dasymetric`
+
+```{py:module} tobler.dasymetric
+```
+
+```{autodoc2-docstring} tobler.dasymetric
+:allowtitles:
+```
+
+## Package Contents
+
+### Functions
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`masked_dot_density <tobler.dasymetric.masked_area_interpolate.masked_dot_density>`
+  - ```{autodoc2-docstring} tobler.dasymetric.masked_area_interpolate.masked_dot_density
+    :summary:
+    ```
+````
+
+### API
+
+````{py:function} masked_dot_density(source_df, raster, pixel_values, scale=1, method='uniform', columns=None, rng=None, method_kwargs=None, nodata=255, n_jobs=-1)
+:canonical: tobler.dasymetric.masked_area_interpolate.masked_dot_density
+
+```{autodoc2-docstring} tobler.dasymetric.masked_area_interpolate.masked_dot_density
+```
+````

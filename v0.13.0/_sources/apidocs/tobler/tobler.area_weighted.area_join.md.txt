@@ -1,0 +1,31 @@
+# {py:mod}`tobler.area_weighted.area_join`
+
+```{py:module} tobler.area_weighted.area_join
+```
+
+```{autodoc2-docstring} tobler.area_weighted.area_join
+:allowtitles:
+```
+
+## Module Contents
+
+### Functions
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`area_join <tobler.area_weighted.area_join.area_join>`
+  - ```{autodoc2-docstring} tobler.area_weighted.area_join.area_join
+    :summary:
+    ```
+````
+
+### API
+
+````{py:function} area_join(source_df, target_df, variables)
+:canonical: tobler.area_weighted.area_join.area_join
+
+```{autodoc2-docstring} tobler.area_weighted.area_join.area_join
+```
+````
