@@ -1,3 +1,4 @@
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -98,6 +99,8 @@ nlcd_2011.tif
 
 docs/generated/
 docs/apidocs/
+docs/source/generated/
+docs/source/user-guide/cache
 
 # macOS
 *.DS_Store
