@@ -54,10 +54,10 @@ def masked_area_interpolate(
         available.
     fill_nan : numeric, str, or None
         [Optional. Default=0.0] Value to replace NaN values in the source variables.
-        If None, NaN values are not replaced and will propagate through the interpolation.
-        If a string is passed, it should be one of 'mean', 'median', 'max', or 'min',
-        and NaN values will be replaced with the corresponding aggregate value from the
-        source variable.
+        If None, NaN values are not replaced and will propagate through the
+        interpolation. If a string is passed, it should be one of 'mean', 'median',
+        'max', or 'min', and NaN values will be replaced with the corresponding
+        aggregate value from the source variable.
 
     Returns
     -------
@@ -67,9 +67,9 @@ def masked_area_interpolate(
     """
 
     source_df = source_df.copy()
-    assert not any(
-        source_df.index.duplicated()
-    ), "The index of the source_df cannot contain duplicates."
+    assert not any(source_df.index.duplicated()), (
+        "The index of the source_df cannot contain duplicates."
+    )
 
     #  create a vector mask from the raster data
     raster_mask = extract_raster_features(
@@ -93,7 +93,7 @@ def masked_area_interpolate(
         n_jobs=n_jobs,
         categorical_variables=categorical_variables,
         allocate_total=allocate_total,
-        fill_nan=fill_nan
+        fill_nan=fill_nan,
     )
     return interpolation
 
@@ -125,21 +125,23 @@ def masked_dot_density(
         input might be [21,22,23,24], which match the "developed" land types in
         that dataset
     scale : int, optional
-        scalar coefficient used to increase or decrease the number of simulated points in
-        each geometry. For example a number less than 1 is used to create a proportional
-        dot-density map; a stochastic realization of the population in each polygon would use
-        1, resulting in the same number of points generated as the numeric value in the dataframe.
+        scalar coefficient used to increase or decrease the number of simulated points
+        in each geometry. For example a number less than 1 is used to create a
+        proportional dot-density map; a stochastic realization of the population in
+        each polygon would use 1, resulting in the same number of points generated
+        as the numeric value in the dataframe.
         By default 1
     method : str, optional
-        name of the distribution used to simulate point locations. The default is  "uniform", in which
-        every location within a polygon has an equal chance of being chosen. Alternatively, other
+        name of the distribution used to simulate point locations. The default is
+        "uniform", in which every location within a polygon has an equal chance of
+        being chosen. Alternatively, other
     columns : list-like, optional
-        a list or array of columns in the dataframe holding the desired size of the set of points in each
-        category. For example this would hold a set of mutually-exclusive racial groups, or employment
-        industries
+        a list or array of columns in the dataframe holding the desired size of the set
+        of points in each category. For example this would hold a set of
+        mutually-exclusive racial groups, or employment industries
     rng : {None, int, array_like[ints], SeedSequence, BitGenerator, Generator}, optional
-        A random generator or seed to initialize the numpy BitGenerator. If None, then fresh,
-        unpredictable entropy will be pulled from the OS.
+        A random generator or seed to initialize the numpy BitGenerator.
+        If None, then fresh, unpredictable entropy will be pulled from the OS.
     method_kwargs : dict, optional
         additional keyword arguments passed to the pointpats.random generator.
     nodata : int
@@ -152,15 +154,16 @@ def masked_dot_density(
     Returns
     -------
     GeoDataFrame
-        a geodataframe with simulated points in the geometry column, with each row containing the index
-        of the containing polygon, and the category to which the point belongs.
+        a geodataframe with simulated points in the geometry column, with each row
+        containing the index of the containing polygon, and the category to which
+        the point belongs.
     """
     if columns is None:
         raise ValueError("must provide a set of categories to draw from")
     source_df = source_df.copy()
-    assert not any(
-        source_df.index.duplicated()
-    ), "The index of the source_df cannot contain duplicates."
+    assert not any(source_df.index.duplicated()), (
+        "The index of the source_df cannot contain duplicates."
+    )
 
     #  create a vector mask from the raster data
     raster_mask = extract_raster_features(
