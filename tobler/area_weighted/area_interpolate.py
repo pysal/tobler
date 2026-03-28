@@ -212,7 +212,7 @@ def area_interpolate(
     n_jobs=1,
     categorical_variables=None,
     categorical_frequency=True,
-    fill_nan=0.0
+    fill_nan=0.0,
 ):
     """
     Area interpolation for extensive, intensive and categorical variables.
@@ -258,7 +258,7 @@ def area_interpolate(
         area). If False, `estimates` contains the area in every polygon of `target_df`
         that is occupied by each value of the categorical
     fill_nan : numeric, str, or None
-        [Optional. Default=0.0] Value to replace NaN values in the source variables. 
+        [Optional. Default=0.0] Value to replace NaN values in the source variables.
         If None, NaN values are not replaced and will propagate through the interpolation.
         If a string is passed, it should be one of 'mean', 'median', 'max', or 'min',
         and NaN values will be replaced with the corresponding aggregate value from the

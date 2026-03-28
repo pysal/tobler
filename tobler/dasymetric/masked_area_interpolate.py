@@ -67,9 +67,9 @@ def masked_area_interpolate(
     """
 
     source_df = source_df.copy()
-    assert not any(
-        source_df.index.duplicated()
-    ), "The index of the source_df cannot contain duplicates."
+    assert not any(source_df.index.duplicated()), (
+        "The index of the source_df cannot contain duplicates."
+    )
 
     #  create a vector mask from the raster data
     raster_mask = extract_raster_features(
@@ -93,7 +93,7 @@ def masked_area_interpolate(
         n_jobs=n_jobs,
         categorical_variables=categorical_variables,
         allocate_total=allocate_total,
-        fill_nan=fill_nan
+        fill_nan=fill_nan,
     )
     return interpolation
 
@@ -158,9 +158,9 @@ def masked_dot_density(
     if columns is None:
         raise ValueError("must provide a set of categories to draw from")
     source_df = source_df.copy()
-    assert not any(
-        source_df.index.duplicated()
-    ), "The index of the source_df cannot contain duplicates."
+    assert not any(source_df.index.duplicated()), (
+        "The index of the source_df cannot contain duplicates."
+    )
 
     #  create a vector mask from the raster data
     raster_mask = extract_raster_features(
