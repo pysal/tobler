@@ -51,9 +51,12 @@ plus = [
     "astropy",
     "dask-geopandas",
     "h3",
-    "pointpats"
+    "pointpats",
 ]
-dev = ["pre-commit"]
+dev = [
+    "pre-commit",
+    "ruff",
+]
 docs = [
     "nbsphinx",
     "numpydoc",
@@ -62,7 +65,7 @@ docs = [
     "sphinxcontrib-bibtex",
     "sphinx_bootstrap_theme",
     "mkdocs-jupyter",
-    "myst-parser"
+    "myst-parser",
 ]
 tests = [
     "codecov",
