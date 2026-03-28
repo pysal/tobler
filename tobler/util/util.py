@@ -64,7 +64,8 @@ def _nan_check(df, column, fill_value=0.0):
     if isinstance(fill_value, str):
         if fill_value not in ["mean", "median", "max", "min"]:
             raise ValueError(
-                "fill_value should be either None, a numeric value, or one of 'mean', 'median', 'max', or 'min'"
+                "fill_value should be either None, a numeric value, or "
+                "one of 'mean', 'median', 'max', or 'min'"
             )
         fill_value = values.agg(fill_value)
     if values.isna().any():
@@ -86,7 +87,8 @@ def _inf_check(vals, column, fill_value=0.0):
     if isinstance(fill_value, str):
         if fill_value not in ["mean", "median", "max", "min"]:
             raise ValueError(
-                "fill_value should be either None, a numeric value, or one of 'mean', 'median', 'max', or 'min'"
+                "fill_value should be either None, a numeric value, or "
+                "one of 'mean', 'median', 'max', or 'min'"
             )
         fill_value = values.agg(fill_value)
     if np.isinf(values).any():
