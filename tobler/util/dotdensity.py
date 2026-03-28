@@ -69,26 +69,27 @@ def dot_density(
     Parameters
     ----------
     gdf : gpd.GeoDataFrame
-        a geodataframe with columns of numeric data, a selection of which will be used
-        to simulate a point-process within each geometry. The data in each column defines
-        the number of points to simulate in each geometry
+        a geodataframe with columns of numeric data, a selection of which will be
+        used to simulate a point-process within each geometry. The data in each column
+        defines the number of points to simulate in each geometry
     columns : list-like,
-        a list or array of columns in the dataframe holding the desired size of the set
-        of points in each category. For example this would hold a set of
+        a list or array of columns in the dataframe holding the desired size of the
+        set of points in each category. For example this would hold a set of
         mutually-exclusive racial groups, or employment industries, etc.
         industries
     scale : float, optional
         scalar coefficient used to increase or decrease the number of simulated points
         in each geometry. For example a number less than 1 is used to create a
-        proportional dot-density map; a stochastic realization of the population in each
-        polygon would use 1, resulting in the same number of points generated as the
-        numeric value in the dataframe.
+        proportional dot-density map; a stochastic realization of the population in
+        each polygon would use 1, resulting in the same number of points generated as
+        the numeric value in the dataframe.
         By default 1
     method : str, optional
         name of the distribution used to simulate point locations. The default is
-        "uniform", in which every location within a polygon has an equal chance of being
-        chosen. Alternatively, other methods are implemented in the `pointpats` package,
-        including {'normal', 'cluster_normal', 'poisson', 'cluster_poisson'}
+        "uniform", in which every location within a polygon has an equal chance of
+        being chosen. Alternatively, other methods are implemented in the
+        `pointpats` package, including
+        {'normal', 'cluster_normal', 'poisson', 'cluster_poisson'}
     rng : {None, int, array_like[ints], SeedSequence, BitGenerator, Generator}, optional
         A random generator or seed to initialize the numpy BitGenerator. If None, then
         fresh, unpredictable entropy will be pulled from the OS.
@@ -98,9 +99,9 @@ def dot_density(
     Returns
     -------
     GeoDataFrame
-        a geodataframe with simulated points in the geometry column, with each row/point
-        holding the index of its containing polygon, and the column to which the
-        point belongs.
+        a geodataframe with simulated points in the geometry column, with each
+        row/point holding the index of its containing polygon, and the column
+        to which the point belongs.
 
     Raises
     ------
