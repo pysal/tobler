@@ -259,10 +259,10 @@ def area_interpolate(
         that is occupied by each value of the categorical
     fill_nan : numeric, str, or None
         [Optional. Default=0.0] Value to replace NaN values in the source variables.
-        If None, NaN values are not replaced and will propagate through the interpolation.
-        If a string is passed, it should be one of 'mean', 'median', 'max', or 'min',
-        and NaN values will be replaced with the corresponding aggregate value from the
-        source variable.
+        If None, NaN values are not replaced and will propagate through the
+        interpolation. If a string is passed, it should be one of 'mean', 'median',
+        'max', or 'min', and NaN values will be replaced with the corresponding
+        aggregate value from the source variable.
 
     Returns
     -------
