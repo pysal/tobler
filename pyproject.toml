@@ -66,6 +66,9 @@ docs = [
     "sphinx_bootstrap_theme",
     "mkdocs-jupyter",
     "myst-parser",
+    "sphinx-immaterial",
+    "myst_nb",
+    "sphinx-copybutton"
 ]
 tests = [
     "codecov",
