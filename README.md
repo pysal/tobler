@@ -1,7 +1,7 @@
 # `tobler`: Areal Interpolation, Dasymetric Mapping & Change of Support
 
 <p align="center">
-<img src="github.com/pysal/tobler/raw/refs/heads/main/docs/source/_static/tobler_long.png" height="200px">
+<img src="https://github.com/pysal/tobler/raw/refs/heads/main/docs/source/_static/tobler_long.png" height="200px">
 </p>
 
 [![Continuous Integration](https://github.com/pysal/tobler/actions/workflows/unittests.yml/badge.svg)](https://github.com/pysal/tobler/actions/workflows/unittests.yml)
