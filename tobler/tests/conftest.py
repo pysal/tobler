@@ -1,6 +1,5 @@
-import pytest
 import geopandas
-
+import pytest
 from libpysal.examples import load_example
 
 
