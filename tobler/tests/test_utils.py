@@ -7,8 +7,8 @@ import pytest
 from libpysal.examples import load_example
 from numpy.testing import assert_almost_equal
 from packaging.version import Version
-from tobler.util import h3fy
 
+from tobler.util import h3fy
 
 PY312 = platform.python_version_tuple()[:2] == ("3", "12")
 
@@ -56,7 +56,7 @@ def test_h3fy_projected_international_feet_buffer(sac1):
         ValueError,
         match="The CRS of source geodataframe uses an unknown measurement unit: `ft`",
     ):
-        sac_hex = h3fy(sac1.to_crs(2994), buffer=True)
+        h3fy(sac1.to_crs(2994), buffer=True)
 
 
 def test_h3fy_clip(sac1):
