@@ -103,7 +103,7 @@ lint.ignore = [
     "UP007"
 ]
 include = ["*.py", "*.ipynb"]
-exclude = ["tobler/tests/*", "docs/*"]
+exclude = ["docs/*"]
 
 [tool.ruff.lint.per-file-ignores]
 "*__init__.py" = [
