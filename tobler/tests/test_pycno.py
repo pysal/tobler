@@ -18,6 +18,7 @@ astropy_warning = pytest.warns(
     ),
 )
 
+
 def test_pycno_interpolate(datasets):
     sac1, sac2 = datasets
     with astropy_warning:

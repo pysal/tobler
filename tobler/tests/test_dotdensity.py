@@ -71,12 +71,8 @@ def test_draw_points_not_list_like(simple_gdf):
 
 
 def test_draw_points_scale(simple_gdf):
-    result_full = dot_density(
-        simple_gdf, columns=["pop_a"], scale=1.0, rng=0
-    )
-    result_scaled = dot_density(
-        simple_gdf, columns=["pop_a"], scale=0.5, rng=0
-    )
+    result_full = dot_density(simple_gdf, columns=["pop_a"], scale=1.0, rng=0)
+    result_scaled = dot_density(simple_gdf, columns=["pop_a"], scale=0.5, rng=0)
     assert len(result_scaled) < len(result_full)
 
 
@@ -99,12 +95,12 @@ def test_draw_points_single_column(simple_gdf):
 
 
 def test_draw_points_normal_cluster(simple_gdf):
-    result = dot_density(simple_gdf, method='cluster_normal', columns=["pop_b"], rng=0)
+    result = dot_density(simple_gdf, method="cluster_normal", columns=["pop_b"], rng=0)
     assert len(result) == simple_gdf["pop_b"].sum()
     assert set(result["category"].unique()) == {"pop_b"}
 
 
 def test_draw_points_normal_cluster(simple_gdf):
-    result = dot_density(simple_gdf, method='cluster_poisson', columns=["pop_b"], rng=0)
+    result = dot_density(simple_gdf, method="cluster_poisson", columns=["pop_b"], rng=0)
     assert len(result) == simple_gdf["pop_b"].sum()
     assert set(result["category"].unique()) == {"pop_b"}

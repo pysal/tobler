@@ -13,7 +13,6 @@ from tobler.area_weighted import area_interpolate, area_interpolate_dask
 from tobler.area_weighted.area_interpolate import _area_tables_binning
 
 
-
 def test_area_interpolate_singlecore(datasets):
     sac1, sac2 = datasets
     with pytest.WARN_VAR_VALS_INF:
@@ -103,7 +102,7 @@ def test_area_interpolate_custom_index(datasets):
     sac1, sac2 = datasets
     sac1.index = sac1.index * 2
     sac2.index = sac2.index * 13
-    with (pytest.WARN_VAR_VALS_INF):
+    with pytest.WARN_VAR_VALS_INF:
         area = area_interpolate(
             source_df=sac1,
             target_df=sac2,
@@ -130,7 +129,7 @@ def test_area_interpolate_sindex_options(datasets):
             extensive_variables=["TOT_POP"],
             intensive_variables=["pct_poverty"],
         )
-    with (pytest.WARN_VAR_VALS_INF):
+    with pytest.WARN_VAR_VALS_INF:
         source = area_interpolate(
             source_df=sac1,
             target_df=sac2,
@@ -138,7 +137,7 @@ def test_area_interpolate_sindex_options(datasets):
             intensive_variables=["pct_poverty"],
             spatial_index="source",
         )
-    with (pytest.WARN_VAR_VALS_INF):
+    with pytest.WARN_VAR_VALS_INF:
         target = area_interpolate(
             source_df=sac1,
             target_df=sac2,
@@ -305,7 +304,9 @@ def test_area_interpolate_fill_nan_invalid_strategy(variable_kind):
     table = csr_matrix(np.eye(2))
 
     kwargs = {f"{variable_kind}_variables": ["value"]}
-    with pytest.raises(ValueError, match="fill_value should be either None, a numeric value"):
+    with pytest.raises(
+        ValueError, match="fill_value should be either None, a numeric value"
+    ):
         area_interpolate(
             source_df=source,
             target_df=target,
