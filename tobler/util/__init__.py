@@ -1,4 +1,4 @@
-from .dotdensity import *
-from .util import *
+from .dotdensity import dot_density
+from .util import circumradius, h3fy
 
-__all__ = ["h3fy", "circumradius", "dot_density"]
+__all__ = ["circumradius", "dot_density", "h3fy"]
