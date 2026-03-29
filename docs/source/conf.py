@@ -5,7 +5,7 @@
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
-from packaging.version import Version 
+from packaging.version import Version
 
 import tobler
 
