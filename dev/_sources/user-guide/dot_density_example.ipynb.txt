@@ -1,0 +1,561 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "1f27bcb5-8957-4361-87fa-5bcf952f27e7",
+   "metadata": {},
+   "source": [
+    "# Dot Density Maps"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "0af9d89f-21e6-4c94-9450-f0d99a7522aa",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "%load_ext autoreload\n",
+    "%autoreload 2\n",
+    "\n",
+    "import geodatasets\n",
+    "import geopandas as gpd\n",
+    "from tobler.util import dot_density\n",
+    "from tobler.dasymetric import masked_dot_density"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b2d4cf24-b416-4189-8b42-c81b9cfa5ea7",
+   "metadata": {},
+   "source": [
+    "Dot density maps are a useful pedagogical tool for understanding the uniform-distribution assumption made during areal interpolation exercises. They can also be very effective maps for visualizing relative frequency among multiple categories. To generate a dot-density map, we draw random points inside each polygon from an input geodataframe according to given data-generating process (DGP) (e.g. 'uniform' by default), with the size of the draw equal to the value specified by a (set of) column(s) in the dataframe.\n",
+    "\n",
+    "For example, for a given extensive variable, like total_population, this function can be used to generate one stochastic layout of the hypothetical population distribution implied by areal interpolation (the uniform distribution in this case). Applying the function to several extensive variables, like subsets of the total population (e.g. age, race, or education) allows visualization of both the distributional assumptions, but also the relative segregation tendencies of the groups.\n",
+    "\n",
+    "This notebook shows:\n",
+    "\n",
+    "1. how the typical assumption of uniform distribution throughout `source` materializes in practice\n",
+    "2. how alternative DGPs could result in different hypothetical layouts\n",
+    "3. how dasymetric refinement changes the distribution assumptions by restricting `source` via a masking layer"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "73a5dd5b-8c79-431f-9e83-fe3c6b8bda4d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "path = geodatasets.get_path(\"geoda tampa1\")\n",
+    "\n",
+    "gdf = gpd.read_file(path)\n",
+    "gdf.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "e22f6c42-c338-4a5d-acc3-1e08ad29db46",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "race_cols = [\"WHITE_\", \"BLACK_\", \"ASIAN_\", \"HISP_\"]\n",
+    "age_cols = [\"POP_16\", \"POP_65\"]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "e2de64d7-ac1d-4493-9ede-86fabc769f32",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [],
+   "source": [
+    "gdf[['geometry']].explore()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "bcf05ea1-4700-40c9-884b-cfdc4865f0ee",
+   "metadata": {},
+   "source": [
+    "## `dot_density`"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5bde53b5-4fec-45f3-9cc3-87ae9e34e342",
+   "metadata": {},
+   "source": [
+    "The `scale` parameter creates *proportional* dot-density maps. For visualization rather than analysis, it's often more efficient (and sometimes more effective) to map proportional densities rather than a 1:1 representation."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "51b4d3d2-f4ce-4e8d-9fdb-96028275a870",
+   "metadata": {},
+   "source": [
+    "### Uniform distribution"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4dc3fa4a-5832-40b4-b93b-b0326e86fb75",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "race_points = dot_density(gdf, columns=race_cols, scale=0.4)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "a92e90fb-a8d5-4b82-8dda-104407c14218",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "race_points"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "dee56105-44f4-4b06-acfc-514c89206864",
+   "metadata": {},
+   "source": [
+    "the number of rows in the dataframe should equal the scaled sum of the input columns"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b3b93bfa-26b0-4768-a3e2-af3ebab1971a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "(gdf[race_cols] * 0.4).round(0).sum().sum()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "91ba4322-dc04-4138-ae74-3fee913442fc",
+   "metadata": {},
+   "source": [
+    "when mapping, you need to shuffle the points, otherwise they draw one category at a time"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "e1e5609d-96b5-4fa0-99a6-14bfcdab37de",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "race_points.sample(frac=1).plot(\n",
+    "    \"category\",\n",
+    "    categorical=True,\n",
+    "    cmap=\"rainbow\",\n",
+    "    figsize=(8, 8),\n",
+    "    markersize=0.05,\n",
+    "    alpha=0.2,\n",
+    "    legend=True,\n",
+    ").axis(\"off\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "bfe2612a-6aa6-4d29-b3ac-5fdfa39479ca",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "age_points = dot_density(gdf, columns=age_cols, scale=0.5)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "172a53cb-9e57-4300-96c8-aceb8a088da5",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "age_points.sample(frac=1).plot(\n",
+    "    \"category\",\n",
+    "    categorical=True,\n",
+    "    figsize=(8, 8),\n",
+    "    markersize=0.05,\n",
+    "    alpha=0.2,\n",
+    "    cmap=\"rainbow\",\n",
+    "    legend=True,\n",
+    ").axis(\"off\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "54bd678e-34dc-4c59-9648-5898bad13acb",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c5ddd84f-5909-41bb-9e60-3d876bd5c0a5",
+   "metadata": {},
+   "source": [
+    "### Alternative DGPs\n",
+    "\n",
+    "Since the function is doing little more than [sampling points](https://geopandas.org/en/latest/docs/user_guide/sampling.html) by category, you can also consider different theoretical generating processes to distribute points within each polygon. If we think that population tends to cluster (by group), we might consider what clustered point processes look like"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "7ca84de1-56ea-469b-b07b-27e450e8ce1a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "age_points_cluster_normal = dot_density(\n",
+    "    gdf, columns=age_cols, scale=0.5, method=\"cluster_normal\"\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "508d5fba-c7ed-4710-83da-ac368b32bf5d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "age_points_cluster_normal.sample(frac=1).plot(\n",
+    "    \"category\",\n",
+    "    categorical=True,\n",
+    "    figsize=(8, 8),\n",
+    "    markersize=0.05,\n",
+    "    alpha=0.2,\n",
+    "    cmap=\"rainbow\",\n",
+    "    legend=True,\n",
+    ").axis(\"off\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ba646695-e69c-48b5-87ad-40e655486b0e",
+   "metadata": {},
+   "source": [
+    "an interesting thing about the non-uniform DGPs is that they're applied separately to each category. At the tract level, the segregation measured between categories will remain consistent because it's still the same people sharing the same unit. At the sub-tract level (and most likely cross-tract, whatever you call irregularly overlaid alternative polygons) this will induce *greater* levels of segregation between categories because the seeds of the DGP are chosen independently, so the groups cluster around different loci within the polygon"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "3775cca7-7d71-4fd3-9a45-6acc716fac10",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "1e7757ff-d4f6-4ae8-bcdc-6853fbc94987",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "age_points_cluster_poisson = dot_density(\n",
+    "    gdf, columns=age_cols, scale=0.5, method=\"cluster_poisson\"\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "3c06015b-9f7d-4efd-86b2-722d252d4f69",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [],
+   "source": [
+    "age_points_cluster_poisson.sample(frac=1).plot(\n",
+    "    \"category\",\n",
+    "    categorical=True,\n",
+    "    figsize=(8, 8),\n",
+    "    markersize=0.05,\n",
+    "    alpha=0.2,\n",
+    "    cmap=\"rainbow\",\n",
+    "    legend=True,\n",
+    ").axis(\"off\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "77512e6a-d1ab-4ccc-9c84-941890a515c9",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4ff2e770-bf56-46dc-9989-ff745fbad141",
+   "metadata": {},
+   "source": [
+    "## Masked Dot Density"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ff74e81c-f92a-4310-8216-672714828a8d",
+   "metadata": {},
+   "source": [
+    "Dasymetric interpolation attempts to improve on the uniform distribution assumption by constraining the source polygons to the areas where the distributional assumptions are more likely to hold. For population studies, this generally means using additional data to mask out uninhabited areas such that `source` refers to areas where people actually live. Applying the uniform distribution assumption to *this* set of polygons is still error-prone, but is more realistic than the generic assumption without dasymetric refinement."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "c3942c24-e12d-43f9-84df-752fd388594f",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "raster = \"s3://spatial-ucr/nlcd/landcover/nlcd_landcover_2021.tif\""
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "45aa2178-dd1b-438c-9bca-97b0a68f5f38",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import rasterio\n",
+    "\n",
+    "with rasterio.Env(AWS_NO_SIGN_REQUEST='YES'):\n",
+    "    masked_age_points = masked_dot_density(\n",
+    "        gdf, raster=raster, pixel_values=[22, 23, 24], columns=age_cols\n",
+    "    )"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "0a92a9ba-3ae7-4b39-8084-13873c08bb1c",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "masked_age_points.sample(frac=1).plot(\n",
+    "    \"category\",\n",
+    "    categorical=True,\n",
+    "    figsize=(8, 8),\n",
+    "    markersize=0.05,\n",
+    "    alpha=0.2,\n",
+    "    cmap=\"rainbow\",\n",
+    "    legend=True,\n",
+    ").axis(\"off\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "c0ab1cbe-1b2f-46f7-89b9-468f18774207",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f5010f03-324a-4281-a0a9-82f8e4677d64",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "with rasterio.Env(AWS_NO_SIGN_REQUEST=\"YES\"):\n",
+    "    masked_age_points_cluster = masked_dot_density(\n",
+    "        gdf,\n",
+    "        raster=raster,\n",
+    "        pixel_values=[22, 23, 24],\n",
+    "        columns=age_cols,\n",
+    "        method=\"cluster_normal\",\n",
+    "    )"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "32c1a3c9-d484-4715-be68-66e49ddaab13",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "masked_age_points_cluster.sample(frac=1).plot(\n",
+    "    \"category\",\n",
+    "    categorical=True,\n",
+    "    figsize=(8, 8),\n",
+    "    markersize=0.05,\n",
+    "    alpha=0.2,\n",
+    "    cmap=\"rainbow\",\n",
+    "    legend=True,\n",
+    ").axis(\"off\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "c51309e7-9b78-4ea7-aa38-d6ee63c90de9",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "3b1ffca5-10bd-4c54-8794-ba7c0b5448fb",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "markdown",
+   "id": "61249041-81c3-4302-a45b-b01e21d92fba",
+   "metadata": {},
+   "source": [
+    "## Interactive viz"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2fe87f62-7c2d-40c9-a8ec-297be39e4763",
+   "metadata": {},
+   "source": [
+    "there are too many points to use the geopandas `explore` method, but `lonboard` can handle these maps with ease"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "85271a70-354f-4038-8dcf-11f3ed0ca7eb",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "from lonboard import viz\n",
+    "from lonboard.colormap import DiscreteColormap, apply_categorical_cmap\n",
+    "from matplotlib import colormaps"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "7a983e9c-c918-4c90-b447-6bf4e9efe956",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "c = [colormaps.get_cmap(\"rainbow\")(i, bytes=True) for i in np.linspace(0, 1, 4)]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f7782a5e-f069-4652-9b2d-419d2f360650",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "simple_cmap = dict(zip(race_cols, c))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "604568cb-593c-417f-9a1d-1581a1a1f337",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "race_points = race_points.sample(frac=1)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "18a355c4-283e-4f64-ab53-b8d239c88048",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "fill_color = apply_categorical_cmap(race_points[\"category\"], simple_cmap)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "6eb7f68f-622f-49f5-864c-6babad2a2cd9",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "viz(race_points, scatterplot_kwargs=dict(get_fill_color=fill_color))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "10ac80ca-23ad-4dbf-84d7-df89753fccf5",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "c = [colormaps.get_cmap(\"rainbow\")(i, bytes=True) for i in np.linspace(0, 1, 2)]\n",
+    "simple_cmap = dict(zip(age_cols, c))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "c5852f86-872b-4a9d-8079-68a0db1d2b22",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "age_points = age_points.sample(frac=1)\n",
+    "fill_color = apply_categorical_cmap(age_points[\"category\"], simple_cmap)\n",
+    "viz(age_points, scatterplot_kwargs=dict(get_fill_color=fill_color))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f68f37cb-60cb-4873-8ee9-6656992c23a5",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "masked_age_points_normal = masked_age_points_cluster.sample(frac=1)\n",
+    "fill_color = apply_categorical_cmap(masked_age_points_normal[\"category\"], simple_cmap)\n",
+    "viz(masked_age_points_normal, scatterplot_kwargs=dict(get_fill_color=fill_color))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "94704f98-74a8-4de7-9455-9d1bb126fee2",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "tobler",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.13.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
