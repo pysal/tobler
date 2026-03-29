@@ -4,8 +4,8 @@ name: Build Docs
 on:
   push:
     branches: [main]
-    tags:
-      - "v*"
+      tags:
+        - "v*"
   pull_request:
     branches:
       - "*"
@@ -41,7 +41,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup micromamba
-        uses: mamba-org/setup-micromamba@v2
+        uses: mamba-org/setup-micromamba@v3
         with:
           environment-file: ${{ matrix.environment-file }}
           micromamba-version: "latest"
