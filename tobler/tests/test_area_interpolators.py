@@ -281,13 +281,16 @@ def test_area_interpolate_fill_nan_none_propagates(variable_kind):
     table = csr_matrix(np.eye(2))
 
     kwargs = {f"{variable_kind}_variables": ["value"]}
-    result = area_interpolate(
-        source_df=source,
-        target_df=target,
-        table=table,
-        fill_nan=None,
-        **kwargs,
-    )
+    with pytest.warns(
+        UserWarning, match="nan values in variable: value, replacing with None"
+    ):
+        result = area_interpolate(
+            source_df=source,
+            target_df=target,
+            table=table,
+            fill_nan=None,
+            **kwargs,
+        )
 
     assert result["value"].isna().tolist() == [False, True]
 
