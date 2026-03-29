@@ -8,7 +8,6 @@ from numpy.testing import assert_almost_equal
 
 from tobler.pycno import pycno_interpolate
 
-
 astropy_warning = pytest.warns(
     AstropyUserWarning,
     match=(
