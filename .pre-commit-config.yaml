@@ -1,5 +1,5 @@
 ---
-files: "tobler\/"
+files: "tobler\/|docs\/"
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: "v0.15.8"
