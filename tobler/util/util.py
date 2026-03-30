@@ -133,7 +133,7 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
         if `return_geoms` is False, a pandas.Series of h3 hexagon ids
     """
     try:
-        import h3
+        import h3  # noqa: F401
     except ImportError as err:
         raise ImportError(
             "This function requires the `h3` library. "
@@ -243,7 +243,7 @@ def _to_hex(source, resolution=6, return_geoms=True):
 
     if _h3lt4(h3):
         polyfill = h3.polyfill
-        kwargs = dict(geo_json_conformant=True)
+        kwargs = {"geo_json_conformant": True}
     else:
         polyfill = h3.geo_to_cells
         kwargs = {}

@@ -1,8 +1,6 @@
 """test interpolation functions."""
 
-import geopandas
 import pytest
-from libpysal.examples import load_example
 from rasterstats.io import NodataWarning
 
 from tobler.model import glm

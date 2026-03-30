@@ -90,12 +90,6 @@ line-length = 88
 lint.select = ["E", "F", "W", "I", "UP", "N", "B", "A", "C4", "SIM", "ARG"]
 include = ["*.py", "*.ipynb"]
 
-#[tool.ruff.lint.per-file-ignores]
-#"*__init__.py" = [
-#    "F403",
-#    "F405",
-#]
-
 [tool.coverage.run]
 source = ["./tobler"]
 

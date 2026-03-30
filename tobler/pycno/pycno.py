@@ -1,7 +1,6 @@
 """Pycnophylactic Interpolation (contributed by @danlewis85)."""
 # https://github.com/danlewis85/pycno/
 
-import numpy as np
 import pandas as pd
 import rasterio
 from numpy import (
@@ -16,9 +15,9 @@ from numpy import (
     nansum,
     pad,
     power,
-    round,  # noqa: A004 Import `round` is shadowing a Python builtin
     unique,
 )
+from numpy import round as _round
 from numpy.ma import masked_invalid, masked_where
 from pandas import DataFrame
 from rasterio.features import rasterize
@@ -70,7 +69,7 @@ def pycno(
     )
 
     # Get cell counts per index value (feature)
-    _unique, count = np.unique(feature_array, return_counts=True)
+    _unique, count = unique(feature_array, return_counts=True)
     cellcounts = asarray((_unique, count)).T
     # Lose the nodata counts
     cellcounts = cellcounts[cellcounts[:, 0] != nodata, :]
@@ -99,8 +98,10 @@ def pycno(
 
     # The basic numpy convolve function doesn't handle nulls.
     def smooth2d(data):
-        # Create function that calls a 1 dimensionsal smoother.
-        s1d = lambda s: convolve(s, [0.5, 0.0, 0.5], mode="same")
+        def s1d(s):
+            """Create function that calls a 1 dimensionsal smoother."""
+            return convolve(s, [0.5, 0, 0.5], mode="same")
+
         # pad the data array with the mean value
         padarray = pad(data, 1, "constant", constant_values=nanmean(data))
         # make nodata mask
@@ -117,6 +118,10 @@ def pycno(
 
     # The convolution function from astropy handles nulls.
     def astro_smooth2d(data):
+        def s1d(s):
+            """Create function that calls a 1 dimensionsal smoother."""
+            return astro_convolve(s, [0.5, 0, 0.5])
+
         try:
             from astropy.convolution import convolve as astro_convolve
         except (ImportError, ModuleNotFoundError) as err:
@@ -124,7 +129,6 @@ def pycno(
                 "Pycnophylactic interpolation with handle_null=True "
                 "requires the astropy package"
             ) from err
-        s1d = lambda s: astro_convolve(s, [0.5, 0, 0.5])
         # pad the data array with the mean value
         padarray = pad(data, 1, "constant", constant_values=nanmean(data))
         # Apply the convolution along each axis of the data and average
@@ -178,9 +182,9 @@ def pycno(
         if verbose:
             print(
                 "Maximum Change: "
-                + str(round(nanmax(absolute(old - value_array)), 4))
+                + str(_round(nanmax(absolute(old - value_array)), 4))
                 + " - will stop at "
-                + str(round(stopper, 4))
+                + str(_round(stopper, 4))
             )
 
         if nanmax(absolute(old - value_array)) < stopper:
