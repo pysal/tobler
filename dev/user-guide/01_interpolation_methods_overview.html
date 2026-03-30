@@ -991,11 +991,12 @@ Downloading Charleston2 to /home/runner/.local/share/pysal/Charleston2
 </div>
 <hr class="docutils" />
 <h2 id="dasymetric-interpolation">Dasymetric Interpolation<a class="headerlink" href="#dasymetric-interpolation" title="Link to this heading">¶</a></h2>
-<p>To help improve accuracy in interpolation we can use axiliary information to mask out areas we know aren’t inhabited. For example we can use raster data like <a class="reference external" href="https://www.mrlc.gov/national-land-cover-database-nlcd-2016">https://www.mrlc.gov/national-land-cover-database-nlcd-2016</a> to mask out uninhabited land uses. To do so, we need to provide a path to the raster and a list of pixel values that are considered developed. Default values are taken from NLCD</p>
+<p>To help improve accuracy in interpolation we can use axiliary information to mask out areas we know aren’t inhabited. For example we can use raster data like <a class="reference external" href="https://www.mrlc.gov/national-land-cover-database-nlcd-2016">https://www.mrlc.gov/national-land-cover-database-nlcd-2016</a> to mask out uninhabited land uses. To do so, we need to provide a path to the raster and a list of pixel values that are considered developed. Default values are taken from NLCD.</p>
 <p><code class="docutils literal notranslate"><span class="pre">tobler</span></code> can accept any kind of raster data that can be read by rasterio, so you can provide your own, or download directly from NLCD linked above. Alternatively, you can download a compressed version of the NLCD we host in the spatialucr quilt bucket using three short lines of code:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">rasterio</span>
+
 <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">Env</span><span class="p">(</span><span class="n">AWS_NO_SIGN_REQUEST</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">):</span>
     <span class="n">results</span> <span class="o">=</span> <span class="n">masked_area_interpolate</span><span class="p">(</span>
         <span class="n">raster</span><span class="o">=</span><span class="s2">&quot;s3://spatial-ucr/nlcd/landcover/nlcd_landcover_2011.tif&quot;</span><span class="p">,</span>
@@ -1055,7 +1056,7 @@ Downloading Charleston2 to /home/runner/.local/share/pysal/Charleston2
 </div>
 <hr class="docutils" />
 <h2 id="model-based-interpolation">Model-Based Interpolation<a class="headerlink" href="#model-based-interpolation" title="Link to this heading">¶</a></h2>
-<p>Rather than assume that extensive and intensive variables are distributed uniformly throughout developed land, tobler can also use a model-based approach to assign weights to different cell types, e.g. if we assume that “high intensity development” raster cells are likely to contain more people than “low intensity development”, even though we definitely want to allocate population to both types. In these cases, <code class="docutils literal notranslate"><span class="pre">tobler</span></code> consumes a raster layer as additional input and a patsy-style model formula string. A default formula string is provided but results can be improved by fitting a model more appropriate for local settings</p>
+<p>Rather than assume that extensive and intensive variables are distributed uniformly throughout developed land, tobler can also use a model-based approach to assign weights to different cell types, e.g. if we assume that “high intensity development” raster cells are likely to contain more people than “low intensity development”, even though we definitely want to allocate population to both types. In these cases, <code class="docutils literal notranslate"><span class="pre">tobler</span></code> consumes a raster layer as additional input and a patsy-style model formula string. A default formula string is provided but results can be improved by fitting a model more appropriate for local settings.</p>
 <p>Unlike area weighted and dasymetric techniques, model-based interpolation estimates only a single variable at a time</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1101,7 +1102,6 @@ Downloading Charleston2 to /home/runner/.local/share/pysal/Charleston2
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">Env</span><span class="p">(</span><span class="n">AWS_NO_SIGN_REQUEST</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">):</span>
-
     <span class="n">pov_results</span> <span class="o">=</span> <span class="n">glm</span><span class="p">(</span>
         <span class="n">raster</span><span class="o">=</span><span class="s2">&quot;s3://spatial-ucr/nlcd/landcover/nlcd_landcover_2011.tif&quot;</span><span class="p">,</span>
         <span class="n">source_df</span><span class="o">=</span><span class="n">tracts</span><span class="p">,</span>

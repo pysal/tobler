@@ -797,11 +797,14 @@
   
 
 <h1 id="installation">Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h1>
-<p>Currently, tobler supports Python &gt;= <a class="reference external" href="https://docs.python.org/3.12/">3.12</a>. Please make sure that you are
-operating in a Python 3 environment.</p>
+<p>Currently, tobler supports Python &gt;= <a class="reference external" href="https://docs.python.org/3.12/">3.12</a>. Please make sure that you are operating in a Python 3 environment.</p>
 <h2 id="installing-a-released-version">Installing a released version<a class="headerlink" href="#installing-a-released-version" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">tobler</span></code> is available on both conda and pip, and can be installed with either</p>
+<p><code class="docutils literal notranslate"><span class="pre">tobler</span></code> is available on both conda and pip, and can be installed with any of</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>tobler
+</code></pre></div>
+</div>
+<p>or</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>pixi<span class="w"> </span>add<span class="w"> </span>tobler
 </code></pre></div>
 </div>
 <p>or</p>
@@ -809,16 +812,20 @@ operating in a Python 3 environment.</p>
 </code></pre></div>
 </div>
 <h2 id="installing-a-development-from-source">Installing a development from source<a class="headerlink" href="#installing-a-development-from-source" title="Link to this heading">¶</a></h2>
-<p>For working with a development version, we recommend <a class="reference external" href="https://www.anaconda.com/download/">anaconda</a>. To get started, clone this repository or download it manually then <code class="docutils literal notranslate"><span class="pre">cd</span></code> into the directory and run the following commands:</p>
+<p>For working with a development version, we recommend <a class="reference external" href="https://github.com/conda-forge/miniforge">miniforge</a> or <a class="reference external" href="https://pixi.prefix.dev/latest/">pixi</a>. To get started, clone this repository or download it manually then <code class="docutils literal notranslate"><span class="pre">cd</span></code> into the directory and run the following commands:</p>
+<p><strong>using conda</strong></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>environment.yml
 conda<span class="w"> </span>activate<span class="w"> </span>tobler
 pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
 </code></pre></div>
 </div>
-<p>You can also <a class="reference external" href="https://help.github.com/articles/fork-a-repo/">fork</a> the <a class="reference external" href="https://github.com/pysal/tobler">pysal/tobler</a> repo and create a local clone of
-your fork. By making changes
-to your local clone and submitting a pull request to <a class="reference external" href="https://github.com/pysal/tobler">pysal/tobler</a>, you can
-contribute to the tobler development.</p>
+<p><strong>using pixi</strong></p>
+<p><em>note</em>: as of this writing, pixi does not support relative paths (like “.”), hence the expansion using the environment variable <code class="docutils literal notranslate"><span class="pre">$PWD</span></code></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>pixi<span class="w"> </span>init<span class="w"> </span>--import<span class="w"> </span>environment.yml
+pixi<span class="w"> </span>add<span class="w"> </span>--pypi<span class="w"> </span>--editable<span class="w">  </span><span class="s2">&quot;tobler @ file://</span><span class="nv">$PWD</span><span class="s2">&quot;</span>
+</code></pre></div>
+</div>
+<p>You can also <a class="reference external" href="https://help.github.com/articles/fork-a-repo/">fork</a> the <a class="reference external" href="https://github.com/pysal/tobler">pysal/tobler</a> repo and create a local clone of your fork. By making changes to your local clone and submitting a pull request to <a class="reference external" href="https://github.com/pysal/tobler">pysal/tobler</a>, you can contribute to the tobler development.</p>
 
 
 

@@ -821,8 +821,8 @@
 <h1 id="extracting-urban-features-from-raster-data">Extracting Urban Features from Raster Data<a class="headerlink" href="#extracting-urban-features-from-raster-data" title="Link to this heading">¶</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">rasterio</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rasterio</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">tobler.dasymetric</span><span class="w"> </span><span class="kn">import</span> <span class="n">extract_raster_features</span>
 
@@ -832,13 +832,13 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Last updated: 2026-03-29
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Last updated: 2026-03-30
 
 Python implementation: CPython
 Python version       : 3.14.3
 IPython version      : 9.12.0
 
-tobler   : 0.13.1.dev99+g8ca0c85ad
+tobler   : 0.13.1.dev120+g87df23aef
 geopandas: 1.1.3
 rasterio : 1.5.0
 </code></pre></div>
@@ -892,9 +892,10 @@ rasterio : 1.5.0
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">Env</span><span class="p">(</span><span class="n">AWS_NO_SIGN_REQUEST</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">):</span>
-
     <span class="n">urban_la</span> <span class="o">=</span> <span class="n">extract_raster_features</span><span class="p">(</span>
-        <span class="n">la</span><span class="p">,</span> <span class="s2">&quot;s3://spatial-ucr/nlcd/landcover/nlcd_landcover_2011.tif&quot;</span><span class="p">,</span> <span class="n">pixel_values</span><span class="o">=</span><span class="p">[</span><span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">24</span><span class="p">]</span>
+        <span class="n">la</span><span class="p">,</span>
+        <span class="s2">&quot;s3://spatial-ucr/nlcd/landcover/nlcd_landcover_2011.tif&quot;</span><span class="p">,</span>
+        <span class="n">pixel_values</span><span class="o">=</span><span class="p">[</span><span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">24</span><span class="p">],</span>
     <span class="p">)</span>
 </code></pre></div>
 </div>
@@ -1008,7 +1009,6 @@ memory usage: 5.7 MB
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">Env</span><span class="p">(</span><span class="n">AWS_NO_SIGN_REQUEST</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">):</span>
-
     <span class="n">impervious_la</span> <span class="o">=</span> <span class="n">extract_raster_features</span><span class="p">(</span>
         <span class="n">la</span><span class="p">,</span>
         <span class="s2">&quot;s3://spatial-ucr/nlcd/impervious/nlcd_impervious_2011.tif&quot;</span><span class="p">,</span>
