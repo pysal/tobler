@@ -17,7 +17,7 @@ def test_glm_poisson(datasets):
             target_df=sac1,
             variable="POP2001",
             raster=(
-                "https://spatial-ucr.s3.amazonaws.com/nlcd/"
+                "s3://spatial-ucr/nlcd/"
                 "landcover/nlcd_landcover_2011.tif"
             ),
         )
