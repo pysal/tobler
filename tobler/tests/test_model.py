@@ -16,9 +16,6 @@ def test_glm_poisson(datasets):
             source_df=sac2,
             target_df=sac1,
             variable="POP2001",
-            raster=(
-                "https://spatial-ucr.s3.amazonaws.com/nlcd/"
-                "landcover/nlcd_landcover_2011.tif"
-            ),
+            raster="https://spatial-ucr.s3.amazonaws.com/nlcd/landcover/nlcd_landcover_2011.tif",
         )
     assert glm_poisson.POP2001.sum() > 1469000
