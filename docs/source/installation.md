@@ -13,7 +13,7 @@ conda install -c conda-forge tobler
 or
 
 ```bash
-pixi install tobler
+pixi add tobler
 ```
 
 or
