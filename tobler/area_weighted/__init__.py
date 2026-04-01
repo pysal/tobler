@@ -6,5 +6,4 @@ __all__ = [
     "area_interpolate",
     "area_join",
     "area_interpolate_dask",
-    "_area_tables_binning",
 ]
