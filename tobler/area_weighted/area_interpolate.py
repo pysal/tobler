@@ -31,10 +31,10 @@ def _index_n_query(geoms1, geoms2):
         large = geoms2
         small = geoms1
     # Build tree + query
-    qry_polyIDs, tree_polyIDs = large.sindex.query(small, predicate="intersects")
+    qry_poly_ids, tree_poly_ids = large.sindex.query(small, predicate="intersects")
     # Remap IDs to global
-    large_global_ids = large.iloc[tree_polyIDs].index.values
-    small_global_ids = small.iloc[qry_polyIDs].index.values
+    large_global_ids = large.iloc[tree_poly_ids].index.values
+    small_global_ids = small.iloc[qry_poly_ids].index.values
     # Return always global IDs for geoms1, geoms2
     if geoms1.shape[0] > geoms2.shape[0]:
         return np.array([large_global_ids, small_global_ids]).T

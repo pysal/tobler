@@ -1,6 +1,6 @@
 """Model-based methods for areal interpolation."""
 
-import numpy as np
+import numpy as np  # noqa: F401 -- needed for numpy's logarithm in the formula string
 import statsmodels.formula.api as smf
 from statsmodels.genmod.families import Gaussian, NegativeBinomial, Poisson
 

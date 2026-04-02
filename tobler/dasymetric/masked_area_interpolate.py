@@ -1,5 +1,3 @@
-from warnings import warn
-
 import geopandas as gpd
 
 from ..area_weighted import area_interpolate
