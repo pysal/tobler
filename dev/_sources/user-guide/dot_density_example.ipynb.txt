@@ -371,7 +371,7 @@
    "source": [
     "import numpy as np\n",
     "from lonboard import viz\n",
-    "from lonboard.colormap import DiscreteColormap, apply_categorical_cmap\n",
+    "from lonboard.colormap import apply_categorical_cmap\n",
     "from matplotlib import colormaps"
    ]
   },
@@ -422,7 +422,7 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "viz(race_points, scatterplot_kwargs=dict(get_fill_color=fill_color))"
+    "viz(race_points, scatterplot_kwargs={\"get_fill_color\": fill_color})"
    ]
   },
   {
@@ -445,7 +445,7 @@
    "source": [
     "age_points = age_points.sample(frac=1)\n",
     "fill_color = apply_categorical_cmap(age_points[\"category\"], simple_cmap)\n",
-    "viz(age_points, scatterplot_kwargs=dict(get_fill_color=fill_color))"
+    "viz(age_points, scatterplot_kwargs={\"get_fill_color\": fill_color})"
    ]
   },
   {
@@ -457,7 +457,7 @@
    "source": [
     "masked_age_points_normal = masked_age_points_cluster.sample(frac=1)\n",
     "fill_color = apply_categorical_cmap(masked_age_points_normal[\"category\"], simple_cmap)\n",
-    "viz(masked_age_points_normal, scatterplot_kwargs=dict(get_fill_color=fill_color))"
+    "viz(masked_age_points_normal, scatterplot_kwargs={\"get_fill_color\": fill_color})"
    ]
   }
  ],
