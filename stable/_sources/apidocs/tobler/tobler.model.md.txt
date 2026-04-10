@@ -1,8 +1,0 @@
-# {py:mod}`tobler.model`
-
-```{py:module} tobler.model
-```
-
-```{autodoc2-docstring} tobler.model
-:allowtitles:
-```
