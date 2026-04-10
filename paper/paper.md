@@ -24,6 +24,10 @@ authors:
   orcid: "0000-0003-3319-3366"
   equal-contrib: true
   affiliation: 4
+- name: James D. Gaboardi
+  orcid: "0000-0002-4776-6826"
+  equal-contrib: true
+  affiliation: 5
 bibliography: paper.bib
 affiliations:
 - name: University of California, Irvine
@@ -34,6 +38,8 @@ affiliations:
   index: 3
 - name: Charles University, Faculty of Science
   index: 4
+- name: Geospatial Science and Human Security, Oak Ridge National Laboratory
+  index: 5
 ---
 
 <!--
@@ -177,8 +183,6 @@ This approach assumes the user have a raster data of his own that can be read by
 ![Example of `tobler` usage for an extensive variable (male employment population) in Charleston, SC, comparing census tracts and ZCTAs.\label{fig:emp_male_maps}](figs/emp_male_maps.png)
 
 # Research impact statement
-
-> ``Evidence of realized impact (publications, external use, integrations) or credible near-term significance (benchmarks, reproducible materials, community-readiness signals). The evidence should be compelling and specific, not aspirational.''
 
 The package is actively used by the research community to transfer the data between various types of geographic boundaries. This is not limited to specific applications but covers use cases from continental analysis of emissions and health [@laporta2024Urban], analysis of urban form and function [@fleischmann2022Geographical], redistribution of census data to school districts for assessment of the Clean School Bus Rebate Program [@osia2025Infrastructure], quantification of radon exposure [@lee2026Quantifyinga], or harmonization of vector and raster data for computer vision tasks [@fleischmann2024Decoding].
 
