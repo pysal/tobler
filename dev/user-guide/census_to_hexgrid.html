@@ -854,13 +854,13 @@
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Author: author: eli knaap
 
-Last updated: 2026-04-11
+Last updated: 2026-05-09
 
 Python implementation: CPython
 Python version       : 3.14.4
-IPython version      : 9.12.0
+IPython version      : 9.13.0
 
-tobler   : 0.14.1.dev4+g14c4a9b69
+tobler   : 0.14.1.dev6+gaa0aba6ac
 cenpy    : 1.0.1
 geopandas: 1.1.3
 </code></pre></div>
@@ -1104,7 +1104,7 @@ Datum: World Geodetic System 1984 ensemble
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/6b370f306b39a0f82979963f414aa003def2342ab80866f0e00865b274ac029f.png" src="../_images/6b370f306b39a0f82979963f414aa003def2342ab80866f0e00865b274ac029f.png" />
+<img alt="../_images/e90872f52766efc272ca6012897296da8406bbce2cda26cbfbe7551b98e40bc0.png" src="../_images/e90872f52766efc272ca6012897296da8406bbce2cda26cbfbe7551b98e40bc0.png" />
 </div>
 </div>
 <p>By altering the <code class="docutils literal notranslate"><span class="pre">resolution</span></code> parameter, we can generate grids using hexes of various sizes</p>
@@ -1130,7 +1130,7 @@ Datum: World Geodetic System 1984 ensemble
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/85df4e26da6919080a725f4d01c03e4fc0c07f2d48e4db2ca901429a988f16a6.png" src="../_images/85df4e26da6919080a725f4d01c03e4fc0c07f2d48e4db2ca901429a988f16a6.png" />
+<img alt="../_images/83b1dee227b9da19637197f9e25d4a185d97bd81e1d3a9de4ec9e6d1fe58e3cc.png" src="../_images/83b1dee227b9da19637197f9e25d4a185d97bd81e1d3a9de4ec9e6d1fe58e3cc.png" />
 </div>
 </div>
 <p>and by using the <code class="docutils literal notranslate"><span class="pre">clip</span></code> parameter, we can ensure that the hexgrid is does not extend beyond the borders of the input geodataframe</p>
@@ -1156,7 +1156,7 @@ Datum: World Geodetic System 1984 ensemble
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Text(0.5, 1.0, &#39;h3fy with clip&#39;)
 </code></pre></div>
 </div>
-<img alt="../_images/baa20c8bbfa90990dfa3dd1c083a630eb28e86fce0ebcfc879329e1ec5b40ccc.png" src="../_images/baa20c8bbfa90990dfa3dd1c083a630eb28e86fce0ebcfc879329e1ec5b40ccc.png" />
+<img alt="../_images/e4b0401f816edc1274a3f37e2c6704fff2ca4f71e0d1df423d83b62293d8672f.png" src="../_images/e4b0401f816edc1274a3f37e2c6704fff2ca4f71e0d1df423d83b62293d8672f.png" />
 </div>
 </div>
 <p>Notice, though, that we still have some sharp hexagonal edges, meaning the hexagon doesn’t <em>fully</em> cover the original source polygons. To force full coverage, we can use the <code class="docutils literal notranslate"><span class="pre">buffer</span></code> keyword (or, optionally, both <code class="docutils literal notranslate"><span class="pre">buffer</span></code> and <code class="docutils literal notranslate"><span class="pre">clip</span></code>).</p>
@@ -1177,7 +1177,7 @@ Datum: World Geodetic System 1984 ensemble
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Text(0.5, 1.0, &#39;h3fy with buffer &amp; clip&#39;)
 </code></pre></div>
 </div>
-<img alt="../_images/91b7260d264a0c5d48746b2d86929da526137c801f852f1a850437f9c95f093b.png" src="../_images/91b7260d264a0c5d48746b2d86929da526137c801f852f1a850437f9c95f093b.png" />
+<img alt="../_images/a79e042589ade43bf16dc8e8e0cc9d2141ffb8aab43ac1d7b53264585734ff99.png" src="../_images/a79e042589ade43bf16dc8e8e0cc9d2141ffb8aab43ac1d7b53264585734ff99.png" />
 </div>
 </div>
 <h2 id="interpolating-to-a-hexgrid">Interpolating to a hexgrid<a class="headerlink" href="#interpolating-to-a-hexgrid" title="Link to this heading">¶</a></h2>
@@ -1221,7 +1221,7 @@ Datum: World Geodetic System 1984 ensemble
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Text(0.5, 0.98, &#39;Spatial Interpolation with the PySAL $\\mathtt{tobler}$ package&#39;)
 </code></pre></div>
 </div>
-<img alt="../_images/93389448a88d5f9ae24789effd7b982819ff83ab0b8923736b499dc0a3438089.png" src="../_images/93389448a88d5f9ae24789effd7b982819ff83ab0b8923736b499dc0a3438089.png" />
+<img alt="../_images/ceab97beeb160fb857abe3ea9ccfd14fc613560ea51778826cbd55e890c815bc.png" src="../_images/ceab97beeb160fb857abe3ea9ccfd14fc613560ea51778826cbd55e890c815bc.png" />
 </div>
 </div>
 <h2 id="dealing-with-nan-values">Dealing with NaN Values<a class="headerlink" href="#dealing-with-nan-values" title="Link to this heading">¶</a></h2>
@@ -1254,7 +1254,7 @@ Datum: World Geodetic System 1984 ensemble
   vals = _nan_check(source_df, variable, fill_value=fill_nan)
 </code></pre></div>
 </div>
-<img alt="../_images/407abffeeb18189bce3ce4335a16246e764fa7cd6c0ad567c901b2ac011edea4.png" src="../_images/407abffeeb18189bce3ce4335a16246e764fa7cd6c0ad567c901b2ac011edea4.png" />
+<img alt="../_images/d8309c879806b01f3ae8e31cdfccf818ec2e82b8200cf202ae960133233a191c.png" src="../_images/d8309c879806b01f3ae8e31cdfccf818ec2e82b8200cf202ae960133233a191c.png" />
 </div>
 </div>
 <p>Further, all of these options are <strong>still</strong> different from dropping any <em>geometries</em> with missing values for the variable being interpolated. In this case, the dropped observations in <code class="docutils literal notranslate"><span class="pre">source</span></code> are not part of the overlay system so only the overlapping pieces of <code class="docutils literal notranslate"><span class="pre">source</span></code> and <code class="docutils literal notranslate"><span class="pre">target</span></code> count toward the total weight applied.</p>
@@ -1278,7 +1278,7 @@ Datum: World Geodetic System 1984 ensemble
  np.float64(4841621.00817157))
 </code></pre></div>
 </div>
-<img alt="../_images/c9b8389c8f8f1cd1da3a2453a61f4d693a0a6be7b86899b3e1c7559b06365670.png" src="../_images/c9b8389c8f8f1cd1da3a2453a61f4d693a0a6be7b86899b3e1c7559b06365670.png" />
+<img alt="../_images/ee1506fcda727f2e9f668e4c1ff6be5d1e8fc1ebcd8f6906314468bbf5da5837.png" src="../_images/ee1506fcda727f2e9f668e4c1ff6be5d1e8fc1ebcd8f6906314468bbf5da5837.png" />
 </div>
 </div>
 <p>For extensive variables (where target values are a weighted sum), dropping missing observations is functionally equivalent to setting <code class="docutils literal notranslate"><span class="pre">fill_nan=0</span></code> and <code class="docutils literal notranslate"><span class="pre">allocate_total=True</span></code>.</p>
