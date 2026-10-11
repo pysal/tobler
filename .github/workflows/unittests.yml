@@ -33,8 +33,6 @@ jobs:
         ]
         include:
           - environment-file: ci/314-latest.yml
-            os: macos-15-intel # Intel
-          - environment-file: ci/314-latest.yml
             os: macos-latest # Apple Silicon
           - environment-file: ci/314-latest.yml
             os: windows-latest
@@ -46,7 +44,7 @@ jobs:
 
     steps:
       - name: checkout repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -88,6 +86,6 @@ jobs:
           --cov-report xml .
 
       - name: codecov
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
