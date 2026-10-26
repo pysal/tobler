@@ -1,8 +1,12 @@
+import importlib.util as ilu
+
 import geopandas as gpd
 import pytest
 from shapely.geometry import box
 
 from tobler.util.dotdensity import _poly_to_dots, dot_density
+
+HAS_POINTPATS = bool(ilu.find_spec("pointpats"))
 
 
 @pytest.fixture
@@ -94,12 +98,14 @@ def test_draw_points_single_column(simple_gdf):
     assert set(result["category"].unique()) == {"pop_b"}
 
 
+@pytest.mark.xfail(not HAS_POINTPATS, reason="pointpats is not installed.")
 def test_draw_points_normal_cluster(simple_gdf):
     result = dot_density(simple_gdf, method="cluster_normal", columns=["pop_b"], rng=0)
     assert len(result) == simple_gdf["pop_b"].sum()
     assert set(result["category"].unique()) == {"pop_b"}
 
 
+@pytest.mark.xfail(not HAS_POINTPATS, reason="pointpats is not installed.")
 def test_draw_points_poisson_cluster(simple_gdf):
     result = dot_density(simple_gdf, method="cluster_poisson", columns=["pop_b"], rng=0)
     assert len(result) == simple_gdf["pop_b"].sum()
