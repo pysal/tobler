@@ -3,17 +3,14 @@
 
 version: 2
 updates:
+
   - package-ecosystem: github-actions
-    directory: /.github/workflows
+    directory: "/"
     schedule:
       interval: "semiannually"
     groups:
-      actions:
+      github-actions:
         patterns:
           - "*"
-        update-types:
-          - patch
-          - minor
-          - major
     cooldown:
       default-days: 7
