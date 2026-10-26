@@ -1,4 +1,4 @@
-"""tools for working with rasters."""
+"""Tools for working with rasters."""
 
 import ast
 import multiprocessing
@@ -48,8 +48,8 @@ def extract_raster_features(
         may generate a very large geodataframe
     nodata : int, optional
         pixel value denoting "no data" in input raster
-    n_jobs : int
-        [Optional. Default=-1] Number of processes to run in parallel. If -1,
+    n_jobs : int, default=-1
+        Number of processes to run in parallel. If -1,
         this is set to the number of CPUs available
     collapse_values : bool, optional
         If True, multiple values passed to the pixel_values argument are treated

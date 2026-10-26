@@ -31,37 +31,37 @@ def glm(
 
     Parameters
     ----------
-    source_df : geopandas.GeoDataFrame, required
+    source_df : geopandas.GeoDataFrame
         geodataframe containing source original data to
         be represented by another geometry
-    target_df : geopandas.GeoDataFrame, required
+    target_df : geopandas.GeoDataFrame
         geodataframe containing target boundaries that
         will be used to represent the source data
-    raster : str, required (default="nlcd_2011")
+    raster : str, default="nlcd_2011"
         path to raster file that will be used to input data to the regression model.
         i.e. a coefficients refer to the relationship between pixel
         counts and population counts. Defaults to 2011 NLCD
-    pixel_values : list, required (default =[21, 22, 23, 24, 41, 42, 52])
+    pixel_values : list, default=[21, 22, 23, 24, 41, 42, 52]
         list of integers that represent different types of raster cells. If no formula
         is given, the model will be fit from a linear combination of the logged count
         of each cell type listed here. Defaults to [21, 22, 23, 24, 41, 42, 52] which
         are informative land type cells from the NLCD
-    extensive_variable : str, required
+    extensive_variable : str
         name of the variable (column) to be modeled from the `source_df`.
         Currently, only one extensive variable is available.
     formula : str, optional
         patsy-style model formula that specifies the model. Raster codes should be
         prefixed with "Type_", e.g.
         `"n_total_pop ~ -1 + Type_21 + Type_22`
-    likelihood : str, {'poisson', 'neg_binomial'} (default = "poisson")
+    likelihood : {"poisson", "neg_binomial"}, default="poisson"
         the likelihood function used in the model
-    return model : bool
+    return_model : bool
         whether to return the fitted model in addition to the interpolated geodataframe.
         If true, this will return (geodataframe, model)
     nodata : int
         value in raster that indicates null or missing values. Default is 255
-    n_jobs : int
-        [Optional. Default=-1] Number of processes to run in parallel to
+    n_jobs : int, default=-1
+        Number of processes to run in parallel to
         generate the area allocation. If -1, this is set to the number of CPUs
         available.
     force_crs_match : None
@@ -69,7 +69,7 @@ def glm(
         -- Scheduled for removal -- no longer used.
 
     Returns
-    --------
+    -------
     interpolated : geopandas.GeoDataFrame
         a new geopandas dataframe with boundaries from `target_df` and modeled
         attribute data from the `source_df`. If `return_model` is true, the

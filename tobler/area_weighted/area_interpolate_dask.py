@@ -1,6 +1,4 @@
-"""
-Area Weighted Interpolation, out-of-core and parallel through Dask
-"""
+"""Area Weighted Interpolation, out-of-core and parallel through Dask."""
 
 import geopandas
 import numpy as np
@@ -20,8 +18,7 @@ def area_interpolate_dask(
     categorical_variables=None,
     categorical_frequency=True,
 ):
-    """
-    Out-of-core and parallel area interpolation for categorical variables.
+    """Out-of-core and parallel area interpolation for categorical variables.
 
     Parameters
     ----------
@@ -39,18 +36,18 @@ def area_interpolate_dask(
         https://dask-geopandas.readthedocs.io/en/stable/guide/spatial-partitioning.html
     id_col : str
         Name of the column in `target_dgdf` with unique IDs to be used in output table
-    extensive_variables : list
-        [Optional. Default=None] Columns in `source_dgdf` for extensive variables.
+    extensive_variables : list, optional
+        Columns in `source_dgdf` for extensive variables.
         IMPORTANT: currently NOT implemented.
-    intensive_variables : list
-        [Optional. Default=None] Columns in `source_dgdf` for intensive variables
+    intensive_variables : list, optional
+        Columns in `source_dgdf` for intensive variables
         IMPORTANT: currently NOT implemented.
-    categorical_variables : list
-        [Optional. Default=None] Columns in `source_dgdf` for categorical variables
+    categorical_variables : list, optional
+        Columns in `source_dgdf` for categorical variables
         IMPORTANT: categorical variables must be of type `'category[known]'`. This is so
         all categories are known ahead of time and Dask can run lazily.
-    categorical_frequency : Boolean
-        [Optional. Default=True] If True, `estimates` returns the frequency of each
+    categorical_frequency : bool, default=True
+        If True, `estimates` returns the frequency of each
         value in a categorical variable in every polygon of `target_df` (proportion of
         area). If False, `estimates` contains the area in every polygon of `target_df`
         that is occupied by each value of the categorical
@@ -58,8 +55,8 @@ def area_interpolate_dask(
     Returns
     -------
     estimates : dask_geopandas.GeoDataFrame
-         new dask-geopandas geodataframe with interpolated variables and `id_col` as
-         columns and target_df geometry as output geometry
+        New dask-geopandas geodataframe with interpolated variables and `id_col` as
+        columns and target_df geometry as output geometry
     """
     try:
         import dask_geopandas
@@ -191,8 +188,8 @@ def id_area_interpolate(
     categorical_variables=None,
     category_vars=None,
 ):
-    """
-    Light wrapper around single-core area interpolation to be run on distributed workers
+    """Light wrapper around single-core area interpolation for distributed workers.
+
 
     Parameters
     ----------
@@ -200,44 +197,45 @@ def id_area_interpolate(
     target_df : geopandas.GeoDataFrame
     id_col : str
         Name of the column in `target_dgdf` with unique IDs to be used in output table
-    extensive_variables : list
-        [Optional. Default=None] Columns in dataframes for extensive variables
-    intensive_variables : list
-        [Optional. Default=None] Columns in dataframes for intensive variables
-    table : scipy.sparse.csr_matrix
-        [Optional. Default=None] Area allocation source-target correspondence
+    extensive_variables : list, optional
+        Columns in dataframes for extensive variables
+    intensive_variables : list, optional
+        Columns in dataframes for intensive variables
+    table : scipy.sparse.csr_matrix, optional
+        Area allocation source-target correspondence
         table. If not provided, it will be built from `source_df` and
         `target_df` using `tobler.area_interpolate._area_tables_binning`
-    allocate_total : boolean
-        [Optional. Default=True] True if total value of source area should be
+    allocate_total : bool, default=True
+        True if total value of source area should be
         allocated. False if denominator is area of i. Note that the two cases
         would be identical when the area of the source polygon is exhausted by
         intersections. See Notes for more details.
-    spatial_index : str
-        [Optional. Default="auto"] Spatial index to use to build the
+    spatial_index : str, default="auto"
+        Spatial index to use to build the
         allocation of area from source to target tables. It currently support
         the following values:
-            - "source": build the spatial index on `source_df`
+
+        - "source": build the spatial index on `source_df`
             - "target": build the spatial index on `target_df`
             - "auto": attempts to guess the most efficient alternative.
               Currently, this option uses the largest table to build the
               index, and performs a `bulk_query` on the shorter table.
         This argument is ignored if n_jobs>1 (or n_jobs=-1).
-    n_jobs : int
-        [Optional. Default=1] Number of processes to run in parallel to
+    n_jobs : int, default=1
+        Number of processes to run in parallel to
         generate the area allocation. If -1, this is set to the number of CPUs
         available. If `table` is passed, this is ignored.
-    categorical_variables : list
-        [Optional. Default=None] Columns in dataframes for categorical variables
-    categories : list
-        [Optional. Default=None] Full list of category names in the format
+    categorical_variables : list, optional
+        Columns in dataframes for categorical variables
+    categories : list, optional
+        Full list of category names in the format
         `f'{var_name}_{cat_name}'`
 
     Returns
     -------
     estimates : geopandas.GeoDataFrame
-         new geodaraframe with interpolated variables as columns and target_df geometry
-         as output geometry
+        New geodataframe with interpolated variables as columns and target_df geometry
+        as output geometry
     """
     estimates = area_interpolate(
         source_df,
