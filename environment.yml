@@ -2,21 +2,22 @@ name: tobler
 channels:
   - conda-forge
 dependencies:
+  - python >=3.12
   - astropy
   - dask
   - dask-geopandas
-  - geopandas
+  - geopandas >=1.0
   - h3-py
-  - joblib
+  - joblib >=1.4
   - jupyterlab
-  - libpysal
+  - libpysal >=4.10
   - mapclassify
-  - numpy
-  - pandas
-  - pip
-  - rasterio
-  - rasterstats
+  - numpy >=2.0
+  - pandas >=2.2
+  - pip >=26.2
+  - rasterio >=1.4
+  - rasterstats >=0.20
   - scikit-learn
-  - scipy
-  - statsmodels
-  - tqdm
+  - scipy >=1.13
+  - statsmodels >=0.14
+  - tqdm >=4.67
