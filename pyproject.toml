@@ -71,7 +71,8 @@ docs = [
     "sphinx-copybutton",
     "cenpy",
     "contextily",
-    "osmnx"
+    "osmnx",
+    "geodatasets"
 ]
 tests = [
     "codecov",
