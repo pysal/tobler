@@ -28,22 +28,33 @@ __all__ = ["pycno_interpolate"]
 def pycno(
     gdf, value_field, cellsize, r=0.2, handle_null=True, converge=3, verbose=True
 ):
-    """Returns a smooth pycnophylactic interpolation raster for a given geodataframe
+    """Return a smooth pycnophylactic interpolation raster for a geodataframe.
 
-    Args:
-    gdf (geopandas.geodataframe.GeoDataFrame): Input GeoDataFrame.
-    value_field (str): Field name of values to be used to produce pycnophylactic surface
-    cellsize (int): Pixel size of raster in planar units (i.e. metres, feet)
-    r (float, optional): Relaxation parameter, default of 0.2 is generally fine.
-    handle_null (boolean, optional): Changes how nodata values are smoothed.
-        Default True.
-    converge (int, optional): Index for stopping value, default 3 is generally fine.
-    verbose (boolean, optional): Print out progress at each iteration.
+    Parameters
+    ----------
+    gdf : geopandas.GeoDataFrame
+        Input GeoDataFrame.
+    value_field : str
+        Field name of values to be used to produce pycnophylactic surface.
+    cellsize : int
+        Pixel size of raster in planar units (i.e. metres, feet).
+    r : float, optional
+        Relaxation parameter, default of 0.2 is generally fine.
+    handle_null : bool, optional
+        Changes how nodata values are smoothed. Default True.
+    converge : int, optional
+        Index for stopping value, default 3 is generally fine.
+    verbose : bool, optional
+        Print out progress at each iteration.
 
-    Returns:
-    Numpy Array: Smooth pycnophylactic interpolation.
-    Rasterio geotransform
-    GeoPandas crs
+    Returns
+    -------
+    numpy.ndarray
+        Smooth pycnophylactic interpolation.
+    rasterio.Affine
+        Rasterio geotransform.
+    pyproj.CRS
+        Coordinate reference system of the input GeoDataFrame.
     """
     # set nodata value
     nodata = -9999
@@ -194,15 +205,20 @@ def pycno(
 
 
 def save_pycno(pycno_array, transform, crs, filestring, driver="GTiff"):
-    """Saves a numpy array as a raster, largely a helper function for pycno
-    Args:
-        pycno_array (numpy array): 2D numpy array of pycnophylactic surface
-        transform (rasterio geotransform): Relevant transform from pycno()
-        crs (GeoPandas crs): Coordinate reference system of GeoDataFrame used in pycno()
-        filestring (str): File path to save raster
-        driver (str, optional): Format for output raster, default: geoTiff.
-    Returns:
-        None
+    """Save a numpy array as a raster, largely a helper function for pycno.
+
+    Parameters
+    ----------
+    pycno_array : numpy.ndarray
+        2D numpy array of pycnophylactic surface.
+    transform : rasterio.Affine
+        Relevant transform from ``pycno()``.
+    crs : pyproj.CRS
+        Coordinate reference system of GeoDataFrame used in ``pycno()``.
+    filestring : str
+        File path to save raster.
+    driver : str, optional
+        Format for output raster, by default ``"GTiff"``.
     """
     import rasterio
 
@@ -265,13 +281,13 @@ def pycno_interpolate(
     converge=3,
     verbose=False,
 ):
-    """Pycnophylactic Inerpolation.
+    """Pycnophylactic interpolation.
 
     Parameters
     ----------
-    source_df : geopandas.GeoDataFrame (required)
+    source_df : geopandas.GeoDataFrame
         geodataframe with polygon geometries and data to transfer
-    target_df : geopandas.GeoDataFrame (required)
+    target_df : geopandas.GeoDataFrame
         geodataframe with polygon geometries to receive new data
     variables : list
         columns on the source_df containing data to transfer
@@ -294,10 +310,10 @@ def pycno_interpolate(
 
     Notes
     -----
-    The formula is based on Tobler, W. R. (1979).
-        Smooth pycnophylactic interpolation for geographical regions.
-        Journal of the American Statistical Association, 74(367), 519–529.
-        https://doi.org/10.1080/01621459.1979.10481647
+    The formula is based on Tobler, W. R. (1979). Smooth pycnophylactic
+    interpolation for geographical regions. Journal of the American
+    Statistical Association, 74(367), 519–529.
+    https://doi.org/10.1080/01621459.1979.10481647
 
     Original implementation written by @danlewis85 at
     <https://github.com/danlewis85/pycno/>

@@ -1,7 +1,4 @@
-"""
-Area Weighted Interpolation
-
-"""
+"""Area Weighted Interpolation."""
 
 import os
 
@@ -57,9 +54,9 @@ def _intersect_area_on_chunk(geoms1, geoms2):
 
 
 def _area_tables_binning_parallel(source_df, target_df, n_jobs=-1):
-    """Construct area allocation and source-target correspondence tables using
-    a parallel spatial indexing approach
-    ...
+    """Construct area allocation and source-target correspondence tables.
+
+    Uses a parallel spatial indexing approach.
 
     NOTE: currently, the largest df is chunked and the other one is shipped in
     full to each core; within each process, the spatial index is built for the
@@ -69,10 +66,10 @@ def _area_tables_binning_parallel(source_df, target_df, n_jobs=-1):
     ----------
     source_df : geopandas.GeoDataFrame
         GeoDataFrame containing input data and polygons
-    target_df : geopandas.GeoDataFramee
+    target_df : geopandas.GeoDataFrame
         GeoDataFrame defining the output geometries
-    n_jobs : int
-        [Optional. Default=-1] Number of processes to run in parallel. If -1,
+    n_jobs : int, default=-1
+        Number of processes to run in parallel. If -1,
         this is set to the number of CPUs available
 
     Returns
@@ -139,9 +136,9 @@ def _area_tables_binning_parallel(source_df, target_df, n_jobs=-1):
 
 
 def _area_tables_binning(source_df, target_df, spatial_index):
-    """Construct area allocation and source-target correspondence
-    tables using a spatial indexing approach
-    ...
+    """Construct area allocation and source-target correspondence tables.
+
+    Uses a spatial indexing approach.
 
     NOTE: this currently relies on Geopandas' spatial index machinery
 
@@ -149,7 +146,7 @@ def _area_tables_binning(source_df, target_df, spatial_index):
     ----------
     source_df : geopandas.GeoDataFrame
         GeoDataFrame containing input data and polygons
-    target_df : geopandas.GeoDataFramee
+    target_df : geopandas.GeoDataFrame
         GeoDataFrame defining the output geometries
     spatial_index : str
         Spatial index to use to build the allocation of area from source to
@@ -214,28 +211,27 @@ def area_interpolate(
     categorical_frequency=True,
     fill_nan=0.0,
 ):
-    """
-    Area interpolation for extensive, intensive and categorical variables.
+    """Area interpolation for extensive, intensive and categorical variables.
 
     Parameters
     ----------
     source_df : geopandas.GeoDataFrame
     target_df : geopandas.GeoDataFrame
-    extensive_variables : list
-        [Optional. Default=None] Columns in dataframes for extensive variables
-    intensive_variables : list
-        [Optional. Default=None] Columns in dataframes for intensive variables
-    table : scipy.sparse.csr_matrix
-        [Optional. Default=None] Area allocation source-target correspondence
+    extensive_variables : list, optional
+        Columns in dataframes for extensive variables
+    intensive_variables : list, optional
+        Columns in dataframes for intensive variables
+    table : scipy.sparse.csr_matrix, optional
+        Area allocation source-target correspondence
         table. If not provided, it will be built from `source_df` and
         `target_df` using `tobler.area_interpolate._area_tables_binning`
-    allocate_total : boolean
-        [Optional. Default=True] True if total value of source area should be
+    allocate_total : bool, default=True
+        True if total value of source area should be
         allocated. False if denominator is area of i. Note that the two cases
         would be identical when the area of the source polygon is exhausted by
         intersections. See Notes for more details.
-    spatial_index : str
-        [Optional. Default="auto"] Spatial index to use to build the
+    spatial_index : str, default="auto"
+        Spatial index to use to build the
         allocation of area from source to target tables. It currently support
         the following values:
 
@@ -246,19 +242,19 @@ def area_interpolate(
         Currently, this option uses the largest table to build the
         index, and performs a `bulk_query` on the shorter table.
         This argument is ignored if n_jobs>1 (or n_jobs=-1).
-    n_jobs : int
-        [Optional. Default=1] Number of processes to run in parallel to
+    n_jobs : int, default=1
+        Number of processes to run in parallel to
         generate the area allocation. If -1, this is set to the number of CPUs
         available. If `table` is passed, this is ignored.
-    categorical_variables : list
-        [Optional. Default=None] Columns in dataframes for categorical variables
-    categorical_frequency : Boolean
-        [Optional. Default=True] If True, `estimates` returns the frequency of each
+    categorical_variables : list, optional
+        Columns in dataframes for categorical variables
+    categorical_frequency : bool, default=True
+        If True, `estimates` returns the frequency of each
         value in a categorical variable in every polygon of `target_df` (proportion of
         area). If False, `estimates` contains the area in every polygon of `target_df`
         that is occupied by each value of the categorical
-    fill_nan : numeric, str, or None
-        [Optional. Default=0.0] Value to replace NaN values in the source variables.
+    fill_nan : numeric, str, or None, default=0.0
+        Value to replace NaN values in the source variables.
         If None, NaN values are not replaced and will propagate through the
         interpolation. If a string is passed, it should be one of 'mean', 'median',
         'max', or 'min', and NaN values will be replaced with the corresponding
@@ -267,8 +263,8 @@ def area_interpolate(
     Returns
     -------
     estimates : geopandas.GeoDataFrame
-         new geodataframe with interpolated variables as columns and target_df geometry
-         as output geometry
+        New geodataframe with interpolated variables as columns and target_df geometry
+        as output geometry
 
     Notes
     -----
@@ -276,6 +272,7 @@ def area_interpolate(
     For an extensive variable, the estimate at target polygon j (default case) is:
 
     .. math::
+
      v_j = \\sum_i v_i w_{i,j}
 
      w_{i,j} = a_{i,j} / \\sum_k a_{i,k}
@@ -285,16 +282,20 @@ def area_interpolate(
     an extensive attribute, then setting allocate_total=False will use the
     following weights:
 
-    $$v_j = \\sum_i v_i w_{i,j}$$
+    .. math::
 
-    $$w_{i,j} = a_{i,j} / a_i$$
+     v_j = \\sum_i v_i w_{i,j}
+
+     w_{i,j} = a_{i,j} / a_i
 
     where a_i is the total area of source polygon i.
     For an intensive variable, the estimate at target polygon j is:
 
-    $$v_j = \\sum_i v_i w_{i,j}$$
+    .. math::
 
-    $$w_{i,j} = a_{i,j} / \\sum_k a_{k,j}$$
+     v_j = \\sum_i v_i w_{i,j}
+
+     w_{i,j} = a_{i,j} / \\sum_k a_{k,j}
 
     For categorical variables, the estimate returns ratio of presence of each
     unique category.

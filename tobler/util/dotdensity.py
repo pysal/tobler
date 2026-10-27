@@ -12,7 +12,7 @@ __all__ = ["dot_density"]
 def _poly_to_dots(
     gdf, scale=1.0, method="uniform", category=None, rng=None, method_kwargs=None
 ):
-    """this is just a function that wraps geopandas sample_points, but returns
+    """Wrap geopandas sample_points, but return
     a single point from a uniform distribution when clustered point pattern
     data-generating processes would raise an error.
     """
@@ -68,11 +68,11 @@ def dot_density(
 
     Parameters
     ----------
-    gdf : gpd.GeoDataFrame
+    gdf : geopandas.GeoDataFrame
         a geodataframe with columns of numeric data, a selection of which will be
         used to simulate a point-process within each geometry. The data in each column
         defines the number of points to simulate in each geometry
-    columns : list-like,
+    columns : list-like
         a list or array of columns in the dataframe holding the desired size of the
         set of points in each category. For example this would hold a set of
         mutually-exclusive racial groups, or employment industries, etc.
@@ -98,7 +98,7 @@ def dot_density(
 
     Returns
     -------
-    GeoDataFrame
+    geopandas.GeoDataFrame
         a geodataframe with simulated points in the geometry column, with each
         row/point holding the index of its containing polygon, and the column
         to which the point belongs.

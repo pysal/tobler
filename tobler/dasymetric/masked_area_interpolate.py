@@ -40,18 +40,18 @@ def masked_area_interpolate(
         Columns of the input dataframe containing extensive variables to interpolate
     intensive_variables : list
         Columns of the input dataframe containing intensive variables to interpolate
-    categorical_variables : list
-        [Optional. Default=None] Columns in dataframes for categorical variables`
+    categorical_variables : list, optional
+        Columns in dataframes for categorical variables`
     allocate_total : bool
         whether to allocate the total from the source geometries (the default is True).
     nodata : int
         value in raster that indicates null or missing values. Default is 255
-    n_jobs : int
-        [Optional. Default=-1] Number of processes to run in parallel to
+    n_jobs : int, default=-1
+        Number of processes to run in parallel to
         generate the area allocation. If -1, this is set to the number of CPUs
         available.
-    fill_nan : numeric, str, or None
-        [Optional. Default=0.0] Value to replace NaN values in the source variables.
+    fill_nan : numeric, str, or None, default=0.0
+        Value to replace NaN values in the source variables.
         If None, NaN values are not replaced and will propagate through the
         interpolation. If a string is passed, it should be one of 'mean', 'median',
         'max', or 'min', and NaN values will be replaced with the corresponding
@@ -144,14 +144,14 @@ def masked_dot_density(
         additional keyword arguments passed to the pointpats.random generator.
     nodata : int
         value in raster that indicates null or missing values. Default is 255
-    n_jobs : int
-        [Optional. Default=-1] Number of processes to run in parallel to
+    n_jobs : int, default=-1
+        Number of processes to run in parallel to
         generate the area allocation. If -1, this is set to the number of CPUs
         available.
 
     Returns
     -------
-    GeoDataFrame
+    geopandas.GeoDataFrame
         a geodataframe with simulated points in the geometry column, with each row
         containing the index of the containing polygon, and the category to which
         the point belongs.

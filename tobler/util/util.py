@@ -14,7 +14,7 @@ __all__ = ["h3fy", "circumradius"]
 
 
 def _h3lt4(p) -> bool:
-    """Helper to isolate h3 version without importing globally."""
+    """Isolate h3 version without importing globally."""
 
     return Version(p.__version__) < Version("4.0")
 
@@ -46,7 +46,7 @@ def circumradius(resolution):
 
 
 def _check_crs(source_df, target_df):
-    """check if crs is identical"""
+    """Check if CRS is identical."""
     if source_df.crs != target_df.crs:
         print("Source and target dataframes have different crs. Please correct.")
         return False
@@ -79,7 +79,7 @@ def _nan_check(df, column, fill_value=0.0):
 
 
 def _inf_check(vals, column, fill_value=0.0):
-    """Check if variable has nan values.
+    """Check if variable has inf values.
 
     Warn and replace inf with 0.0.
     """
@@ -100,7 +100,7 @@ def _inf_check(vals, column, fill_value=0.0):
 
 
 def _check_presence_of_crs(geoinput):
-    """check if there is crs in the polygon/geodataframe"""
+    """Check if there is a CRS in the polygon/geodataframe."""
     if geoinput.crs is None:
         raise KeyError("Geodataframe must have a CRS set before using this function.")
 
@@ -112,16 +112,16 @@ def h3fy(source, resolution=6, clip=False, buffer=False, return_geoms=True):
     ----------
     source : geopandas.GeoDataFrame
         GeoDataFrame to transform into a hexagonal grid
-    resolution : int, optional (default is 6)
+    resolution : int, default=6
         resolution of output h3 hexgrid.
         See <https://h3geo.org/docs/core-library/restable> for more information
-    clip : bool, optional (default is False)
+    clip : bool, default=False
         if True, hexagons are clipped by the boundary of the source gdf. Otherwise,
         heaxgons along the boundary will be left intact.
-    buffer : bool, optional (default is False)
+    buffer : bool, default=False
         if True, force hexagons to completely fill the interior of the source area.
         if False, (h3 default) may result in empty areas within the source area.
-    return_geoms: bool, optional (default is True)
+    return_geoms : bool, default=True
         whether to generate hexagon geometries as a geodataframe or simply return
         hex ids as a pandas.Series
 
@@ -218,10 +218,10 @@ def _to_hex(source, resolution=6, return_geoms=True):
     ----------
     source : geometry
         geometry to transform into a hexagonal grid (needs to support __geo_interface__)
-    resolution : int, optional (default is 6)
+    resolution : int, default=6
         resolution of output h3 hexgrid.
         See <https://h3geo.org/docs/core-library/restable> for more information
-    return_geoms: bool, optional (default is True)
+    return_geoms : bool, default=True
         whether to generate hexagon geometries as a geodataframe or simply return
         hex ids as a pandas.Series
 
