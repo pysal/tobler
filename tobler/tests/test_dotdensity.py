@@ -95,12 +95,18 @@ def test_draw_points_single_column(simple_gdf):
 
 
 def test_draw_points_normal_cluster(simple_gdf):
+    # cluster methods require pointpats library
+    pytest.importorskip("pointpats")
+
     result = dot_density(simple_gdf, method="cluster_normal", columns=["pop_b"], rng=0)
     assert len(result) == simple_gdf["pop_b"].sum()
     assert set(result["category"].unique()) == {"pop_b"}
 
 
 def test_draw_points_poisson_cluster(simple_gdf):
+    # cluster methods require pointpats library
+    pytest.importorskip("pointpats")
+
     result = dot_density(simple_gdf, method="cluster_poisson", columns=["pop_b"], rng=0)
     assert len(result) == simple_gdf["pop_b"].sum()
     assert set(result["category"].unique()) == {"pop_b"}

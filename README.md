@@ -52,8 +52,8 @@ constraining the areal interpolation to areas that are known to be inhabited. Fo
 is available or unavailable for interpolation. The package can incorporate additional
 sources such as
 
-* raster data such as satellite imagery that define land types
-* vector features such as roads or water bodies that define habitable or inhabitable land
+- raster data such as satellite imagery that define land types
+- vector features such as roads or water bodies that define habitable or inhabitable land
 
 either (or both) of which may be used to help ensure that variables from the source
 geometries are not allocated to inappropriate areas of the target geometries. Naturally,
@@ -88,7 +88,6 @@ raise an issue for discussion or open a new pull request!
 $ conda env create -f environment.yml
 $ conda activate tobler
 $ pip install -e . --no-deps
-
 ```
 
 ## Contribute
@@ -105,7 +104,7 @@ List](https://github.com/pysal/tobler/graphs/contributors).
 
 ## License
 
-The project is licensed under the [BSD license](https://github.com/pysal/tobler/blob/main/LICENSE.txt).
+The project is licensed under the [BSD-3-Clause license](https://github.com/pysal/tobler/blob/main/LICENSE.txt).
 
 ## Funding
 
@@ -113,5 +112,4 @@ The project is licensed under the [BSD license](https://github.com/pysal/tobler/
 
 Award #1733705 [Neighborhoods in Space-Time Contexts](https://www.nsf.gov/awardsearch/showAward?AWD_ID=1733705&HistoricalAwards=false)
 
- Award #1831615 [Scalable Geospatial Analytics for Social Science Research](https://www.nsf.gov/awardsearch/showAward?AWD_ID=1831615)
-
+Award #1831615 [Scalable Geospatial Analytics for Social Science Research](https://www.nsf.gov/awardsearch/showAward?AWD_ID=1831615)
