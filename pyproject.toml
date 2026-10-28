@@ -73,7 +73,11 @@ docs = [
     "myst-parser",
     "sphinx-immaterial",
     "myst_nb",
-    "sphinx-copybutton"
+    "sphinx-copybutton",
+    "cenpy",
+    "contextily",
+    "osmnx",
+    "geodatasets"
 ]
 tests = [
     "codecov",
