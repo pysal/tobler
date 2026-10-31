@@ -84,7 +84,7 @@ As part of the Python Spatial Analysis Library (PySAL) ecosystem [@pysal2007; @r
 
 Spatial data are commonly aggregated to administrative units such as census tracts, ZIP codes, or political boundaries, which often differ across datasets or change over time. As a result, transferring variables between incompatible zoning systems is a common challenge for longitudinal analysis, data integration, and cross-scale comparison, particularly in the social and behavioral sciences. While Python packages such as `PyKrige` [@benjamin_murphy_2025_17372225] and `pyinterpolate` [@molinski2022PyinterpolateSpatial] support *continuous* spatial interpolation, they are not designed for interpolation between discrete zoning systems.
 
-Traditional GIS software (e.g., ArcGIS, QGIS) provides tools for areal interpolation, but these implementations are often embedded in graphical interfaces, limiting reproducibility and automation. Moreover, they may not expose the full range of methodological options or allow for easy integration into data science pipelines.
+Traditional GIS software (e.g., ArcGIS, QGIS [@qgis-2026]) provides tools for areal interpolation, but these implementations are often embedded in graphical interfaces, limiting reproducibility and automation. Moreover, they may not expose the full range of methodological options or allow for easy integration into data science pipelines.
 
 Prior to `tobler`, the Python ecosystem support for areal interpolation was fragmented or limited. While foundational libraries such as GeoPandas provide data structures and geometric operations, they do not natively implement interpolation methods. As a result, users often relied on *ad hoc* scripts or external tools, leading to inconsistent workflows and potential methodological errors.
 
@@ -114,7 +114,7 @@ While similar functionality exists in other ecosystems (e.g., R packages such as
 
 # Software design
 
-`tobler` is designed with attention to both computational efficiency and usability. Spatial overlay operations, which are central to areal interpolation, can be computationally intensive for large datasets. The package leverages vectorized operations and efficient geometric libraries (via GeoPandas [@geopandas-2026] and Shapely [@shapely-2026]) to handle these tasks.
+`tobler` is designed with attention to both computational efficiency and usability. Spatial overlay operations, which are central to areal interpolation, can be computationally intensive for large datasets. The package leverages vectorized operations and efficient geometric libraries (via GeoPandas [@fleischmann2026GeoPandas] and Shapely [@shapely-2026]) to handle these tasks.
 
 The API design emphasizes clarity and consistency, with function signatures that explicitly distinguish between extensive and intensive variables. Intensive variables are things like rates or percentages that must be averaged when aggregating, whereas extensive variables are things like counts that must be summed during aggregation.
 
@@ -199,7 +199,7 @@ No generative AI or LLMs were used for code production for `tobler` or the writi
 `tobler` is developed by the PySAL community and builds on decades of research in areal interpolation and spatial data science.
 
 Funding from National Science Foundation Grants [2345820](https://www.nsf.gov/awardsearch/show-award/?AWD_ID=2345820) and
-[1831615](https://www.nsf.gov/awardsearch/show-award/?AWD_ID=1831615&HistoricalAwards=false) have supported `tobler` development.
+[1831615](https://www.nsf.gov/awardsearch/show-award/?AWD_ID=1831615) have supported `tobler` development.
 
 The following acknowledgement applies to James D. Gaboardi:
 
