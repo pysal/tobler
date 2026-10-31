@@ -114,7 +114,7 @@ While similar functionality exists in other ecosystems (e.g., R packages such as
 
 # Software design
 
-`tobler` is designed with attention to both computational efficiency and usability. Spatial overlay operations, which are central to areal interpolation, can be computationally intensive for large datasets. The package leverages vectorized operations and efficient geometric libraries (via GeoPandas [@geopandas-2026; fleischmann2026GeoPandas] and Shapely [@shapely-2026]) to handle these tasks.
+`tobler` is designed with attention to both computational efficiency and usability. Spatial overlay operations, which are central to areal interpolation, can be computationally intensive for large datasets. The package leverages vectorized operations and efficient geometric libraries (via GeoPandas [@fleischmann2026GeoPandas] and Shapely [@shapely-2026]) to handle these tasks.
 
 The API design emphasizes clarity and consistency, with function signatures that explicitly distinguish between extensive and intensive variables. Intensive variables are things like rates or percentages that must be averaged when aggregating, whereas extensive variables are things like counts that must be summed during aggregation.
 
