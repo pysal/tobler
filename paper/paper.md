@@ -42,7 +42,7 @@ affiliations:
   index: 3
 - name: Charles University, Faculty of Science
   index: 4
-- name: Geospatial Science and Human Security, Oak Ridge National Laboratory
+- name: Geospatial Science and Engineering, Oak Ridge National Laboratory
   index: 5
 - name: University of Liverpool
   index: 6
