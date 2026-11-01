@@ -1,4 +1,4 @@
-name: test
+name: doc
 channels:
   - conda-forge
 dependencies:
@@ -13,28 +13,30 @@ dependencies:
   - libpysal
   - numpy
   - pandas
+  - pointpats
   - rasterio
   - rasterstats
   - scikit-learn
   - scipy
   - statsmodels
   - tqdm
-  - pointpats
-  # docs
-  - numpydoc
-  - nbsphinx
-  - joblib
-  - astropy
-  - osmnx
+
+  # docs deps
+  - cenpy
   - contextily
-  - myst-parser
-  - sphinx-autodoc2
   - geodatasets
   - lonboard
+  - osmnx
   - watermark
+
+  # docs themselves
+  - nbsphinx
+  - numpydoc
   - myst-nb
+  - myst-parser
   - sphinx
   - sphinxcontrib-bibtex
+  - sphinx-autodoc2
   - sphinx-autosummary-accessors
   - sphinx-copybutton
   - sphinx-immaterial
