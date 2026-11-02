@@ -22,7 +22,7 @@ dependencies:
   - tqdm
 
   # docs deps
-  - cenpy
+  # - cenpy # see below; uncomment we new version on CenPy is available via conda-forge
   - contextily
   - geodatasets
   - lonboard
@@ -40,3 +40,7 @@ dependencies:
   - sphinx-autosummary-accessors
   - sphinx-copybutton
   - sphinx-immaterial
+
+  - pip:
+    # [2026-11] need master branch of `cenpy`
+    - git+https://github.com/cenpy-dev/cenpy@master
