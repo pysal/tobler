@@ -43,4 +43,4 @@ dependencies:
 
   - pip:
     # [2026-11] need master branch of `cenpy`
-    - git+https://github.com/cenpy-dev/cenpy@master
+    - git+https://github.com/cenpy-devs/cenpy.git@master
