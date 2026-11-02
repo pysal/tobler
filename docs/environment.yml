@@ -1,4 +1,4 @@
-name: test
+name: doc
 channels:
   - conda-forge
 dependencies:
@@ -13,28 +13,34 @@ dependencies:
   - libpysal
   - numpy
   - pandas
+  - pointpats
   - rasterio
   - rasterstats
   - scikit-learn
   - scipy
   - statsmodels
   - tqdm
-  - pointpats
-  # docs
-  - numpydoc
-  - nbsphinx
-  - joblib
-  - astropy
-  - osmnx
+
+  # docs deps
+  # - cenpy # see below; uncomment we new version on CenPy is available via conda-forge
   - contextily
-  - myst-parser
-  - sphinx-autodoc2
   - geodatasets
   - lonboard
+  - osmnx
   - watermark
+
+  # docs themselves
+  - nbsphinx
+  - numpydoc
   - myst-nb
+  - myst-parser
   - sphinx
   - sphinxcontrib-bibtex
+  - sphinx-autodoc2
   - sphinx-autosummary-accessors
   - sphinx-copybutton
   - sphinx-immaterial
+
+  - pip:
+    # [2026-11] need master branch of `cenpy`
+    - git+https://github.com/cenpy-devs/cenpy.git@master
