@@ -804,7 +804,7 @@ Python implementation: CPython
 Python version       : 3.14.10
 IPython version      : 9.18.1
 
-tobler   : 0.14.1.dev85+ga89400ec2
+tobler   : 0.14.1.dev87+g65db83dbb
 geopandas: 1.2.0
 rasterio : 1.5.2
 </code></pre></div>
@@ -818,6 +818,9 @@ or<br />
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">osmnx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ox</span>
+
+<span class="n">ox</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">use_cache</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">ox</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">cache_folder</span> <span class="o">=</span> <span class="s2">"./cache"</span>
 </code></pre></div>
 </div>
 </div>
