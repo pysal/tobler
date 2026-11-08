@@ -74,7 +74,7 @@ docs = [
     "sphinx-immaterial",
     "myst_nb",
     "sphinx-copybutton",
-    "cenpy",
+    "pytidycensus",
     "contextily",
     "osmnx",
     "geodatasets"
