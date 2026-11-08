@@ -42,7 +42,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.74c816e3f9967dd6e.min.css?v=6cfe2491" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.6efbe22605a23fcd6.min.css?v=b2ceb110" />
         <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
         <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
         <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=93c5fc88" />
@@ -72,7 +72,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#getting-data-from-cenpy" class="md-skip">
+        <a href="#creating-hexgrids-with-the-h3fy-function" class="md-skip">
           Skip to content
         </a>
       
@@ -429,16 +429,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#getting-data-from-cenpy" class="md-nav__link">
-    
-    <span class="md-ellipsis">
-      <span>Getting data from Cen<wbr>Py</span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#creating-hexgrids-with-the-h3fy-function" class="md-nav__link">
     
     <span class="md-ellipsis">
@@ -775,16 +765,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#getting-data-from-cenpy" class="md-nav__link">
-    
-    <span class="md-ellipsis">
-      <span>Getting data from Cen<wbr>Py</span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#creating-hexgrids-with-the-h3fy-function" class="md-nav__link">
     
     <span class="md-ellipsis">
@@ -841,247 +821,55 @@
 <h1 id="generating-h3-hexgrids-from-geodataframes">Generating h3 Hexgrids from GeoDataFrames<a class="headerlink" href="#generating-h3-hexgrids-from-geodataframes" title="Link to this heading">¶</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">geodatasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">tobler.area_weighted</span><span class="w"> </span><span class="kn">import</span> <span class="n">area_interpolate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tobler.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">h3fy</span>
 
 <span class="o">%</span><span class="k">load_ext</span> watermark
-<span class="o">%</span><span class="k">watermark</span> -v -a &quot;author: eli knaap&quot; -d -u -p tobler,cenpy,geopandas
+<span class="o">%</span><span class="k">watermark</span> -v -a "author: eli knaap" -d -u -p tobler,geopandas
 </code></pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Author: author: eli knaap
 
-Last updated: 2026-05-09
+Last updated: 2026-11-08
 
 Python implementation: CPython
-Python version       : 3.14.4
-IPython version      : 9.13.0
+Python version       : 3.14.10
+IPython version      : 9.18.1
 
-tobler   : 0.14.1.dev6+gaa0aba6ac
-cenpy    : 1.0.1
-geopandas: 1.1.3
+tobler   : 0.14.1.dev85+ga89400ec2
+geopandas: 1.2.0
 </code></pre></div>
 </div>
 </div>
 </div>
-<p><strong>Note</strong>: This notebook relies on functionality from the <a class="reference external" href="https://contextily.readthedocs.io/en/latest/"><code class="docutils literal notranslate"><span class="pre">contextily</span></code></a> package that provides convenient basemaps for geospatial plots, and the <a class="reference external" href="https://cenpy-devs.github.io/cenpy/"><code class="docutils literal notranslate"><span class="pre">cenpy</span></code></a> package that provide a convenient interface to the U.S. Census API. These can be installed with</p>
-<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">contextily</span> <span class="pre">cenpy</span></code><br />
+<p><strong>Note</strong>: This notebook relies on functionality from the <a class="reference external" href="https://contextily.readthedocs.io/en/latest/"><code class="docutils literal notranslate"><span class="pre">contextily</span></code></a> package that provides convenient basemaps for geospatial plots. Install the package with</p>
+<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">contextily</span></code><br />
 or<br />
-<code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">contextily</span> <span class="pre">cenpy</span> <span class="pre">-c</span> <span class="pre">conda-forge</span></code></p>
+<code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">contextily</span> <span class="pre">-c</span> <span class="pre">conda-forge</span></code></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">contextily</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ctx</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">cenpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">products</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">nyc</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">get_path</span><span class="p">(</span><span class="s2">"geoda.nyc_education"</span><span class="p">))</span>
 </code></pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>/home/runner/micromamba/envs/test/lib/python3.14/site-packages/fuzzywuzzy/fuzz.py:11: UserWarning: Using slow pure-python SequenceMatcher. Install python-Levenshtein to remove this warning
-  warnings.warn(&#39;Using slow pure-python SequenceMatcher. Install python-Levenshtein to remove this warning&#39;)
-</code></pre></div>
-</div>
-</div>
-</div>
-<h2 id="getting-data-from-cenpy">Getting data from CenPy<a class="headerlink" href="#getting-data-from-cenpy" title="Link to this heading">¶</a></h2>
-<p>To begin with, we will fetch some data from the 2017 ACS</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">acs</span> <span class="o">=</span> <span class="n">products</span><span class="o">.</span><span class="n">ACS</span><span class="p">(</span><span class="mi">2017</span><span class="p">)</span>
-</code></pre></div>
-</div>
-</div>
-</div>
-<p>We’re looking for median home value, so first we will filter the ACS tables by those containing “value” in the description so we can find the correct variable code</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">acs</span><span class="o">.</span><span class="n">filter_tables</span><span class="p">(</span><span class="s2">&quot;VALUE&quot;</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="s2">&quot;description&quot;</span><span class="p">)</span>
-</code></pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>description</th>
-      <th>columns</th>
-    </tr>
-    <tr>
-      <th>table_name</th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>B25075</th>
-      <td>VALUE</td>
-      <td>[B25075_001E, B25075_002E, B25075_003E, B25075...</td>
-    </tr>
-    <tr>
-      <th>B25076</th>
-      <td>LOWER VALUE QUARTILE (DOLLARS)</td>
-      <td>[B25076_001E]</td>
-    </tr>
-    <tr>
-      <th>B25077</th>
-      <td>MEDIAN VALUE (DOLLARS)</td>
-      <td>[B25077_001E]</td>
-    </tr>
-    <tr>
-      <th>B25078</th>
-      <td>UPPER VALUE QUARTILE (DOLLARS)</td>
-      <td>[B25078_001E]</td>
-    </tr>
-    <tr>
-      <th>B25079</th>
-      <td>AGGREGATE VALUE (DOLLARS) BY AGE OF HOUSEHOLDER</td>
-      <td>[B25079_001E, B25079_002E, B25079_003E, B25079...</td>
-    </tr>
-    <tr>
-      <th>B25080</th>
-      <td>AGGREGATE VALUE (DOLLARS) BY UNITS IN STRUCTURE</td>
-      <td>[B25080_001E, B25080_002E, B25080_003E, B25080...</td>
-    </tr>
-    <tr>
-      <th>B25082</th>
-      <td>AGGREGATE VALUE (DOLLARS) BY MORTGAGE STATUS</td>
-      <td>[B25082_001E, B25082_002E, B25082_003E]</td>
-    </tr>
-    <tr>
-      <th>B25083</th>
-      <td>MEDIAN VALUE (DOLLARS) FOR MOBILE HOMES</td>
-      <td>[B25083_001E]</td>
-    </tr>
-    <tr>
-      <th>B25096</th>
-      <td>MORTGAGE STATUS BY VALUE</td>
-      <td>[B25096_001E, B25096_002E, B25096_003E, B25096...</td>
-    </tr>
-    <tr>
-      <th>B25097</th>
-      <td>MORTGAGE STATUS BY MEDIAN VALUE (DOLLARS)</td>
-      <td>[B25097_001E, B25097_002E, B25097_003E]</td>
-    </tr>
-    <tr>
-      <th>B25100</th>
-      <td>MORTGAGE STATUS BY RATIO OF VALUE TO HOUSEHOLD...</td>
-      <td>[B25100_001E, B25100_002E, B25100_003E, B25100...</td>
-    </tr>
-    <tr>
-      <th>B25107</th>
-      <td>MEDIAN VALUE BY YEAR STRUCTURE BUILT</td>
-      <td>[B25107_001E, B25107_002E, B25107_003E, B25107...</td>
-    </tr>
-    <tr>
-      <th>B25108</th>
-      <td>AGGREGATE VALUE (DOLLARS) BY YEAR STRUCTURE BUILT</td>
-      <td>[B25108_001E, B25108_002E, B25108_003E, B25108...</td>
-    </tr>
-    <tr>
-      <th>B25109</th>
-      <td>MEDIAN VALUE BY YEAR HOUSEHOLDER MOVED INTO UNIT</td>
-      <td>[B25109_001E, B25109_002E, B25109_003E, B25109...</td>
-    </tr>
-    <tr>
-      <th>B25110</th>
-      <td>AGGREGATE VALUE (DOLLARS) BY YEAR HOUSEHOLDER ...</td>
-      <td>[B25110_001E, B25110_002E, B25110_003E, B25110...</td>
-    </tr>
-    <tr>
-      <th>B25121</th>
-      <td>HOUSEHOLD INCOME IN THE PAST 12 MONTHS (IN 201...</td>
-      <td>[B25121_001E, B25121_002E, B25121_003E, B25121...</td>
-    </tr>
-    <tr>
-      <th>B992519</th>
-      <td>ALLOCATION OF VALUE</td>
-      <td>[B992519_001E, B992519_002E, B992519_003E]</td>
-    </tr>
-  </tbody>
-</table>
-</div></div></div>
-</div>
-<p>The variable we’re looking for is <code class="docutils literal notranslate"><span class="pre">B25077_001E</span></code>, the median home value of each. Lets collect that data for the Washington DC metropolitan region. The next cell can take a minute or two to run, depending on the speed of your connection.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">dc</span> <span class="o">=</span> <span class="n">acs</span><span class="o">.</span><span class="n">from_msa</span><span class="p">(</span><span class="s2">&quot;Washington-Arlington&quot;</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;B25077_001E&quot;</span><span class="p">])</span>
-</code></pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">dc</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
-</code></pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>&lt;class &#39;geopandas.geodataframe.GeoDataFrame&#39;&gt;
-RangeIndex: 1359 entries, 0 to 1358
-Data columns (total 7 columns):
- #   Column       Non-Null Count  Dtype   
----  ------       --------------  -----   
- 0   GEOID        1359 non-null   str     
- 1   geometry     1359 non-null   geometry
- 2   B25077_001E  1331 non-null   float64 
- 3   NAME         1359 non-null   str     
- 4   state        1359 non-null   str     
- 5   county       1359 non-null   str     
- 6   tract        1359 non-null   str     
-dtypes: float64(1), geometry(1), str(5)
-memory usage: 170.8 KB
-</code></pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">dc</span><span class="o">.</span><span class="n">crs</span>
-</code></pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>&lt;Projected CRS: EPSG:3857&gt;
-Name: WGS 84 / Pseudo-Mercator
-Axis Info [cartesian]:
-- X[east]: Easting (metre)
-- Y[north]: Northing (metre)
-Area of Use:
-- name: World between 85.06°S and 85.06°N.
-- bounds: (-180.0, -85.06, 180.0, 85.06)
-Coordinate Operation:
-- name: Popular Visualisation Pseudo-Mercator
-- method: Popular Visualisation Pseudo Mercator
-Datum: World Geodetic System 1984 ensemble
-- Ellipsoid: WGS 84
-- Prime Meridian: Greenwich
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Downloading file 'nyc_2000Census.zip' from 'https://geodacenter.github.io/data-and-lab//data/nyc_2000Census.zip' to '/home/runner/.cache/geodatasets'.
 </code></pre></div>
 </div>
 </div>
 </div>
 <h2 id="creating-hexgrids-with-the-h3fy-function">Creating Hexgrids with the <code class="docutils literal notranslate"><span class="pre">h3fy</span></code> function<a class="headerlink" href="#creating-hexgrids-with-the-h3fy-function" title="Link to this heading">¶</a></h2>
-<p>Using the <code class="docutils literal notranslate"><span class="pre">h3fy</span></code> function from the <code class="docutils literal notranslate"><span class="pre">tobler.util</span></code> module, we can easily generate a hexgrid covering the face of the DC Metropolitan region</p>
+<p>Using the <code class="docutils literal notranslate"><span class="pre">h3fy</span></code> function from the <code class="docutils literal notranslate"><span class="pre">tobler.util</span></code> module, we can easily generate a hexgrid covering the face of the NY.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">dc_hex</span> <span class="o">=</span> <span class="n">h3fy</span><span class="p">(</span><span class="n">dc</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">nyc_hex</span> <span class="o">=</span> <span class="n">h3fy</span><span class="p">(</span><span class="n">nyc</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -1091,27 +879,26 @@ Datum: World Geodetic System 1984 ensemble
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
 <span class="n">axs</span> <span class="o">=</span> <span class="n">axs</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 
-<span class="n">dc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.6</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
-<span class="n">dc_hex</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.6</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
+<span class="n">nyc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.6</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"white"</span><span class="p">,</span> <span class="n">tiles</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">nyc_hex</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.6</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"white"</span><span class="p">,</span> <span class="n">tiles</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Original Tract Data&quot;</span><span class="p">)</span>
-<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Hex Grid&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Original Tract Data"</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Hex Grid"</span><span class="p">)</span>
 
-<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axs</span><span class="p">):</span>
-    <span class="n">ctx</span><span class="o">.</span><span class="n">add_basemap</span><span class="p">(</span><span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">source</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">providers</span><span class="o">.</span><span class="n">CartoDB</span><span class="o">.</span><span class="n">Positron</span><span class="p">)</span>
-    <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axs</span><span class="o">.</span><span class="n">flat</span><span class="p">:</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">"off"</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/e90872f52766efc272ca6012897296da8406bbce2cda26cbfbe7551b98e40bc0.png" src="../_images/e90872f52766efc272ca6012897296da8406bbce2cda26cbfbe7551b98e40bc0.png" />
+<img alt="../_images/70ea539ea717b4013d940eff0d7d145830c7220c3b7b3739a7d8652890606468.png" src="../_images/70ea539ea717b4013d940eff0d7d145830c7220c3b7b3739a7d8652890606468.png" />
 </div>
 </div>
 <p>By altering the <code class="docutils literal notranslate"><span class="pre">resolution</span></code> parameter, we can generate grids using hexes of various sizes</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">dc_hex_large</span> <span class="o">=</span> <span class="n">h3fy</span><span class="p">(</span><span class="n">dc</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-<span class="n">dc_hex_small</span> <span class="o">=</span> <span class="n">h3fy</span><span class="p">(</span><span class="n">dc</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">nyc_hex_large</span> <span class="o">=</span> <span class="n">h3fy</span><span class="p">(</span><span class="n">nyc</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<span class="n">nyc_hex_small</span> <span class="o">=</span> <span class="n">h3fy</span><span class="p">(</span><span class="n">nyc</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -1120,23 +907,22 @@ Datum: World Geodetic System 1984 ensemble
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
 
-<span class="n">dc_hex_large</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.6</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
-<span class="n">dc_hex_small</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.6</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
+<span class="n">nyc_hex_large</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.6</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"white"</span><span class="p">,</span> <span class="n">tiles</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">nyc_hex_small</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.6</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"white"</span><span class="p">,</span> <span class="n">tiles</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axs</span><span class="p">:</span>
-    <span class="n">ctx</span><span class="o">.</span><span class="n">add_basemap</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">providers</span><span class="o">.</span><span class="n">CartoDB</span><span class="o">.</span><span class="n">Positron</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axs</span><span class="o">.</span><span class="n">flat</span><span class="p">:</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">"off"</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/83b1dee227b9da19637197f9e25d4a185d97bd81e1d3a9de4ec9e6d1fe58e3cc.png" src="../_images/83b1dee227b9da19637197f9e25d4a185d97bd81e1d3a9de4ec9e6d1fe58e3cc.png" />
+<img alt="../_images/f2824515849dc382fd62baf1ae8ca649809fba603fee67a8869f3fae3cb8d493.png" src="../_images/f2824515849dc382fd62baf1ae8ca649809fba603fee67a8869f3fae3cb8d493.png" />
 </div>
 </div>
 <p>and by using the <code class="docutils literal notranslate"><span class="pre">clip</span></code> parameter, we can ensure that the hexgrid is does not extend beyond the borders of the input geodataframe</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">dc_hex_clipped</span> <span class="o">=</span> <span class="n">h3fy</span><span class="p">(</span><span class="n">dc</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">clip</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">nyc_hex_clipped</span> <span class="o">=</span> <span class="n">h3fy</span><span class="p">(</span><span class="n">nyc</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">clip</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -1145,55 +931,47 @@ Datum: World Geodetic System 1984 ensemble
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
 
-<span class="n">dc_hex_clipped</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.6</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
-<span class="n">ctx</span><span class="o">.</span><span class="n">add_basemap</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">providers</span><span class="o">.</span><span class="n">CartoDB</span><span class="o">.</span><span class="n">Positron</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;h3fy with clip&quot;</span><span class="p">)</span>
+<span class="n">nyc_hex_clipped</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.6</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"white"</span><span class="p">,</span> <span class="n">tiles</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">"off"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"h3fy with clip"</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Text(0.5, 1.0, &#39;h3fy with clip&#39;)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Text(0.5, 1.0, 'h3fy with clip')
 </code></pre></div>
 </div>
-<img alt="../_images/e4b0401f816edc1274a3f37e2c6704fff2ca4f71e0d1df423d83b62293d8672f.png" src="../_images/e4b0401f816edc1274a3f37e2c6704fff2ca4f71e0d1df423d83b62293d8672f.png" />
+<img alt="../_images/99c76cf8254bc362d2a77239cb66057672bac755b05f78b9993f2a1f38640bfc.png" src="../_images/99c76cf8254bc362d2a77239cb66057672bac755b05f78b9993f2a1f38640bfc.png" />
 </div>
 </div>
 <p>Notice, though, that we still have some sharp hexagonal edges, meaning the hexagon doesn’t <em>fully</em> cover the original source polygons. To force full coverage, we can use the <code class="docutils literal notranslate"><span class="pre">buffer</span></code> keyword (or, optionally, both <code class="docutils literal notranslate"><span class="pre">buffer</span></code> and <code class="docutils literal notranslate"><span class="pre">clip</span></code>).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">dc_hex_clipped</span> <span class="o">=</span> <span class="n">h3fy</span><span class="p">(</span><span class="n">dc</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">clip</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">buffer</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">nyc_hex_clipped</span> <span class="o">=</span> <span class="n">h3fy</span><span class="p">(</span><span class="n">nyc</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">clip</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">buffer</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
 
-<span class="n">dc_hex_clipped</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.6</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
-<span class="n">ctx</span><span class="o">.</span><span class="n">add_basemap</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">providers</span><span class="o">.</span><span class="n">CartoDB</span><span class="o">.</span><span class="n">Positron</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;h3fy with buffer &amp; clip&quot;</span><span class="p">)</span>
+<span class="n">nyc_hex_clipped</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.6</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"white"</span><span class="p">,</span> <span class="n">tiles</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">"off"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"h3fy with buffer &amp; clip"</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Text(0.5, 1.0, &#39;h3fy with buffer &amp; clip&#39;)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Text(0.5, 1.0, 'h3fy with buffer &amp; clip')
 </code></pre></div>
 </div>
-<img alt="../_images/a79e042589ade43bf16dc8e8e0cc9d2141ffb8aab43ac1d7b53264585734ff99.png" src="../_images/a79e042589ade43bf16dc8e8e0cc9d2141ffb8aab43ac1d7b53264585734ff99.png" />
+<img alt="../_images/b62a32e0589bb37488d120b812b288f8aa25c44ba145d85e7de091d5ce8d2f17.png" src="../_images/b62a32e0589bb37488d120b812b288f8aa25c44ba145d85e7de091d5ce8d2f17.png" />
 </div>
 </div>
 <h2 id="interpolating-to-a-hexgrid">Interpolating to a hexgrid<a class="headerlink" href="#interpolating-to-a-hexgrid" title="Link to this heading">¶</a></h2>
 <p>Thus, in just a few lines of code, we can estimate the value of census variables represented by a regular hexgrid</p>
-<p>here, we will estimate the median home value of each hex in the DC region using simple areal interpolation</p>
+<p>here, we will estimate the median home value of each hex in the NY using simple areal interpolation</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">dc_hex_interpolated</span> <span class="o">=</span> <span class="n">area_interpolate</span><span class="p">(</span>
-    <span class="n">source_df</span><span class="o">=</span><span class="n">dc</span><span class="p">,</span> <span class="n">target_df</span><span class="o">=</span><span class="n">dc_hex</span><span class="p">,</span> <span class="n">intensive_variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;B25077_001E&quot;</span><span class="p">],</span> <span class="n">fill_nan</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">nyc_hex_interpolated</span> <span class="o">=</span> <span class="n">area_interpolate</span><span class="p">(</span>
+    <span class="n">source_df</span><span class="o">=</span><span class="n">nyc</span><span class="p">,</span> <span class="n">target_df</span><span class="o">=</span><span class="n">nyc_hex</span><span class="p">,</span> <span class="n">intensive_variables</span><span class="o">=</span><span class="p">[</span><span class="s2">"PER_BLACK"</span><span class="p">],</span> <span class="n">fill_nan</span><span class="o">=</span><span class="s2">"mean"</span>
 <span class="p">)</span>
-</code></pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>/home/runner/micromamba/envs/test/lib/python3.14/site-packages/tobler/area_weighted/area_interpolate.py:350: UserWarning: nan values in variable: B25077_001E, replacing with 437297.2201352367
-  vals = _nan_check(source_df, variable, fill_value=fill_nan)
 </code></pre></div>
 </div>
 </div>
@@ -1201,84 +979,109 @@ Datum: World Geodetic System 1984 ensemble
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
-<span class="n">dc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;B25077_001E&quot;</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">&quot;quantiles&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">nyc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">"PER_BLACK"</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">"quantiles"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tiles</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="n">dc_hex_interpolated</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;B25077_001E&quot;</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">&quot;quantiles&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">nyc_hex_interpolated</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="s2">"PER_BLACK"</span><span class="p">,</span>
+    <span class="n">scheme</span><span class="o">=</span><span class="s2">"quantiles"</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">tiles</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
 
-<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Original Data&quot;</span><span class="p">)</span>
-<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Interpolated Data&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Original Data"</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Interpolated Data"</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axs</span><span class="p">:</span>
-    <span class="n">ctx</span><span class="o">.</span><span class="n">add_basemap</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">providers</span><span class="o">.</span><span class="n">CartoDB</span><span class="o">.</span><span class="n">Positron</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">"off"</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span>
-    <span class="sa">r</span><span class="s2">&quot;Spatial Interpolation with the PySAL $\mathtt</span><span class="si">{tobler}</span><span class="s2">$ package&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span>
+    <span class="sa">r</span><span class="s2">"Spatial Interpolation with the PySAL $\mathtt</span><span class="si">{tobler}</span><span class="s2">$ package"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span>
 <span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Text(0.5, 0.98, &#39;Spatial Interpolation with the PySAL $\\mathtt{tobler}$ package&#39;)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Text(0.5, 0.98, 'Spatial Interpolation with the PySAL $\\mathtt{tobler}$ package')
 </code></pre></div>
 </div>
-<img alt="../_images/ceab97beeb160fb857abe3ea9ccfd14fc613560ea51778826cbd55e890c815bc.png" src="../_images/ceab97beeb160fb857abe3ea9ccfd14fc613560ea51778826cbd55e890c815bc.png" />
+<img alt="../_images/8903f0a5e5f51fa85a117fcab04fc50f4076680d5d84e70770a86b12e8d42054.png" src="../_images/8903f0a5e5f51fa85a117fcab04fc50f4076680d5d84e70770a86b12e8d42054.png" />
 </div>
 </div>
 <h2 id="dealing-with-nan-values">Dealing with NaN Values<a class="headerlink" href="#dealing-with-nan-values" title="Link to this heading">¶</a></h2>
-<p>It’s important to understand how and NaN (not-a-number) values (i.e. missing data) in the source dataframe are handled.</p>
+<p>It’s important to understand how and NaN (not-a-number) values (i.e. missing data) in the source dataframe are handled. Introduce some missing values.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">fill_nans</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;median&quot;</span><span class="p">]</span>
-
-<span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">nan</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fill_nans</span><span class="p">):</span>
-    <span class="n">dc_hex_interpolated</span> <span class="o">=</span> <span class="n">area_interpolate</span><span class="p">(</span>
-        <span class="n">source_df</span><span class="o">=</span><span class="n">dc</span><span class="p">,</span>
-        <span class="n">target_df</span><span class="o">=</span><span class="n">dc_hex</span><span class="p">,</span>
-        <span class="n">intensive_variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;B25077_001E&quot;</span><span class="p">],</span>
-        <span class="n">fill_nan</span><span class="o">=</span><span class="n">nan</span><span class="p">,</span>
-    <span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;B25077_001E&quot;</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">&quot;quantiles&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;fill_nan=</span><span class="si">{</span><span class="n">nan</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">nyc</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">nyc</span><span class="p">),</span> <span class="mi">25</span><span class="p">),</span> <span class="s2">"PER_BLACK"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">nyc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">"PER_BLACK"</span><span class="p">,</span> <span class="n">missing_kwds</span><span class="o">=</span><span class="p">{</span><span class="s2">"color"</span><span class="p">:</span> <span class="s2">"red"</span><span class="p">})</span>
 </code></pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>/home/runner/micromamba/envs/test/lib/python3.14/site-packages/tobler/area_weighted/area_interpolate.py:350: UserWarning: nan values in variable: B25077_001E, replacing with None
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>&lt;Axes: xlabel='Easting [US survey foot]', ylabel='Northing [US survey foot]'&gt;
+</code></pre></div>
+</div>
+<img alt="../_images/30dc5dd85d193d379d2390457e4e5aa507f5ce289ad8de837b309c3cee187c43.png" src="../_images/30dc5dd85d193d379d2390457e4e5aa507f5ce289ad8de837b309c3cee187c43.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">fill_nans</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">"mean"</span><span class="p">,</span> <span class="s2">"median"</span><span class="p">]</span>
+
+<span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">nan</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fill_nans</span><span class="p">):</span>
+    <span class="n">nyc_hex_interpolated</span> <span class="o">=</span> <span class="n">area_interpolate</span><span class="p">(</span>
+        <span class="n">source_df</span><span class="o">=</span><span class="n">nyc</span><span class="p">,</span>
+        <span class="n">target_df</span><span class="o">=</span><span class="n">nyc_hex</span><span class="p">,</span>
+        <span class="n">intensive_variables</span><span class="o">=</span><span class="p">[</span><span class="s2">"PER_BLACK"</span><span class="p">],</span>
+        <span class="n">fill_nan</span><span class="o">=</span><span class="n">nan</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">"PER_BLACK"</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">"quantiles"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">"fill_nan=</span><span class="si">{</span><span class="n">nan</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>/home/runner/micromamba/envs/test/lib/python3.14/site-packages/tobler/area_weighted/area_interpolate.py:351: UserWarning: nan values in variable: PER_BLACK, replacing with None
   vals = _nan_check(source_df, variable, fill_value=fill_nan)
-/home/runner/micromamba/envs/test/lib/python3.14/site-packages/tobler/area_weighted/area_interpolate.py:350: UserWarning: nan values in variable: B25077_001E, replacing with 0.0
+/home/runner/micromamba/envs/test/lib/python3.14/site-packages/tobler/area_weighted/area_interpolate.py:351: UserWarning: nan values in variable: PER_BLACK, replacing with 0.0
   vals = _nan_check(source_df, variable, fill_value=fill_nan)
-/home/runner/micromamba/envs/test/lib/python3.14/site-packages/tobler/area_weighted/area_interpolate.py:350: UserWarning: nan values in variable: B25077_001E, replacing with 437297.2201352367
+/home/runner/micromamba/envs/test/lib/python3.14/site-packages/tobler/area_weighted/area_interpolate.py:351: UserWarning: nan values in variable: PER_BLACK, replacing with 0.2803338034790785
   vals = _nan_check(source_df, variable, fill_value=fill_nan)
-/home/runner/micromamba/envs/test/lib/python3.14/site-packages/tobler/area_weighted/area_interpolate.py:350: UserWarning: nan values in variable: B25077_001E, replacing with 385900.0
+/home/runner/micromamba/envs/test/lib/python3.14/site-packages/tobler/area_weighted/area_interpolate.py:351: UserWarning: nan values in variable: PER_BLACK, replacing with 0.1
   vals = _nan_check(source_df, variable, fill_value=fill_nan)
 </code></pre></div>
 </div>
-<img alt="../_images/d8309c879806b01f3ae8e31cdfccf818ec2e82b8200cf202ae960133233a191c.png" src="../_images/d8309c879806b01f3ae8e31cdfccf818ec2e82b8200cf202ae960133233a191c.png" />
+<img alt="../_images/cc721597749e03da5527701f4c2bcc33c4fe2d2fd98d5350e847a9692920d54c.png" src="../_images/cc721597749e03da5527701f4c2bcc33c4fe2d2fd98d5350e847a9692920d54c.png" />
 </div>
 </div>
 <p>Further, all of these options are <strong>still</strong> different from dropping any <em>geometries</em> with missing values for the variable being interpolated. In this case, the dropped observations in <code class="docutils literal notranslate"><span class="pre">source</span></code> are not part of the overlay system so only the overlapping pieces of <code class="docutils literal notranslate"><span class="pre">source</span></code> and <code class="docutils literal notranslate"><span class="pre">target</span></code> count toward the total weight applied.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">ax</span> <span class="o">=</span> <span class="n">dc_hex_interpolated</span> <span class="o">=</span> <span class="n">area_interpolate</span><span class="p">(</span>
-    <span class="n">source_df</span><span class="o">=</span><span class="n">dc</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;B25077_001E&quot;</span><span class="p">]),</span>
-    <span class="n">target_df</span><span class="o">=</span><span class="n">dc_hex</span><span class="p">,</span>
-    <span class="n">intensive_variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;B25077_001E&quot;</span><span class="p">],</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">ax</span> <span class="o">=</span> <span class="n">nyc_hex_interpolated</span> <span class="o">=</span> <span class="n">area_interpolate</span><span class="p">(</span>
+    <span class="n">source_df</span><span class="o">=</span><span class="n">nyc</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">"PER_BLACK"</span><span class="p">]),</span>
+    <span class="n">target_df</span><span class="o">=</span><span class="n">nyc_hex</span><span class="p">,</span>
+    <span class="n">intensive_variables</span><span class="o">=</span><span class="p">[</span><span class="s2">"PER_BLACK"</span><span class="p">],</span>
     <span class="n">fill_nan</span><span class="o">=</span><span class="n">nan</span><span class="p">,</span>
-<span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;B25077_001E&quot;</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">&quot;quantiles&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;drop NA prior to interpolation&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">"PER_BLACK"</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">"quantiles"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"drop NA prior to interpolation"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">"off"</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>(np.float64(-8739249.02217054),
- np.float64(-8481429.572694423),
- np.float64(4567405.812595519),
- np.float64(4841621.00817157))
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>(np.float64(903700.4239424965),
+ np.float64(1075572.2157699093),
+ np.float64(113343.12145785264),
+ np.float64(279318.2721226369))
 </code></pre></div>
 </div>
-<img alt="../_images/ee1506fcda727f2e9f668e4c1ff6be5d1e8fc1ebcd8f6906314468bbf5da5837.png" src="../_images/ee1506fcda727f2e9f668e4c1ff6be5d1e8fc1ebcd8f6906314468bbf5da5837.png" />
+<img alt="../_images/390fafd458c8b371fb6ee572475a875885db95982cb4ac5c44708a610bf85128.png" src="../_images/390fafd458c8b371fb6ee572475a875885db95982cb4ac5c44708a610bf85128.png" />
 </div>
 </div>
 <p>For extensive variables (where target values are a weighted sum), dropping missing observations is functionally equivalent to setting <code class="docutils literal notranslate"><span class="pre">fill_nan=0</span></code> and <code class="docutils literal notranslate"><span class="pre">allocate_total=True</span></code>.</p>
@@ -1329,7 +1132,7 @@ Datum: World Geodetic System 1984 ensemble
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    8.2.3.
+    9.2.0.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

@@ -21,7 +21,7 @@
     
     
       
-        <title>Overview of toblers Interpolation Methods - tobler</title>
+        <title>Overview of tobler’s Interpolation Methods - tobler</title>
       
     
     
@@ -42,7 +42,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.74c816e3f9967dd6e.min.css?v=6cfe2491" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.6efbe22605a23fcd6.min.css?v=b2ceb110" />
         <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
         <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
         <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=93c5fc88" />
@@ -109,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Overview of toblers Interpolation Methods
+              Overview of tobler’s Interpolation Methods
             
           </span>
         </div>
@@ -421,6 +421,22 @@
       <span>Areal Interpolation</span>
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Areal Interpolation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#performance" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Performance</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -792,6 +808,22 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Areal Interpolation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#performance" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Performance</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -838,11 +870,12 @@
   
   
 
-<h1 id="overview-of-toblers-interpolation-methods">Overview of <code class="docutils literal notranslate"><span class="pre">tobler</span></code>s Interpolation Methods<a class="headerlink" href="#overview-of-toblers-interpolation-methods" title="Link to this heading">¶</a></h1>
+<h1 id="overview-of-tobler-s-interpolation-methods">Overview of <code class="docutils literal notranslate"><span class="pre">tobler</span></code>’s Interpolation Methods<a class="headerlink" href="#overview-of-tobler-s-interpolation-methods" title="Link to this heading">¶</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">libpysal.examples</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_example</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">tobler.area_weighted</span><span class="w"> </span><span class="kn">import</span> <span class="n">area_interpolate</span>
@@ -857,8 +890,8 @@
 <p>First we’ll grab two geodataframes representing chaleston, sc–one with census tracts and the other with zctas</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">c1</span> <span class="o">=</span> <span class="n">load_example</span><span class="p">(</span><span class="s2">&quot;Charleston1&quot;</span><span class="p">)</span>
-<span class="n">c2</span> <span class="o">=</span> <span class="n">load_example</span><span class="p">(</span><span class="s2">&quot;Charleston2&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">c1</span> <span class="o">=</span> <span class="n">load_example</span><span class="p">(</span><span class="s2">"Charleston1"</span><span class="p">)</span>
+<span class="n">c2</span> <span class="o">=</span> <span class="n">load_example</span><span class="p">(</span><span class="s2">"Charleston2"</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -869,24 +902,24 @@ Downloading Charleston2 to /home/runner/.local/share/pysal/Charleston2
 </div>
 </div>
 </div>
-<p>Since areal interpolation uses spatial ovelays, we should make sure to use a reasonable projection. If a <code class="docutils literal notranslate"><span class="pre">tobler</span></code> detects that a user is performing an analysis on an unprojected geodataframe, it will do its best to reproject the data into the appropriate UTM zone to ensure accuracy. All the same, its best to set the CRS explicitly</p>
+<p>Since areal interpolation uses spatial ovelays, we should make sure to use a reasonable projection. If a <code class="docutils literal notranslate"><span class="pre">tobler</span></code> detects that a user is performing an analysis on an unprojected geodataframe, it will do its best to reproject the data into the appropriate UTM zone to ensure accuracy. All the same, its best to set the local CRS explicitly.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">crs</span> <span class="o">=</span> <span class="mi">6569</span>  <span class="c1"># https://epsg.io/6569</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">crs</span> <span class="o">=</span> <span class="mi">6569</span>  <span class="c1"># https://spatialreference.org/ref/epsg/6569/</span>
 </code></pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">tracts</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">c1</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s2">&quot;sc_final_census2.shp&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">crs</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">tracts</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">c1</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s2">"sc_final_census2.shp"</span><span class="p">))</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">crs</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">zip_codes</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">c2</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s2">&quot;CharlestonMSA2.shp&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">crs</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">zip_codes</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">c2</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s2">"CharlestonMSA2.shp"</span><span class="p">))</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">crs</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -899,12 +932,12 @@ Downloading Charleston2 to /home/runner/.local/share/pysal/Charleston2
 <span class="n">zip_codes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
 <span class="k">for</span> <span class="n">_ax</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">:</span>
-    <span class="n">_ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+    <span class="n">_ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">"off"</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/ab8df2ef14e4f69e55d5b145d82bcf17eeea0a557c26e3e2be25205d9c607b97.png" src="../_images/ab8df2ef14e4f69e55d5b145d82bcf17eeea0a557c26e3e2be25205d9c607b97.png" />
+<img alt="../_images/272472463d0ecda5b06c03ff0944443e8304a70ac766f2a6e8b49cf20872ff0d.png" src="../_images/272472463d0ecda5b06c03ff0944443e8304a70ac766f2a6e8b49cf20872ff0d.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -914,19 +947,19 @@ Downloading Charleston2 to /home/runner/.local/share/pysal/Charleston2
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Index([&#39;FIPS&#39;, &#39;MSA&#39;, &#39;TOT_POP&#39;, &#39;POP_16&#39;, &#39;POP_65&#39;, &#39;WHITE_&#39;, &#39;BLACK_&#39;,
-       &#39;ASIAN_&#39;, &#39;HISP_&#39;, &#39;MULTI_RA&#39;, &#39;MALES&#39;, &#39;FEMALES&#39;, &#39;MALE1664&#39;,
-       &#39;FEM1664&#39;, &#39;EMPL16&#39;, &#39;EMP_AWAY&#39;, &#39;EMP_HOME&#39;, &#39;EMP_29&#39;, &#39;EMP_30&#39;,
-       &#39;EMP16_2&#39;, &#39;EMP_MALE&#39;, &#39;EMP_FEM&#39;, &#39;OCC_MAN&#39;, &#39;OCC_OFF1&#39;, &#39;OCC_INFO&#39;,
-       &#39;HH_INC&#39;, &#39;POV_POP&#39;, &#39;POV_TOT&#39;, &#39;HSG_VAL&#39;, &#39;POLYID&#39;, &#39;geometry&#39;],
-      dtype=&#39;str&#39;)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Index(['FIPS', 'MSA', 'TOT_POP', 'POP_16', 'POP_65', 'WHITE_', 'BLACK_',
+       'ASIAN_', 'HISP_', 'MULTI_RA', 'MALES', 'FEMALES', 'MALE1664',
+       'FEM1664', 'EMPL16', 'EMP_AWAY', 'EMP_HOME', 'EMP_29', 'EMP_30',
+       'EMP16_2', 'EMP_MALE', 'EMP_FEM', 'OCC_MAN', 'OCC_OFF1', 'OCC_INFO',
+       'HH_INC', 'POV_POP', 'POV_TOT', 'HSG_VAL', 'POLYID', 'geometry'],
+      dtype='str')
 </code></pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">tracts</span><span class="p">[</span><span class="s2">&quot;pct_poverty&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tracts</span><span class="o">.</span><span class="n">POV_POP</span> <span class="o">/</span> <span class="n">tracts</span><span class="o">.</span><span class="n">POV_TOT</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">tracts</span><span class="p">[</span><span class="s2">"pct_poverty"</span><span class="p">]</span> <span class="o">=</span> <span class="n">tracts</span><span class="o">.</span><span class="n">POV_POP</span> <span class="o">/</span> <span class="n">tracts</span><span class="o">.</span><span class="n">POV_TOT</span>
 </code></pre></div>
 </div>
 </div>
@@ -938,8 +971,8 @@ Downloading Charleston2 to /home/runner/.local/share/pysal/Charleston2
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">results</span> <span class="o">=</span> <span class="n">area_interpolate</span><span class="p">(</span>
     <span class="n">source_df</span><span class="o">=</span><span class="n">tracts</span><span class="p">,</span>
     <span class="n">target_df</span><span class="o">=</span><span class="n">zip_codes</span><span class="p">,</span>
-    <span class="n">intensive_variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;pct_poverty&quot;</span><span class="p">],</span>
-    <span class="n">extensive_variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;EMP_MALE&quot;</span><span class="p">],</span>
+    <span class="n">intensive_variables</span><span class="o">=</span><span class="p">[</span><span class="s2">"pct_poverty"</span><span class="p">],</span>
+    <span class="n">extensive_variables</span><span class="o">=</span><span class="p">[</span><span class="s2">"EMP_MALE"</span><span class="p">],</span>
 <span class="p">)</span>
 </code></pre></div>
 </div>
@@ -949,46 +982,104 @@ Downloading Charleston2 to /home/runner/.local/share/pysal/Charleston2
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
 
-<span class="n">results</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;EMP_MALE&quot;</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">&quot;quantiles&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">tracts</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;EMP_MALE&quot;</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">&quot;quantiles&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">results</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">"EMP_MALE"</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">"quantiles"</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">tracts</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">"EMP_MALE"</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">"quantiles"</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;interpolated&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;original&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"interpolated"</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"original"</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">_ax</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">:</span>
-    <span class="n">_ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Male Employment (extensive)&quot;</span><span class="p">)</span>
+    <span class="n">_ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">"off"</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">"Male Employment (extensive)"</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Text(0.5, 0.98, &#39;Male Employment (extensive)&#39;)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Text(0.5, 0.98, 'Male Employment (extensive)')
 </code></pre></div>
 </div>
-<img alt="../_images/1ba10ad9c3614018f1ef4aaede215932167d8dc41301c8d0935295bfd54b0ef8.png" src="../_images/1ba10ad9c3614018f1ef4aaede215932167d8dc41301c8d0935295bfd54b0ef8.png" />
+<img alt="../_images/267b290b00c7575923170c82d63790a4ad22b0d9516809735cc180c8332edccf.png" src="../_images/267b290b00c7575923170c82d63790a4ad22b0d9516809735cc180c8332edccf.png" />
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
 
-<span class="n">results</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;pct_poverty&quot;</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">&quot;quantiles&quot;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;magma&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">tracts</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;pct_poverty&quot;</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">&quot;quantiles&quot;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;magma&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">results</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">"pct_poverty"</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">"quantiles"</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">"magma"</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">tracts</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">"pct_poverty"</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">"quantiles"</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">"magma"</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;interpolated&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;original&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"interpolated"</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"original"</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">_ax</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">:</span>
-    <span class="n">_ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Poverty Rate (intensive)&quot;</span><span class="p">)</span>
+    <span class="n">_ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">"off"</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">"Poverty Rate (intensive)"</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Text(0.5, 0.98, &#39;Poverty Rate (intensive)&#39;)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Text(0.5, 0.98, 'Poverty Rate (intensive)')
 </code></pre></div>
 </div>
-<img alt="../_images/d9d7b036487cc2e850d2391f7c280fbecd55125c64770edf4621f68ab0bb3d50.png" src="../_images/d9d7b036487cc2e850d2391f7c280fbecd55125c64770edf4621f68ab0bb3d50.png" />
+<img alt="../_images/34a446e4acf36aa00cf8394e4c260461a7a9639ec5e663b01c5e5dee0992397d.png" src="../_images/34a446e4acf36aa00cf8394e4c260461a7a9639ec5e663b01c5e5dee0992397d.png" />
 </div>
 </div>
+<h3 id="performance">Performance<a class="headerlink" href="#performance" title="Link to this heading">¶</a></h3>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">area_interpolate</span></code> will run in a single process, which is typically good enough for small- to medium-sized GeoDataFrames. However, you can specify <code class="docutils literal notranslate"><span class="pre">n_jobs</span></code> to set the number of processes to be used to run the operation in parallel, where <code class="docutils literal notranslate"><span class="pre">-1</span></code> represents all available. This can significantly speed-up the computation for large datasets. We can illustrate this using generated grids and interpolation of a random variable between two hexagonal grids with different orientation.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">grid1</span> <span class="o">=</span> <span class="n">tracts</span><span class="o">.</span><span class="n">make_grid</span><span class="p">(</span>
+    <span class="n">cell_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">grid_type</span><span class="o">=</span><span class="s2">"hexagon"</span><span class="p">,</span> <span class="n">flat_topped</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span><span class="o">.</span><span class="n">to_frame</span><span class="p">(</span><span class="s2">"geometry"</span><span class="p">)</span>
+<span class="n">grid2</span> <span class="o">=</span> <span class="n">tracts</span><span class="o">.</span><span class="n">make_grid</span><span class="p">(</span><span class="n">cell_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">grid_type</span><span class="o">=</span><span class="s2">"hexagon"</span><span class="p">,</span> <span class="n">flat_topped</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">to_frame</span><span class="p">(</span>
+    <span class="s2">"geometry"</span>
+<span class="p">)</span>
+<span class="n">grid1</span><span class="p">[</span><span class="s2">"variable"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">grid1</span><span class="p">))</span>
+<span class="n">grid1</span><span class="o">.</span><span class="n">shape</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>(839044, 2)
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>When comparing the two following lines on a machine with 24 cores, the timing is as follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">interpolated_grid</span> <span class="o">=</span> <span class="n">area_interpolate</span><span class="p">(</span><span class="n">grid1</span><span class="p">,</span> <span class="n">grid2</span><span class="p">,</span> <span class="n">extensive_variables</span><span class="o">=</span><span class="p">[</span><span class="s2">"variable"</span><span class="p">])</span>
+<span class="n">interpolated_grid</span> <span class="o">=</span> <span class="n">area_interpolate</span><span class="p">(</span>
+    <span class="n">grid1</span><span class="p">,</span>
+    <span class="n">grid2</span><span class="p">,</span>
+    <span class="n">extensive_variables</span><span class="o">=</span><span class="p">[</span><span class="s2">"variable"</span><span class="p">],</span>
+    <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>Single-threaded:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="n">CPU</span> <span class="n">times</span><span class="p">:</span> <span class="n">user</span> <span class="mf">26.2</span> <span class="n">s</span><span class="p">,</span> <span class="n">sys</span><span class="p">:</span> <span class="mf">67.9</span> <span class="n">ms</span><span class="p">,</span> <span class="n">total</span><span class="p">:</span> <span class="mf">26.3</span> <span class="n">s</span>
+<span class="n">Wall</span> <span class="n">time</span><span class="p">:</span> <span class="mf">26.3</span> <span class="n">s</span>
+</code></pre></div>
+</div>
+<p>Parallel:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="n">CPU</span> <span class="n">times</span><span class="p">:</span> <span class="n">user</span> <span class="mf">11.5</span> <span class="n">s</span><span class="p">,</span> <span class="n">sys</span><span class="p">:</span> <span class="mf">1.62</span> <span class="n">s</span><span class="p">,</span> <span class="n">total</span><span class="p">:</span> <span class="mf">13.1</span> <span class="n">s</span>
+<span class="n">Wall</span> <span class="n">time</span><span class="p">:</span> <span class="mf">15.5</span> <span class="n">s</span>
+</code></pre></div>
+</div>
+<p>You can see that it nearly halved the computation time. Interpolation is not an embarrassingly parallel algorithm so not all parts of the process can be parallelised, but you can expect about double the performance in most cases. However, the exact case is heavily dependent on the nature of the data and relations between polygons in source and destination.</p>
+<p>The same case above, with <code class="docutils literal notranslate"><span class="pre">grid1</span></code> using <code class="docutils literal notranslate"><span class="pre">cell_size</span></code> of 50 and <code class="docutils literal notranslate"><span class="pre">grid2</span></code> using <code class="docutils literal notranslate"><span class="pre">500</span></code>, would yield:</p>
+<p>Single-threaded:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="n">CPU</span> <span class="n">times</span><span class="p">:</span> <span class="n">user</span> <span class="mf">23.1</span> <span class="n">s</span><span class="p">,</span> <span class="n">sys</span><span class="p">:</span> <span class="mi">0</span> <span class="n">ns</span><span class="p">,</span> <span class="n">total</span><span class="p">:</span> <span class="mf">23.1</span> <span class="n">s</span>
+<span class="n">Wall</span> <span class="n">time</span><span class="p">:</span> <span class="mf">23.1</span> <span class="n">s</span>
+</code></pre></div>
+</div>
+<p>Parallel:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="n">CPU</span> <span class="n">times</span><span class="p">:</span> <span class="n">user</span> <span class="mf">5.71</span> <span class="n">s</span><span class="p">,</span> <span class="n">sys</span><span class="p">:</span> <span class="mi">530</span> <span class="n">ms</span><span class="p">,</span> <span class="n">total</span><span class="p">:</span> <span class="mf">6.24</span> <span class="n">s</span>
+<span class="n">Wall</span> <span class="n">time</span><span class="p">:</span> <span class="mf">7.39</span> <span class="n">s</span>
+</code></pre></div>
+</div>
+<p>That is about 3x faster. The most difference would be in situations when one of the GeoDataFrames contains non-compact geometries that do not fit nicely to the structure of an STRtree spatial index.</p>
 <hr class="docutils" />
 <h2 id="dasymetric-interpolation">Dasymetric Interpolation<a class="headerlink" href="#dasymetric-interpolation" title="Link to this heading">¶</a></h2>
 <p>To help improve accuracy in interpolation we can use axiliary information to mask out areas we know aren’t inhabited. For example we can use raster data like <a class="reference external" href="https://www.mrlc.gov/national-land-cover-database-nlcd-2016">https://www.mrlc.gov/national-land-cover-database-nlcd-2016</a> to mask out uninhabited land uses. To do so, we need to provide a path to the raster and a list of pixel values that are considered developed. Default values are taken from NLCD.</p>
@@ -997,13 +1088,13 @@ Downloading Charleston2 to /home/runner/.local/share/pysal/Charleston2
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">rasterio</span>
 
-<span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">Env</span><span class="p">(</span><span class="n">AWS_NO_SIGN_REQUEST</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">):</span>
+<span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">Env</span><span class="p">(</span><span class="n">AWS_NO_SIGN_REQUEST</span><span class="o">=</span><span class="s2">"YES"</span><span class="p">):</span>
     <span class="n">results</span> <span class="o">=</span> <span class="n">masked_area_interpolate</span><span class="p">(</span>
-        <span class="n">raster</span><span class="o">=</span><span class="s2">&quot;s3://spatial-ucr/nlcd/landcover/nlcd_landcover_2011.tif&quot;</span><span class="p">,</span>
+        <span class="n">raster</span><span class="o">=</span><span class="s2">"s3://spatial-ucr/nlcd/landcover/nlcd_landcover_2011.tif"</span><span class="p">,</span>
         <span class="n">source_df</span><span class="o">=</span><span class="n">tracts</span><span class="p">,</span>
         <span class="n">target_df</span><span class="o">=</span><span class="n">zip_codes</span><span class="p">,</span>
-        <span class="n">intensive_variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;pct_poverty&quot;</span><span class="p">],</span>
-        <span class="n">extensive_variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;EMP_MALE&quot;</span><span class="p">],</span>
+        <span class="n">intensive_variables</span><span class="o">=</span><span class="p">[</span><span class="s2">"pct_poverty"</span><span class="p">],</span>
+        <span class="n">extensive_variables</span><span class="o">=</span><span class="p">[</span><span class="s2">"EMP_MALE"</span><span class="p">],</span>
         <span class="n">pixel_values</span><span class="o">=</span><span class="p">[</span><span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">24</span><span class="p">],</span>
     <span class="p">)</span>
 </code></pre></div>
@@ -1014,44 +1105,44 @@ Downloading Charleston2 to /home/runner/.local/share/pysal/Charleston2
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
 
-<span class="n">results</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;EMP_MALE&quot;</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">&quot;quantiles&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">tracts</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;EMP_MALE&quot;</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">&quot;quantiles&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">results</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">"EMP_MALE"</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">"quantiles"</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">tracts</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">"EMP_MALE"</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">"quantiles"</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;interpolated&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;original&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"interpolated"</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"original"</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">_ax</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">:</span>
-    <span class="n">_ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Male Employment (extensive)&quot;</span><span class="p">)</span>
+    <span class="n">_ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">"off"</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">"Male Employment (extensive)"</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Text(0.5, 0.98, &#39;Male Employment (extensive)&#39;)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Text(0.5, 0.98, 'Male Employment (extensive)')
 </code></pre></div>
 </div>
-<img alt="../_images/d0376107236ca35d4a540a76b945099de169532820f38fd36001535e8d8b075e.png" src="../_images/d0376107236ca35d4a540a76b945099de169532820f38fd36001535e8d8b075e.png" />
+<img alt="../_images/86c1ddff25cfc37dd1802b3473d2f9906b55cc6f860ef0c7bf099370407e8956.png" src="../_images/86c1ddff25cfc37dd1802b3473d2f9906b55cc6f860ef0c7bf099370407e8956.png" />
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
 
-<span class="n">results</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;pct_poverty&quot;</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">&quot;quantiles&quot;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;magma&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">tracts</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;pct_poverty&quot;</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">&quot;quantiles&quot;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;magma&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">results</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">"pct_poverty"</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">"quantiles"</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">"magma"</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">tracts</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">"pct_poverty"</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">"quantiles"</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">"magma"</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;interpolated&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;original&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"interpolated"</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"original"</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">_ax</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">:</span>
-    <span class="n">_ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Poverty Rate (intensive)&quot;</span><span class="p">)</span>
+    <span class="n">_ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">"off"</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">"Poverty Rate (intensive)"</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Text(0.5, 0.98, &#39;Poverty Rate (intensive)&#39;)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Text(0.5, 0.98, 'Poverty Rate (intensive)')
 </code></pre></div>
 </div>
-<img alt="../_images/5a5923da6ae112e818567413ad71d53cc807093a20ef104e364c82ac63d6ec95.png" src="../_images/5a5923da6ae112e818567413ad71d53cc807093a20ef104e364c82ac63d6ec95.png" />
+<img alt="../_images/5006503ac094f212b739e052cf06dc44d5c1b798a825ce72e886bed9ebd27f43.png" src="../_images/5006503ac094f212b739e052cf06dc44d5c1b798a825ce72e886bed9ebd27f43.png" />
 </div>
 </div>
 <hr class="docutils" />
@@ -1060,53 +1151,12 @@ Downloading Charleston2 to /home/runner/.local/share/pysal/Charleston2
 <p>Unlike area weighted and dasymetric techniques, model-based interpolation estimates only a single variable at a time</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">Env</span><span class="p">(</span><span class="n">AWS_NO_SIGN_REQUEST</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">Env</span><span class="p">(</span><span class="n">AWS_NO_SIGN_REQUEST</span><span class="o">=</span><span class="s2">"YES"</span><span class="p">):</span>
     <span class="n">emp_results</span> <span class="o">=</span> <span class="n">glm</span><span class="p">(</span>
-        <span class="n">raster</span><span class="o">=</span><span class="s2">&quot;s3://spatial-ucr/nlcd/landcover/nlcd_landcover_2011.tif&quot;</span><span class="p">,</span>
+        <span class="n">raster</span><span class="o">=</span><span class="s2">"s3://spatial-ucr/nlcd/landcover/nlcd_landcover_2011.tif"</span><span class="p">,</span>
         <span class="n">source_df</span><span class="o">=</span><span class="n">tracts</span><span class="p">,</span>
         <span class="n">target_df</span><span class="o">=</span><span class="n">zip_codes</span><span class="p">,</span>
-        <span class="n">variable</span><span class="o">=</span><span class="s2">&quot;EMP_MALE&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-</code></pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>/home/runner/micromamba/envs/test/lib/python3.14/site-packages/rasterstats/io.py:335: NodataWarning: Setting nodata to -999; specify nodata explicitly
-  warnings.warn(
-</code></pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
-
-<span class="n">emp_results</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;EMP_MALE&quot;</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">&quot;quantiles&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">tracts</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;EMP_MALE&quot;</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">&quot;quantiles&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;interpolated&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;original&quot;</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">_ax</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">:</span>
-    <span class="n">_ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Male Employment (extensive)&quot;</span><span class="p">)</span>
-</code></pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Text(0.5, 0.98, &#39;Male Employment (extensive)&#39;)
-</code></pre></div>
-</div>
-<img alt="../_images/d53da3d85f646020a1f0506bf28e76e660aabb5259c37e55d42b07f7018b041c.png" src="../_images/d53da3d85f646020a1f0506bf28e76e660aabb5259c37e55d42b07f7018b041c.png" />
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">Env</span><span class="p">(</span><span class="n">AWS_NO_SIGN_REQUEST</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">):</span>
-    <span class="n">pov_results</span> <span class="o">=</span> <span class="n">glm</span><span class="p">(</span>
-        <span class="n">raster</span><span class="o">=</span><span class="s2">&quot;s3://spatial-ucr/nlcd/landcover/nlcd_landcover_2011.tif&quot;</span><span class="p">,</span>
-        <span class="n">source_df</span><span class="o">=</span><span class="n">tracts</span><span class="p">,</span>
-        <span class="n">target_df</span><span class="o">=</span><span class="n">zip_codes</span><span class="p">,</span>
-        <span class="n">variable</span><span class="o">=</span><span class="s2">&quot;pct_poverty&quot;</span><span class="p">,</span>
+        <span class="n">extensive_variable</span><span class="o">=</span><span class="s2">"EMP_MALE"</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div>
 </div>
@@ -1116,25 +1166,25 @@ Downloading Charleston2 to /home/runner/.local/share/pysal/Charleston2
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
 
-<span class="n">pov_results</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;pct_poverty&quot;</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">&quot;quantiles&quot;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;magma&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">tracts</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;pct_poverty&quot;</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">&quot;quantiles&quot;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;magma&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">emp_results</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">"EMP_MALE"</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">"quantiles"</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">tracts</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">"EMP_MALE"</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">"quantiles"</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;interpolated&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;original&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"interpolated"</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"original"</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">_ax</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">:</span>
-    <span class="n">_ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Poverty Rate (intensive)&quot;</span><span class="p">)</span>
+    <span class="n">_ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">"off"</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">"Male Employment (extensive)"</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Text(0.5, 0.98, &#39;Poverty Rate (intensive)&#39;)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Text(0.5, 0.98, 'Male Employment (extensive)')
 </code></pre></div>
 </div>
-<img alt="../_images/c01b4c2a0bb3cb2fe639e66e5ff634500baebd8be9b4dcd0813b536a6bf94133.png" src="../_images/c01b4c2a0bb3cb2fe639e66e5ff634500baebd8be9b4dcd0813b536a6bf94133.png" />
+<img alt="../_images/b85cfd5a6e99774cbacca4fb6414c56fc12881b10d1af3b3d265833322ad79a6.png" src="../_images/b85cfd5a6e99774cbacca4fb6414c56fc12881b10d1af3b3d265833322ad79a6.png" />
 </div>
 </div>
-<p>From the maps, it looks like the model-based approach is better at estimating the extensive variable (male employment) than the intensive variable (poverty rate), at least using the default regression equation. That’s not a surprising result, though, because its much easier to intuit the relationship between land-use types and total employment levels than land-use type and poverty rate</p>
+<p>From the map, you can inspect the model-based approach for the extensive variable (male employment).</p>
 
 
 
@@ -1181,7 +1231,7 @@ Downloading Charleston2 to /home/runner/.local/share/pysal/Charleston2
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    8.2.3.
+    9.2.0.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

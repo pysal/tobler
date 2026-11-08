@@ -48,7 +48,11 @@
    "source": [
     "## Fetching boundary data on the fly\n",
     "\n",
-    "We'll use osmnx to grab a geodataframe of the UK boundary"
+    "We'll use osmnx to grab a geodataframe of the UK boundary. That can be installed with  \n",
+    "  \n",
+    "`pip install osmnx`     \n",
+    "or    \n",
+    "`conda install osmnx -c conda-forge`"
    ]
   },
   {

@@ -42,7 +42,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.74c816e3f9967dd6e.min.css?v=6cfe2491" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.6efbe22605a23fcd6.min.css?v=b2ceb110" />
         <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
         <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
         <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=93c5fc88" />
@@ -782,86 +782,42 @@
 <h2 id="following-an-nhgis-like-methodology">Following an NHGIS-like Methodology<a class="headerlink" href="#following-an-nhgis-like-methodology" title="Link to this heading">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">contextily</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ctx</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">osmnx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ox</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">tobler.area_weighted</span><span class="w"> </span><span class="kn">import</span> <span class="n">area_interpolate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tobler.dasymetric</span><span class="w"> </span><span class="kn">import</span> <span class="n">extract_raster_features</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tobler.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">h3fy</span>
 
-<span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/cenpy-devs/cenpy.git<span class="w"> </span>-U
-
 <span class="o">%</span><span class="k">load_ext</span> watermark
-<span class="o">%</span><span class="k">watermark</span> -a &#39;eli knaap&#39; -v -d -u -p tobler,geopandas,rasterio
+<span class="o">%</span><span class="k">watermark</span> -a 'eli knaap' -v -d -u -p tobler,geopandas,rasterio
 </code></pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Collecting git+https://github.com/cenpy-devs/cenpy.git
-  Cloning https://github.com/cenpy-devs/cenpy.git to /tmp/pip-req-build-ica85an1
-  Running command git clone --filter=blob:none --quiet https://github.com/cenpy-devs/cenpy.git /tmp/pip-req-build-ica85an1
-  Resolved https://github.com/cenpy-devs/cenpy.git to commit b9e57a1fa9d404be39fd0926e6d0baf015fe1317
-  Installing build dependencies ... ?25l-
- \
- done
-?25h  Getting requirements to build wheel ... ?25l-
- done
-?25h  Preparing metadata (pyproject.toml) ... ?25l-
- done
-?25hRequirement already satisfied: pandas in /home/runner/micromamba/envs/test/lib/python3.14/site-packages (from cenpy==1.0.1) (3.0.2)
-Requirement already satisfied: geopandas in /home/runner/micromamba/envs/test/lib/python3.14/site-packages (from cenpy==1.0.1) (1.1.3)
-Requirement already satisfied: requests in /home/runner/micromamba/envs/test/lib/python3.14/site-packages (from cenpy==1.0.1) (2.33.1)
-Collecting rtree (from cenpy==1.0.1)
-  Downloading rtree-1.4.1-py3-none-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (2.1 kB)
-Requirement already satisfied: numpy in /home/runner/micromamba/envs/test/lib/python3.14/site-packages (from cenpy==1.0.1) (2.4.3)
-Requirement already satisfied: six in /home/runner/micromamba/envs/test/lib/python3.14/site-packages (from cenpy==1.0.1) (1.17.0)
-Collecting fuzzywuzzy (from cenpy==1.0.1)
-  Downloading fuzzywuzzy-0.18.0-py2.py3-none-any.whl.metadata (4.9 kB)
-Requirement already satisfied: libpysal in /home/runner/micromamba/envs/test/lib/python3.14/site-packages (from cenpy==1.0.1) (4.14.1)
-Requirement already satisfied: packaging in /home/runner/micromamba/envs/test/lib/python3.14/site-packages (from geopandas-&gt;cenpy==1.0.1) (26.2)
-Requirement already satisfied: shapely&gt;=2.0.0 in /home/runner/micromamba/envs/test/lib/python3.14/site-packages (from geopandas-&gt;cenpy==1.0.1) (2.1.2)
-Requirement already satisfied: python-dateutil&gt;=2.8.2 in /home/runner/micromamba/envs/test/lib/python3.14/site-packages (from pandas-&gt;cenpy==1.0.1) (2.9.0.post0)
-Requirement already satisfied: beautifulsoup4&gt;=4.13.0 in /home/runner/micromamba/envs/test/lib/python3.14/site-packages (from libpysal-&gt;cenpy==1.0.1) (4.14.3)
-Requirement already satisfied: jinja2 in /home/runner/micromamba/envs/test/lib/python3.14/site-packages (from libpysal-&gt;cenpy==1.0.1) (3.1.6)
-Requirement already satisfied: platformdirs&gt;=3.11.0 in /home/runner/micromamba/envs/test/lib/python3.14/site-packages (from libpysal-&gt;cenpy==1.0.1) (4.9.6)
-Requirement already satisfied: scikit-learn&gt;=1.4.0 in /home/runner/micromamba/envs/test/lib/python3.14/site-packages (from libpysal-&gt;cenpy==1.0.1) (1.8.0)
-Requirement already satisfied: scipy&gt;=1.12.0 in /home/runner/micromamba/envs/test/lib/python3.14/site-packages (from libpysal-&gt;cenpy==1.0.1) (1.17.1)
-Requirement already satisfied: soupsieve&gt;=1.6.1 in /home/runner/micromamba/envs/test/lib/python3.14/site-packages (from beautifulsoup4&gt;=4.13.0-&gt;libpysal-&gt;cenpy==1.0.1) (2.8.3)
-Requirement already satisfied: typing-extensions&gt;=4.0.0 in /home/runner/micromamba/envs/test/lib/python3.14/site-packages (from beautifulsoup4&gt;=4.13.0-&gt;libpysal-&gt;cenpy==1.0.1) (4.15.0)
-Requirement already satisfied: charset_normalizer&lt;4,&gt;=2 in /home/runner/micromamba/envs/test/lib/python3.14/site-packages (from requests-&gt;cenpy==1.0.1) (3.4.7)
-Requirement already satisfied: idna&lt;4,&gt;=2.5 in /home/runner/micromamba/envs/test/lib/python3.14/site-packages (from requests-&gt;cenpy==1.0.1) (3.13)
-Requirement already satisfied: urllib3&lt;3,&gt;=1.26 in /home/runner/micromamba/envs/test/lib/python3.14/site-packages (from requests-&gt;cenpy==1.0.1) (2.7.0)
-Requirement already satisfied: certifi&gt;=2023.5.7 in /home/runner/micromamba/envs/test/lib/python3.14/site-packages (from requests-&gt;cenpy==1.0.1) (2026.4.22)
-Requirement already satisfied: joblib&gt;=1.3.0 in /home/runner/micromamba/envs/test/lib/python3.14/site-packages (from scikit-learn&gt;=1.4.0-&gt;libpysal-&gt;cenpy==1.0.1) (1.5.3)
-Requirement already satisfied: threadpoolctl&gt;=3.2.0 in /home/runner/micromamba/envs/test/lib/python3.14/site-packages (from scikit-learn&gt;=1.4.0-&gt;libpysal-&gt;cenpy==1.0.1) (3.6.0)
-Requirement already satisfied: MarkupSafe&gt;=2.0 in /home/runner/micromamba/envs/test/lib/python3.14/site-packages (from jinja2-&gt;libpysal-&gt;cenpy==1.0.1) (3.0.3)
-Downloading fuzzywuzzy-0.18.0-py2.py3-none-any.whl (18 kB)
-Downloading rtree-1.4.1-py3-none-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (507 kB)
-Building wheels for collected packages: cenpy
-  Building wheel for cenpy (pyproject.toml) ... ?25l-
- done
-?25h  Created wheel for cenpy: filename=cenpy-1.0.1-py3-none-any.whl size=30427 sha256=2a7b17c993834d772d87cbc454a6c85ddb30c258c2f6bd30baff3e75e3f58370
-  Stored in directory: /tmp/pip-ephem-wheel-cache-x8ym4u36/wheels/c9/2a/4a/2656d97097aaccede1a7906ba339f0c06a867250eb39b3f0a6
-Successfully built cenpy
-Installing collected packages: fuzzywuzzy, rtree, cenpy
-?25l
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">3/3</span> [cenpy]
-Successfully installed cenpy-1.0.1 fuzzywuzzy-0.18.0 rtree-1.4.1
-Author: eli knaap
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Author: eli knaap
 
-Last updated: 2026-05-09
+Last updated: 2026-11-08
 
 Python implementation: CPython
-Python version       : 3.14.4
-IPython version      : 9.13.0
+Python version       : 3.14.10
+IPython version      : 9.18.1
 
-tobler   : 0.14.1.dev6+gaa0aba6ac
-geopandas: 1.1.3
-rasterio : 1.5.0
+tobler   : 0.14.1.dev85+ga89400ec2
+geopandas: 1.2.0
+rasterio : 1.5.2
+</code></pre></div>
+</div>
+</div>
+</div>
+<p><strong>Note</strong>: This notebook relies on functionality from the <a class="reference external" href="https://contextily.readthedocs.io/en/latest/"><code class="docutils literal notranslate"><span class="pre">contextily</span></code></a> package that provides convenient basemaps for geospatial plots, the <a class="reference external" href="https://osmnx.readthedocs.io/en/stable/"><code class="docutils literal notranslate"><span class="pre">osmnx</span></code></a> package that provides access to OpenStreetMap data, and the <a class="reference external" href="https://pypi.org/project/pytidycensus/"><code class="docutils literal notranslate"><span class="pre">pytidycensus</span></code></a> package that provides an interface to the U.S. Census API. Set the <code class="docutils literal notranslate"><span class="pre">CENSUS_API_KEY</span></code> environment variable to your Census API key before running the data-fetching cells. Install the packages with</p>
+<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">contextily</span> <span class="pre">osmnx</span> <span class="pre">pytidycensus</span></code><br />
+or<br />
+<code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">contextily</span> <span class="pre">osmnx</span> <span class="pre">-c</span> <span class="pre">conda-forge</span></code> followed by <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">pytidycensus</span></code></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">osmnx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ox</span>
 </code></pre></div>
 </div>
 </div>
@@ -874,26 +830,10 @@ rasterio : 1.5.0
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">rside_streets</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">features_from_place</span><span class="p">(</span>
-    <span class="s2">&quot;Riverside County, California&quot;</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;highway&quot;</span><span class="p">:</span> <span class="s2">&quot;residential&quot;</span><span class="p">}</span>
+    <span class="s2">"Riverside County, California"</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">{</span><span class="s2">"highway"</span><span class="p">:</span> <span class="s2">"residential"</span><span class="p">}</span>
 <span class="p">)</span>
 <span class="n">rside_streets</span> <span class="o">=</span> <span class="n">rside_streets</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="mi">2230</span><span class="p">)</span>
 <span class="n">rside_streets</span> <span class="o">=</span> <span class="n">rside_streets</span><span class="o">.</span><span class="n">set_geometry</span><span class="p">(</span><span class="n">rside_streets</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="mi">300</span><span class="p">))</span>
-</code></pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">rside_streets</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
-</code></pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>&lt;class &#39;geopandas.geodataframe.GeoDataFrame&#39;&gt;
-MultiIndex: 55109 entries, (&#39;way&#39;, np.int64(5942156)) to (&#39;way&#39;, np.int64(1510705395))
-Columns: 207 entries, geometry to cycleway:right:segregated
-dtypes: geometry(1), str(206)
-memory usage: 92.1 MB
 </code></pre></div>
 </div>
 </div>
@@ -902,7 +842,7 @@ memory usage: 92.1 MB
 <p>First, download <a class="reference external" href="https://www.mrlc.gov/data">NLCD</a> data from here: https://s3-us-west-2.amazonaws.com/mrlc/NLCD_2016_Impervious_L48_20190405.zip, then unzip the archive and pass the path to the <code class="docutils literal notranslate"><span class="pre">img</span></code> file to tobler’s <code class="docutils literal notranslate"><span class="pre">extract_raster_features</span></code> function</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">nlcd_path</span> <span class="o">=</span> <span class="s2">&quot;s3://spatial-ucr/nlcd/impervious/nlcd_impervious_2016.tif&quot;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">nlcd_path</span> <span class="o">=</span> <span class="s2">"s3://spatial-ucr/nlcd/impervious/nlcd_impervious_2016.tif"</span>
 </code></pre></div>
 </div>
 </div>
@@ -911,29 +851,10 @@ memory usage: 92.1 MB
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">rasterio</span>
 
-<span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">Env</span><span class="p">(</span><span class="n">AWS_NO_SIGN_REQUEST</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">):</span>
+<span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">Env</span><span class="p">(</span><span class="n">AWS_NO_SIGN_REQUEST</span><span class="o">=</span><span class="s2">"YES"</span><span class="p">):</span>
     <span class="n">urban_rside</span> <span class="o">=</span> <span class="n">extract_raster_features</span><span class="p">(</span>
         <span class="n">rside_streets</span><span class="p">,</span> <span class="n">nlcd_path</span><span class="p">,</span> <span class="n">pixel_values</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">101</span><span class="p">)),</span> <span class="n">collapse_values</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span>
-</code></pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">urban_rside</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
-</code></pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>&lt;class &#39;geopandas.geodataframe.GeoDataFrame&#39;&gt;
-RangeIndex: 23676 entries, 0 to 23675
-Data columns (total 1 columns):
- #   Column    Non-Null Count  Dtype   
----  ------    --------------  -----   
- 0   geometry  23676 non-null  geometry
-dtypes: geometry(1)
-memory usage: 185.1 KB
 </code></pre></div>
 </div>
 </div>
@@ -948,86 +869,39 @@ memory usage: 185.1 KB
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">14</span><span class="p">))</span>
-<span class="n">urban_rside</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">urban_rside</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">);</span>
 </code></pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>&lt;Axes: &gt;
-</code></pre></div>
-</div>
-<img alt="../_images/c2fcbecf5f736e460440e6983336e1e1c01acbb70557ffa09773397b353ab214.png" src="../_images/c2fcbecf5f736e460440e6983336e1e1c01acbb70557ffa09773397b353ab214.png" />
+<img alt="../_images/7f1b5ea2f0c0e44c282ac65f2313e62a63f3ad7d9dff583675e1fe10a9840afd.png" src="../_images/7f1b5ea2f0c0e44c282ac65f2313e62a63f3ad7d9dff583675e1fe10a9840afd.png" />
 </div>
 </div>
 <p>This geodataframe represents the areas that meet both criteria NHGIS suggests</p>
-<p>Now we need some census data to transfer geometries. Lets grab tract-level population counts using cenpy</p>
+<p>Now we need some census data to transfer geometries. Let’s use tract-level median home values. The cell below requires an API key, so we read the result from the cache. If you’d like to replicate this analysis for another area, use <code class="docutils literal notranslate"><span class="pre">pytidycensus</span></code> as indicated below.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">cenpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">products</span>
-
-<span class="n">acs</span> <span class="o">=</span> <span class="n">products</span><span class="o">.</span><span class="n">ACS</span><span class="p">(</span><span class="mi">2017</span><span class="p">)</span>
-<span class="n">rside_census</span> <span class="o">=</span> <span class="n">acs</span><span class="o">.</span><span class="n">from_county</span><span class="p">(</span><span class="s2">&quot;Riverside County&quot;</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;B25077_001E&quot;</span><span class="p">])</span>
-<span class="n">rside_census</span> <span class="o">=</span> <span class="n">rside_census</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="mi">2230</span><span class="p">)</span>
-
-<span class="n">rside_census</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">rside_census</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="s2">"cache/rside_census.gpkg"</span><span class="p">)</span>
 </code></pre></div>
 </div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>/home/runner/micromamba/envs/test/lib/python3.14/site-packages/fuzzywuzzy/fuzz.py:11: UserWarning: Using slow pure-python SequenceMatcher. Install python-Levenshtein to remove this warning
-  warnings.warn(&#39;Using slow pure-python SequenceMatcher. Install python-Levenshtein to remove this warning&#39;)
-</code></pre></div>
-</div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>&lt;Axes: &gt;
-</code></pre></div>
-</div>
-<img alt="../_images/2de336341fb373b0051e044c5c60d23c4e80de68325ece96e0054d89a2fcc78b.png" src="../_images/2de336341fb373b0051e044c5c60d23c4e80de68325ece96e0054d89a2fcc78b.png" />
 </div>
 </div>
 <p>And lets generate some synthetic zones to transfer this population data into using h3 hexagons</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">rside_hex</span> <span class="o">=</span> <span class="n">h3fy</span><span class="p">(</span><span class="n">rside_census</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
-<span class="n">rside_hex</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">rside_hex</span><span class="o">.</span><span class="n">plot</span><span class="p">();</span>
 </code></pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>&lt;Axes: &gt;
-</code></pre></div>
-</div>
-<img alt="../_images/15480d29766843a78b0ea781ca3b284769de9c2da89d147c85691abfe82b4bb4.png" src="../_images/15480d29766843a78b0ea781ca3b284769de9c2da89d147c85691abfe82b4bb4.png" />
+<img alt="../_images/df8983e33f76f5d4f628d5270df8835f11e158669082054c94d582c90a982250.png" src="../_images/df8983e33f76f5d4f628d5270df8835f11e158669082054c94d582c90a982250.png" />
 </div>
 </div>
 <p>Ok, now all that’s left is to clip our input census data, “restricting” it to the locations NLCD defines as 5-100% impervious. To do so, we just need to clip the census data using our extracted urban features as a mask</p>
-<p>The commented cell below takes hours and hours because geopandas current clip function is very inefficient for these data–<strong>dont uncomment it!</strong></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># rside_dasy = gpd.clip(rside_census, urban_rside)</span>
-</code></pre></div>
-</div>
-</div>
-</div>
-<p>Instead, lets define a more efficient clip operation using the spatial index</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">iterclip</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
-    <span class="n">tree</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">sindex</span>
-    <span class="n">features</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">source</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-        <span class="n">query</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">predicate</span><span class="o">=</span><span class="s2">&quot;intersects&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-        <span class="n">submask</span> <span class="o">=</span> <span class="n">mask</span><span class="p">[</span><span class="n">mask</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">query</span><span class="p">)]</span>
-        <span class="n">single</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="n">source</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span>
-        <span class="n">features</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gpd</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">single</span><span class="p">,</span> <span class="n">submask</span><span class="p">))</span>
-    <span class="n">frame</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">features</span><span class="p">),</span> <span class="n">crs</span><span class="o">=</span><span class="n">source</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">frame</span>
-</code></pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">dasy</span> <span class="o">=</span> <span class="n">iterclip</span><span class="p">(</span><span class="n">rside_census</span><span class="p">,</span> <span class="n">urban_rside</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">dasy</span> <span class="o">=</span> <span class="n">rside_census</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">urban_rside</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -1035,20 +909,17 @@ memory usage: 185.1 KB
 <p>Clipping census geometries by the urban features leaves the census attributes intact but reshapes them. If a census tract had 2000 people in it and covered 1 sqmi, but only a quarter mile of the tract was urbanized, the new geodataframe effectively shows these 2000 people occupying the quarter mile. By passing these new data to the <code class="docutils literal notranslate"><span class="pre">areal_interpolate</span></code> function, we’re still assuming that population density is constant across our new geometries (a condition that may not be true in reality) but that assumption is much more plausible than when using original census geometries.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">dasy</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">dasy</span><span class="o">.</span><span class="n">plot</span><span class="p">();</span>
 </code></pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>&lt;Axes: &gt;
-</code></pre></div>
-</div>
-<img alt="../_images/d11d897d447930bcd9416ea773f03ed11098368d3b3ae6f9c0f3e0612aad294b.png" src="../_images/d11d897d447930bcd9416ea773f03ed11098368d3b3ae6f9c0f3e0612aad294b.png" />
+<img alt="../_images/73e44799ce3f8d94ce9ba3380865e0221c55b847c201bd7b9b26f87b55a13aa7.png" src="../_images/73e44799ce3f8d94ce9ba3380865e0221c55b847c201bd7b9b26f87b55a13aa7.png" />
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">dasy</span><span class="o">.</span><span class="n">B25077_001E</span> <span class="o">=</span> <span class="n">dasy</span><span class="o">.</span><span class="n">B25077_001E</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">dasy</span><span class="o">.</span><span class="n">B25077_001E</span> <span class="o">=</span> <span class="n">dasy</span><span class="o">.</span><span class="n">B25077_001E</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"&lt;NA&gt;"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -1060,32 +931,38 @@ memory usage: 185.1 KB
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>0      340500
-1      341400
-2      165800
-3      256600
-4      157900
-        ...  
-448    203300
-449    156100
-450    214700
-451    322500
-452    328400
-Name: B25077_001E, Length: 453, dtype: int64
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>350    528600.0
+161    443700.0
+327    368600.0
+384    454700.0
+54     351500.0
+         ...   
+33     336200.0
+34     251200.0
+117    251200.0
+231    263800.0
+226    305600.0
+Name: B25077_001E, Length: 453, dtype: float64
 </code></pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">interp</span> <span class="o">=</span> <span class="n">area_interpolate</span><span class="p">(</span><span class="n">dasy</span><span class="p">,</span> <span class="n">rside_hex</span><span class="p">,</span> <span class="n">extensive_variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;B25077_001E&quot;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">interp</span> <span class="o">=</span> <span class="n">area_interpolate</span><span class="p">(</span><span class="n">dasy</span><span class="p">,</span> <span class="n">rside_hex</span><span class="p">,</span> <span class="n">extensive_variables</span><span class="o">=</span><span class="p">[</span><span class="s2">"B25077_001E"</span><span class="p">])</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>/home/runner/micromamba/envs/test/lib/python3.14/site-packages/tobler/area_weighted/area_interpolate.py:331: UserWarning: nan values in variable: B25077_001E, replacing with 0.0
+  vals = _nan_check(source_df, variable, fill_value=fill_nan)
 </code></pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">interp</span><span class="p">[</span><span class="s2">&quot;plot&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">B25077_001E</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">interp</span><span class="p">[</span><span class="s2">"plot"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">interp</span><span class="o">.</span><span class="n">B25077_001E</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -1093,20 +970,13 @@ Name: B25077_001E, Length: 453, dtype: int64
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
-<span class="n">interp</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="mi">3857</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;plot&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
-<span class="n">ctx</span><span class="o">.</span><span class="n">add_basemap</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">providers</span><span class="o">.</span><span class="n">CartoDB</span><span class="o">.</span><span class="n">Positron</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+<span class="n">interp</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="mi">3857</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">"plot"</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">tiles</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">"off"</span><span class="p">);</span>
 </code></pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>(np.float64(-13117985.779566513),
- np.float64(-12720300.007852018),
- np.float64(3946892.157340163),
- np.float64(4044586.9064775496))
-</code></pre></div>
-</div>
-<img alt="../_images/22d8dda609c8f7ebcc89d140c858a4670f1e32214becd870296f5dcda282ac34.png" src="../_images/22d8dda609c8f7ebcc89d140c858a4670f1e32214becd870296f5dcda282ac34.png" />
+<img alt="../_images/1844484e7f9466ef052551c0e15b97cdbb7d83bb25b6b1b198369f31c99a8e81.png" src="../_images/1844484e7f9466ef052551c0e15b97cdbb7d83bb25b6b1b198369f31c99a8e81.png" />
 </div>
 </div>
 <p>And there we have it. Riverside’s 2017 population estimated at a regular hexgrid</p>
@@ -1156,7 +1026,7 @@ Name: B25077_001E, Length: 453, dtype: int64
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    8.2.3.
+    9.2.0.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

@@ -4,7 +4,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "# Overview of `tobler`s Interpolation Methods"
+    "# Overview of `tobler`'s Interpolation Methods"
    ]
   },
   {
@@ -15,6 +15,7 @@
    "source": [
     "import geopandas as gpd\n",
     "import matplotlib.pyplot as plt\n",
+    "import numpy as np\n",
     "from libpysal.examples import load_example\n",
     "\n",
     "from tobler.area_weighted import area_interpolate\n",
@@ -47,7 +48,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "Since areal interpolation uses spatial ovelays, we should make sure to use a reasonable projection. If a `tobler` detects that a user is performing an analysis on an unprojected geodataframe, it will do its best to reproject the data into the appropriate UTM zone to ensure accuracy. All the same, its best to set the CRS explicitly"
+    "Since areal interpolation uses spatial ovelays, we should make sure to use a reasonable projection. If a `tobler` detects that a user is performing an analysis on an unprojected geodataframe, it will do its best to reproject the data into the appropriate UTM zone to ensure accuracy. All the same, its best to set the local CRS explicitly."
    ]
   },
   {
@@ -56,7 +57,7 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "crs = 6569  # https://epsg.io/6569"
+    "crs = 6569  # https://spatialreference.org/ref/epsg/6569/"
    ]
   },
   {
@@ -173,6 +174,90 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
+    "### Performance\n",
+    "\n",
+    "By default, `area_interpolate` will run in a single process, which is typically good enough for small- to medium-sized GeoDataFrames. However, you can specify `n_jobs` to set the number of processes to be used to run the operation in parallel, where `-1` represents all available. This can significantly speed-up the computation for large datasets. We can illustrate this using generated grids and interpolation of a random variable between two hexagonal grids with different orientation. "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "grid1 = tracts.make_grid(\n",
+    "    cell_size=100, grid_type=\"hexagon\", flat_topped=False\n",
+    ").to_frame(\"geometry\")\n",
+    "grid2 = tracts.make_grid(cell_size=100, grid_type=\"hexagon\", flat_topped=True).to_frame(\n",
+    "    \"geometry\"\n",
+    ")\n",
+    "grid1[\"variable\"] = np.random.default_rng(seed=9).random(len(grid1))\n",
+    "grid1.shape"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "When comparing the two following lines on a machine with 24 cores, the timing is as follows:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "interpolated_grid = area_interpolate(grid1, grid2, extensive_variables=[\"variable\"])\n",
+    "interpolated_grid = area_interpolate(\n",
+    "    grid1,\n",
+    "    grid2,\n",
+    "    extensive_variables=[\"variable\"],\n",
+    "    n_jobs=-1,\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "vscode": {
+     "languageId": "raw"
+    }
+   },
+   "source": [
+    "Single-threaded:\n",
+    "```\n",
+    "CPU times: user 26.2 s, sys: 67.9 ms, total: 26.3 s\n",
+    "Wall time: 26.3 s\n",
+    "```\n",
+    "Parallel:\n",
+    "```\n",
+    "CPU times: user 11.5 s, sys: 1.62 s, total: 13.1 s\n",
+    "Wall time: 15.5 s\n",
+    "```\n",
+    "\n",
+    "You can see that it nearly halved the computation time. Interpolation is not an embarrassingly parallel algorithm so not all parts of the process can be parallelised, but you can expect about double the performance in most cases. However, the exact case is heavily dependent on the nature of the data and relations between polygons in source and destination.\n",
+    "\n",
+    "The same case above, with `grid1` using `cell_size` of 50 and `grid2` using `500`, would yield:\n",
+    "\n",
+    "Single-threaded:\n",
+    "```\n",
+    "CPU times: user 23.1 s, sys: 0 ns, total: 23.1 s\n",
+    "Wall time: 23.1 s\n",
+    "```\n",
+    "Parallel:\n",
+    "```\n",
+    "CPU times: user 5.71 s, sys: 530 ms, total: 6.24 s\n",
+    "Wall time: 7.39 s\n",
+    "```\n",
+    "\n",
+    "That is about 3x faster. The most difference would be in situations when one of the GeoDataFrames contains non-compact geometries that do not fit nicely to the structure of an STRtree spatial index."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
     "---\n",
     "\n",
     "## Dasymetric Interpolation\n",
@@ -266,7 +351,7 @@
     "        raster=\"s3://spatial-ucr/nlcd/landcover/nlcd_landcover_2011.tif\",\n",
     "        source_df=tracts,\n",
     "        target_df=zip_codes,\n",
-    "        variable=\"EMP_MALE\",\n",
+    "        extensive_variable=\"EMP_MALE\",\n",
     "    )"
    ]
   },
@@ -289,49 +374,16 @@
    ]
   },
   {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "with rasterio.Env(AWS_NO_SIGN_REQUEST=\"YES\"):\n",
-    "    pov_results = glm(\n",
-    "        raster=\"s3://spatial-ucr/nlcd/landcover/nlcd_landcover_2011.tif\",\n",
-    "        source_df=tracts,\n",
-    "        target_df=zip_codes,\n",
-    "        variable=\"pct_poverty\",\n",
-    "    )"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "fig, ax = plt.subplots(1, 2, figsize=(14, 7))\n",
-    "\n",
-    "pov_results.plot(\"pct_poverty\", scheme=\"quantiles\", cmap=\"magma\", ax=ax[0])\n",
-    "tracts.plot(\"pct_poverty\", scheme=\"quantiles\", cmap=\"magma\", ax=ax[1])\n",
-    "\n",
-    "ax[0].set_title(\"interpolated\")\n",
-    "ax[1].set_title(\"original\")\n",
-    "for _ax in ax:\n",
-    "    _ax.axis(\"off\")\n",
-    "fig.suptitle(\"Poverty Rate (intensive)\")"
-   ]
-  },
-  {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "From the maps, it looks like the model-based approach is better at estimating the extensive variable (male employment) than the intensive variable (poverty rate), at least using the default regression equation. That's not a surprising result, though, because its much easier to intuit the relationship between land-use types and total employment levels than land-use type and poverty rate"
+    "From the map, you can inspect the model-based approach for the extensive variable (male employment)."
    ]
   }
  ],
  "metadata": {
   "kernelspec": {
-   "display_name": "Python 3 (ipykernel)",
+   "display_name": "default",
    "language": "python",
    "name": "python3"
   },
@@ -345,7 +397,7 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.14.3"
+   "version": "3.14.6"
   },
   "widgets": {
    "application/vnd.jupyter.widget-state+json": {
