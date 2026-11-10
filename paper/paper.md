@@ -76,7 +76,7 @@ https://joss.readthedocs.io/en/latest/paper.html#:~:text=Your%20paper%20must-,in
 
 `tobler` is an open-source Python library for spatial interpolation and areal data transformation, designed to support a wide range of workflows in geographic information science (GIScience), spatial data science, and applied spatial analysis. The package provides a unified, extensible framework for transferring data between incompatible zonal systems—an essential task when working with spatially aggregated data such as census geographies, administrative boundaries, or service areas.
 
-Areal interpolation is a foundational problem in spatial analysis, arising whenever data collected over one set of polygons (source zones) must be reallocated to another (target zones) with different spatial configurations. `tobler` implements a suite of methods for this task, ranging from simple area-weighted interpolation to more advanced dasymetric and model-based approaches. The package is designed to operate natively on GeoPandas GeoDataFrames, enabling seamless integration into modern Python-based geospatial workflows.
+Areal interpolation is a foundational problem in spatial analysis, arising whenever data collected over one set of polygons (source zones) must be reallocated to another (target zones) with different spatial configurations. `tobler` implements a suite of methods for this task, ranging from simple area-weighted interpolation to more advanced dasymetric and model-based approaches. The package is designed to operate natively on GeoPandas [@fleischmann2026GeoPandas] GeoDataFrames, enabling seamless integration into modern Python-based geospatial workflows.
 
 As part of the Python Spatial Analysis Library (PySAL) ecosystem [@pysal2007; @rey2022pysalecosystem], `tobler` emphasizes composability, transparency, and reproducibility while providing robust implementations of areal interpolation methods for both applied and methodological research.
 
@@ -114,7 +114,7 @@ While similar functionality exists in other ecosystems (e.g., R packages such as
 
 # Software design
 
-`tobler` is designed with attention to both computational efficiency and usability. Spatial overlay operations, which are central to areal interpolation, can be computationally intensive for large datasets. The package leverages vectorized operations and efficient geometric libraries (via GeoPandas [@fleischmann2026GeoPandas] and Shapely [@shapely-2026]) to handle these tasks.
+`tobler` is designed with attention to both computational efficiency and usability. Spatial overlay operations, which are central to areal interpolation, can be computationally intensive for large datasets. The package leverages vectorized operations and efficient geometric libraries (via GeoPandas and Shapely [@shapely-2026]) to handle these tasks.
 
 The API design emphasizes clarity and consistency, with function signatures that explicitly distinguish between extensive and intensive variables. Intensive variables are things like rates or percentages that must be averaged when aggregating, whereas extensive variables are things like counts that must be summed during aggregation.
 
