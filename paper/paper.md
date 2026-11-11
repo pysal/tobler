@@ -118,7 +118,7 @@ While similar functionality exists in other ecosystems (e.g., R packages such as
 
 The API design emphasizes clarity and consistency, with function signatures that explicitly distinguish between extensive and intensive variables. Intensive variables are things like rates or percentages that must be averaged when aggregating, whereas extensive variables are things like counts that must be summed during aggregation.
 
-Additionally, `tobler` is developed with testing and documentation standards consistent with the Scientific Python ecosystem, ensuring reliability and maintainability.
+Additionally, `tobler` is developed with testing and documentation standards consistent with the Scientific Python ecosystem, ensuring reliability and maintainability. Moreover, `tobler` is heavily dependent on the following core libraries on the Scientific Python stack: `numpy` [@numpy], `pandas` [@pandas], `scipy` [@scipy], `rasterio` [@rasterio], and `joblib` [@joblib].
 
 ## Core Functionality
 
