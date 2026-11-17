@@ -82,7 +82,7 @@ As part of the Python Spatial Analysis Library (PySAL) ecosystem [@pysal2007; @r
 
 # Statement of need
 
-Spatial data are commonly aggregated to administrative units such as census tracts, ZIP codes, or political boundaries, which often differ across datasets or change over time. As a result, transferring variables between incompatible zoning systems is a common challenge for longitudinal analysis, data integration, and cross-scale comparison, particularly in the social and behavioral sciences. While Python packages such as `PyKrige` [@benjamin_murphy_2025_17372225] and `pyinterpolate` [@molinski2022PyinterpolateSpatial] support *continuous* spatial interpolation, they are not designed for interpolation between discrete zoning systems.
+Spatial data are commonly aggregated to administrative units such as census tracts, ZIP codes, or political boundaries, which often differ across datasets or change over time. As a result, transferring variables between incompatible zoning systems is a common challenge for longitudinal analysis, data integration, and cross-scale comparison, particularly in the social and behavioral sciences. While Python packages such as `PyKrige` [@benjamin_murphy_2025_17372225] and `pyinterpolate` [@molinski2022PyinterpolateSpatial] support continuous spatial interpolation, they are not designed for interpolation between discrete zoning systems.
 
 Traditional GIS software (e.g., ArcGIS, QGIS [@qgis-2026]) provides tools for areal interpolation, but these implementations are often embedded in graphical interfaces, limiting reproducibility and automation. Moreover, they may not expose the full range of methodological options or allow for easy integration into data science pipelines.
 
@@ -106,9 +106,9 @@ These capabilities make `tobler` particularly valuable for researchers and pract
 * `model` for spatial modeling
 * `viz` provides classification schemes for choropleth mapping
 
-Within this ecosystem, **`tobler`** occupies a critical niche by providing the data integration and interpolation methods necessary to harmonize datasets before analysis in the **explore** or **model** phases.
+Within this ecosystem, **`tobler`** occupies a critical niche by providing the data integration and interpolation methods necessary to harmonize datasets before analysis in the *explore* or *model* phases.
 
-`tobler` complements these packages by addressing the specific problem of spatial data transformation between incompatible zonal systems. Compared to desktop GIS platforms, `tobler` offers advantages like **Reproducibility**, **Transparency**, **Extensibility**, and **Integration**.
+`tobler` complements these packages by addressing the specific problem of spatial data transformation between incompatible zonal systems. Compared to desktop GIS platforms, `tobler` offers advantages like reproducibility, transparency, extensibility, and integration.
 
 While similar functionality exists in other ecosystems (e.g., R packages such as `areal` [@Preneretal2019] or `sf`-based workflows [@RJ-2018-009]), `tobler` provides a native solution for Python users.
 
@@ -128,7 +128,7 @@ Additionally, `tobler` is developed with testing and documentation standards con
 
 Area-weighted interpolation assumes that variables are uniformly distributed within each source zone and allocates values to target zones in proportion to the area of overlap.
 
-`tobler` provides efficient implementations for both **extensive variables** (e.g., population counts) and **intensive variables** (e.g., rates or densities), ensuring appropriate handling of each type [@goodchild1980areal]. The library also supports pycnophylactic adjustments to preserve totals where required [@tobler1979SmoothPycnophylactic].
+`tobler` provides efficient implementations for both extensive variables (e.g., population counts) and intensive variables (e.g., rates or densities), ensuring appropriate handling of each type [@goodchild1980areal]. The library also supports pycnophylactic adjustments to preserve totals where required [@tobler1979SmoothPycnophylactic].
 
 ### Dasymetric interpolation
 
