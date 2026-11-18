@@ -1,9 +1,7 @@
 """test interpolation functions."""
 
-import geopandas
 import pytest
 from astropy.utils.exceptions import AstropyUserWarning
-from libpysal.examples import load_example
 from numpy.testing import assert_almost_equal
 
 from tobler.pycno import pycno_interpolate

@@ -1,0 +1,43 @@
+name: test
+channels:
+  - conda-forge
+dependencies:
+  - python=3.14
+  - astropy
+  - dask
+  - dask-geopandas
+  - geopandas>=1
+  - h3-py
+  - joblib
+  - jupyterlab
+  - libpysal
+  - numpy
+  - pandas
+  - rasterio
+  - rasterstats
+  - scikit-learn
+  - scipy
+  - statsmodels
+  - tqdm
+  - pointpats
+  # docs
+  - numpydoc
+  - nbsphinx
+  - joblib
+  - astropy
+  - osmnx
+  - contextily
+  - myst-parser
+  - sphinx-autodoc2
+  - geodatasets
+  - lonboard
+  - watermark
+  - myst-nb
+  - sphinx
+  - sphinxcontrib-bibtex
+  - sphinx-autosummary-accessors
+  - sphinx-copybutton
+  - sphinx-immaterial
+  - pip
+  - pip:
+    - pytidycensus

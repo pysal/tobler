@@ -100,7 +100,7 @@ nlcd_2011.tif
 docs/generated/
 docs/apidocs/
 docs/source/generated/
-docs/source/user-guide/cache
+docs/source/generated/*.json
 
 # macOS
 *.DS_Store

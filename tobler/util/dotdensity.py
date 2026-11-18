@@ -179,11 +179,11 @@ def dot_density(
 
     Parameters
     ----------
-    gdf : gpd.GeoDataFrame
+    gdf : geopandas.GeoDataFrame
         a geodataframe with columns of numeric data, a selection of which will be
         used to simulate a point-process within each geometry. The data in each column
         defines the number of points to simulate in each geometry
-    columns : list-like,
+    columns : list-like
         a list or array of columns in the dataframe holding the desired size of the
         set of points in each category. For example this would hold a set of
         mutually-exclusive racial groups, or employment industries, etc.
@@ -217,7 +217,7 @@ def dot_density(
 
     Returns
     -------
-    GeoDataFrame
+    geopandas.GeoDataFrame
         a geodataframe with simulated points in the geometry column, with each
         row/point holding the index of its containing polygon, and the column
         to which the point belongs.

@@ -89,7 +89,7 @@ html_theme_options = {
     },
     "site_url": "https://pysal.org/tobler",
     "repo_url": "https://github.com/pysal/tobler/",
-    "edit_uri": "blob/main/docs",
+    "edit_uri": "blob/main/docs/source",
     "repo_name": "pysal/tobler",
     "features": [
         # "navigation.expand",

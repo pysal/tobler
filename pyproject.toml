@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0", "setuptools_scm[toml]>=6.2"]
+requires = ["setuptools>=83.0", "setuptools_scm[toml]>=10.2"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
@@ -9,10 +9,11 @@ name = "tobler"
 dynamic = ["version"]
 authors = [
     { name = "Eli Knaap", email = "ek@knaaptime.com" },
-    { name = "Serge Rey", email = "sjsrey@gmail.com" },
+    { name = "Serge Rey", email = "sjsrey@gmail.com" }
 ]
 maintainers = [{ name = "pysal contributors" }]
-license = { text = "BSD 3-Clause" }
+license = "BSD-3-Clause"
+license-files = ["LICENSE.txt"]
 description = "Tobler is a Python library for areal interpolation."
 keywords = [
     "dasymetric mapping, spatial analysis, interpolation, change of support"
@@ -22,24 +23,28 @@ Spatial interpolation, Dasymetric Mapping, & Change of Support"
 
 """, content-type = "text/x-rst" }
 classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: BSD License",
-    "Operating System :: OS Independent",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Science/Research",
-    "Topic :: Scientific/Engineering :: GIS",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: 3.12",
+    "Programming Language :: Python :: 3 :: 3.13",
+    "Programming Language :: Python :: 3 :: 3.14",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: GIS"
 ]
 requires-python = ">=3.12"
 dependencies = [
-    "geopandas>=1.0",
-    "joblib>=1.4",
-    "libpysal>=4.10",
-    "numpy>=2.0",
-    "pandas>=2.2",
-    "rasterio>=1.4",
-    "rasterstats>=0.20",
-    "scipy>=1.13",
-    "statsmodels>=0.14",
-    "tqdm>=4.67",
+    "geopandas >=1.0",
+    "joblib >=1.4",
+    "libpysal >=4.10",
+    "numpy >=2.0",
+    "pandas >=2.2",
+    "rasterio >=1.4",
+    "rasterstats >=0.20",
+    "scipy >=1.13",
+    "statsmodels >=0.14",
+    "tqdm >=4.67"
 ]
 
 [project.urls]
@@ -51,11 +56,11 @@ plus = [
     "astropy",
     "dask-geopandas",
     "h3",
-    "pointpats",
+    "pointpats"
 ]
 dev = [
     "pre-commit",
-    "ruff",
+    "ruff"
 ]
 docs = [
     "nbsphinx",
@@ -68,17 +73,20 @@ docs = [
     "myst-parser",
     "sphinx-immaterial",
     "myst_nb",
-    "sphinx-copybutton"
+    "sphinx-copybutton",
+    "pytidycensus",
+    "contextily",
+    "osmnx",
+    "geodatasets"
 ]
 tests = [
     "codecov",
     "coverage",
-    "pytest",
+    "pytest >=9.0",
     "pytest-mpl",
     "pytest-cov",
     "pytest-xdist",
-    "watermark",
-
+    "watermark"
 ]
 all = ["tobler[plus,dev,docs,tests]"]
 
@@ -88,26 +96,13 @@ include = ["tobler", "tobler.*"]
 [tool.ruff]
 line-length = 88
 lint.select = ["E", "F", "W", "I", "UP", "N", "B", "A", "C4", "SIM", "ARG"]
-lint.ignore = [
-    "B006",
-    "B008",
-    "B009",
-    "B010",
-    "C408",
-    "E731",
-    "F401",
-    "F403",
-    "N803",
-    "N806",
-    "N999",
-    "UP007"
-]
 include = ["*.py", "*.ipynb"]
 
 [tool.ruff.lint.per-file-ignores]
-"*__init__.py" = [
-    "F403",
-    "F405",
+"tobler/**/__init__.py" = [
+    "F401",  # ... imported but unused; consider removing, adding to `__all__`, or using a redundant alias
+    "F403",  # ... used; unable to detect undefined names
+    "F405",  # ... may be undefined, or defined from star imports
 ]
 
 [tool.coverage.run]
@@ -124,7 +119,7 @@ exclude_lines = [
 ignore_errors = true
 omit = ["tobler/tests/*", "docs/conf.py"]
 
-[tool.pytest.ini_options]
+[tool.pytest]
 filterwarnings = [
     # internal warning thrown from ``pyogrio/__init__.py``
     "ignore:The 'shapely.geos' module is deprecated*:DeprecationWarning",

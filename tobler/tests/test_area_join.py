@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 import pytest
 from packaging.version import Version
-from shapely.geometry import Point
 
 from tobler.area_weighted import area_join
 

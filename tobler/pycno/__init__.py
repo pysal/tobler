@@ -1,3 +1,3 @@
-from .pycno import pycno_interpolate
+from .pycno import *
 
 __all__ = ["pycno_interpolate"]

@@ -1,20 +1,16 @@
-"""tools for working with rasters."""
+"""Tools for working with rasters."""
 
 import ast
 import multiprocessing
-import warnings
 
 import geopandas as gpd
 import numpy as np
 import pandas as pd
 import rasterio as rio
-import rasterstats as rs
 from joblib import Parallel, delayed
 from rasterio import features
 from rasterio.mask import mask
 from shapely.geometry import shape
-
-from ..util.util import _check_presence_of_crs
 
 __all__ = ["extract_raster_features"]
 
@@ -32,50 +28,6 @@ def _parse_geom(geom_str):
 
 def _apply_parser(df):
     return df.apply(_parse_geom)
-
-
-def _fast_append_profile_in_gdf(geodataframe, raster_path, force_crs_match=True):
-    """Append categorical zonal statistics (counts by pixel type)
-    as columns to an input geodataframe.
-
-    Parameters
-    ----------
-    geodataframe : geopandas.GeoDataFrame
-        geodataframe that has overlay with the raster. If some polygon do
-        not overlay the raster, consider a preprocessing step using the function
-        subset_gdf_polygons_from_raster.
-    raster_path : str
-        path to the raster image.
-    force_crs_match : bool, Default is True.
-        Whether the Coordinate Reference System (CRS) of the polygon will be reprojected
-        to the CRS of the raster file. It is recommended to let this argument as True.
-
-    Notes
-    -----
-    The generated geodataframe will input the value 0 for each Type that
-    is not present in the raster for each polygon.
-    """
-
-    _check_presence_of_crs(geodataframe)
-    if force_crs_match:
-        with rio.open(raster_path) as raster:
-            geodataframe = geodataframe.to_crs(crs=raster.crs.data)
-    else:
-        warnings.warn(
-            "The GeoDataFrame is not being reprojected. "
-            "The clipping might be being performing on "
-            "unmatching polygon to the raster.",
-            UserWarning,
-            stacklevel=2,
-        )
-
-    zonal_gjson = rs.zonal_stats(
-        geodataframe, raster_path, prefix="Type_", geojson_out=True, categorical=True
-    )
-
-    zonal_ppt_gdf = gpd.GeoDataFrame.from_features(zonal_gjson)
-
-    return zonal_ppt_gdf
 
 
 def extract_raster_features(
@@ -96,8 +48,8 @@ def extract_raster_features(
         may generate a very large geodataframe
     nodata : int, optional
         pixel value denoting "no data" in input raster
-    n_jobs : int
-        [Optional. Default=-1] Number of processes to run in parallel. If -1,
+    n_jobs : int, default=-1
+        Number of processes to run in parallel. If -1,
         this is set to the number of CPUs available
     collapse_values : bool, optional
         If True, multiple values passed to the pixel_values argument are treated
