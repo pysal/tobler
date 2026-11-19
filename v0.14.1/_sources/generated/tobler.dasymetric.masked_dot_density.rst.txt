@@ -1,0 +1,6 @@
+﻿tobler.dasymetric.masked\_dot\_density
+======================================
+
+.. currentmodule:: tobler.dasymetric
+
+.. autofunction:: masked_dot_density
