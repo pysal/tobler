@@ -1347,10 +1347,10 @@ based on the collection of pixel values they contain.</p>
 <dl class="field-list simple">
 <dt class="field-odd" id="tobler.model.glm-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#tobler.model.glm-parameters" title="Permalink to this headline">¶</a></dt>
 <dd class="field-odd"><dl class="simple api-field highlight">
-<dt id="tobler.model.glm.source_df"><span class="sig-name descname">source_df</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.2.1.dev10)">geopandas.GeoDataFrame</a></span></span><a class="headerlink" href="#tobler.model.glm.source_df" title="Permalink to this definition">¶</a></dt><dd><p>geodataframe containing source original data to
+<dt id="tobler.model.glm.source_df"><span class="sig-name descname">source_df</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.2.1.dev16)">geopandas.GeoDataFrame</a></span></span><a class="headerlink" href="#tobler.model.glm.source_df" title="Permalink to this definition">¶</a></dt><dd><p>geodataframe containing source original data to
 be represented by another geometry</p>
 </dd>
-<dt id="tobler.model.glm.target_df"><span class="sig-name descname">target_df</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.2.1.dev10)">geopandas.GeoDataFrame</a></span></span><a class="headerlink" href="#tobler.model.glm.target_df" title="Permalink to this definition">¶</a></dt><dd><p>geodataframe containing target boundaries that
+<dt id="tobler.model.glm.target_df"><span class="sig-name descname">target_df</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.2.1.dev16)">geopandas.GeoDataFrame</a></span></span><a class="headerlink" href="#tobler.model.glm.target_df" title="Permalink to this definition">¶</a></dt><dd><p>geodataframe containing target boundaries that
 will be used to represent the source data</p>
 </dd>
 <dt id="tobler.model.glm.raster"><span class="sig-name descname">raster</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a>, default=&quot;nlcd_2011&quot;</span></span><a class="headerlink" href="#tobler.model.glm.raster" title="Permalink to this definition">¶</a></dt><dd><p>path to raster file that will be used to input data to the regression model.
@@ -1366,8 +1366,8 @@ are informative land type cells from the NLCD</p>
 Currently, only one extensive variable is available.</p>
 </dd>
 <dt id="tobler.model.glm.formula"><span class="sig-name descname">formula</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a>, optional</span></span><a class="headerlink" href="#tobler.model.glm.formula" title="Permalink to this definition">¶</a></dt><dd><p>patsy-style model formula that specifies the model. Raster codes should be
-prefixed with “<a href="#id1"><span class="problematic" id="id2">Type_</span></a>”, e.g.
-<cite>“n_total_pop ~ -1 + Type_21 + Type_22</cite></p>
+prefixed with <code class="docutils literal notranslate"><span class="pre">Type_</span></code>, e.g.
+<code class="docutils literal notranslate"><span class="pre">&quot;n_total_pop</span> <span class="pre">~</span> <span class="pre">-1</span> <span class="pre">+</span> <span class="pre">Type_21</span> <span class="pre">+</span> <span class="pre">Type_22&quot;</span></code></p>
 </dd>
 <dt id="tobler.model.glm.likelihood"><span class="sig-name descname">likelihood</span><span class="p"> : </span><span class="desctype"><span class="desctype">{&quot;poisson&quot;, &quot;neg_binomial&quot;}, default=&quot;poisson&quot;</span></span><a class="headerlink" href="#tobler.model.glm.likelihood" title="Permalink to this definition">¶</a></dt><dd><p>the likelihood function used in the model</p>
 </dd>
@@ -1392,7 +1392,7 @@ function will also return the fitted regression model for further diagnostics
 The new geopandas will present a column named given by extensive_variable</p>
 </dd>
 <dt class="field-odd" id="tobler.model.glm-return-type">Return type<span class="colon">:</span><a class="headerlink" href="#tobler.model.glm-return-type" title="Permalink to this headline">¶</a></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.2.1.dev10)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.2.1.dev16)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
