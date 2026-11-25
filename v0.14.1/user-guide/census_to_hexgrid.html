@@ -837,11 +837,11 @@
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Author: author: eli knaap
 
-Last updated: 2026-11-18
+Last updated: 2026-11-25
 
 Python implementation: CPython
 Python version       : 3.14.10
-IPython version      : 9.18.1
+IPython version      : 9.19.1
 
 tobler   : 0.14.1
 geopandas: 1.2.0
@@ -891,7 +891,7 @@ or<br />
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/70ea539ea717b4013d940eff0d7d145830c7220c3b7b3739a7d8652890606468.png" src="../_images/70ea539ea717b4013d940eff0d7d145830c7220c3b7b3739a7d8652890606468.png" />
+<img alt="../_images/0794ff072d240b05a77ffc1df969021b1a1820e19065a1c533132080ff623cf2.png" src="../_images/0794ff072d240b05a77ffc1df969021b1a1820e19065a1c533132080ff623cf2.png" />
 </div>
 </div>
 <p>By altering the <code class="docutils literal notranslate"><span class="pre">resolution</span></code> parameter, we can generate grids using hexes of various sizes</p>
@@ -916,7 +916,7 @@ or<br />
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/f2824515849dc382fd62baf1ae8ca649809fba603fee67a8869f3fae3cb8d493.png" src="../_images/f2824515849dc382fd62baf1ae8ca649809fba603fee67a8869f3fae3cb8d493.png" />
+<img alt="../_images/d372c8ca3e4e601e053b090a744c521a98c5704c8188b3254a3d0324a95609a4.png" src="../_images/d372c8ca3e4e601e053b090a744c521a98c5704c8188b3254a3d0324a95609a4.png" />
 </div>
 </div>
 <p>and by using the <code class="docutils literal notranslate"><span class="pre">clip</span></code> parameter, we can ensure that the hexgrid is does not extend beyond the borders of the input geodataframe</p>
@@ -941,7 +941,7 @@ or<br />
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Text(0.5, 1.0, 'h3fy with clip')
 </code></pre></div>
 </div>
-<img alt="../_images/99c76cf8254bc362d2a77239cb66057672bac755b05f78b9993f2a1f38640bfc.png" src="../_images/99c76cf8254bc362d2a77239cb66057672bac755b05f78b9993f2a1f38640bfc.png" />
+<img alt="../_images/4682fb816bab98f3fce0a73247dfcf89df1c54a46b70a50f9edfeffc39efbc1b.png" src="../_images/4682fb816bab98f3fce0a73247dfcf89df1c54a46b70a50f9edfeffc39efbc1b.png" />
 </div>
 </div>
 <p>Notice, though, that we still have some sharp hexagonal edges, meaning the hexagon doesn’t <em>fully</em> cover the original source polygons. To force full coverage, we can use the <code class="docutils literal notranslate"><span class="pre">buffer</span></code> keyword (or, optionally, both <code class="docutils literal notranslate"><span class="pre">buffer</span></code> and <code class="docutils literal notranslate"><span class="pre">clip</span></code>).</p>
@@ -961,7 +961,7 @@ or<br />
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Text(0.5, 1.0, 'h3fy with buffer &amp; clip')
 </code></pre></div>
 </div>
-<img alt="../_images/b62a32e0589bb37488d120b812b288f8aa25c44ba145d85e7de091d5ce8d2f17.png" src="../_images/b62a32e0589bb37488d120b812b288f8aa25c44ba145d85e7de091d5ce8d2f17.png" />
+<img alt="../_images/e3c2f1b6f2326a346ed7a2695749c769d60ed2f5142472dbc70a12b5f7dd6b63.png" src="../_images/e3c2f1b6f2326a346ed7a2695749c769d60ed2f5142472dbc70a12b5f7dd6b63.png" />
 </div>
 </div>
 <h2 id="interpolating-to-a-hexgrid">Interpolating to a hexgrid<a class="headerlink" href="#interpolating-to-a-hexgrid" title="Link to this heading">¶</a></h2>
@@ -1004,7 +1004,7 @@ or<br />
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>Text(0.5, 0.98, 'Spatial Interpolation with the PySAL $\\mathtt{tobler}$ package')
 </code></pre></div>
 </div>
-<img alt="../_images/8903f0a5e5f51fa85a117fcab04fc50f4076680d5d84e70770a86b12e8d42054.png" src="../_images/8903f0a5e5f51fa85a117fcab04fc50f4076680d5d84e70770a86b12e8d42054.png" />
+<img alt="../_images/99b797f2e0ee3692e0fa511af2db4c92793463982ecab0e293fd62104e8fff56.png" src="../_images/99b797f2e0ee3692e0fa511af2db4c92793463982ecab0e293fd62104e8fff56.png" />
 </div>
 </div>
 <h2 id="dealing-with-nan-values">Dealing with NaN Values<a class="headerlink" href="#dealing-with-nan-values" title="Link to this heading">¶</a></h2>
