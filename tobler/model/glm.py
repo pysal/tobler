@@ -51,8 +51,8 @@ def glm(
         Currently, only one extensive variable is available.
     formula : str, optional
         patsy-style model formula that specifies the model. Raster codes should be
-        prefixed with "Type_", e.g.
-        `"n_total_pop ~ -1 + Type_21 + Type_22`
+        prefixed with ``Type_``, e.g.
+        ``"n_total_pop ~ -1 + Type_21 + Type_22"``
     likelihood : {"poisson", "neg_binomial"}, default="poisson"
         the likelihood function used in the model
     return_model : bool
